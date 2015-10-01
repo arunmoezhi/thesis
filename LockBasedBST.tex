@@ -1,0 +1,75 @@
+% Style to select only points from #1 to #2 (inclusive)
+\pgfplotsset
+{
+	select coords between index/.style 2 args=
+	{
+    x filter/.code=
+		{
+        \ifnum\coordindex<#1\def\pgfmathresult{}\fi
+        \ifnum\coordindex>#2\def\pgfmathresult{}\fi
+    }
+	}
+}
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[scale=0.9, transform shape]
+		\begin{groupplot}[group style={group size= 3 by 3,vertical sep=0.75cm},height=3cm,width=4cm,xmode=log,log basis x={2},max space between ticks=20,minor tick num=1,tick label style={font=\tiny},xlabel style={font=\tiny},ylabel style={font=\tiny}, title style={font=\tiny}]
+		\nextgroupplot[title=Small,ylabel={Read-Dominated},xtick=data]
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={3}{6}] table{Data/HJ-BST.dat};  \label{plots:HJ-BST:1}
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={3}{6}] table{Data/NM-BST.dat};  \label{plots:NM-BST:2}
+				\addplot[brown, semithick,mark=square] 	[select coords between index={3}{6}] table{Data/CITRUS.dat};  \label{plots:CITRUS:3}
+				\addplot[green, semithick,mark=o] 			[select coords between index={3}{6}] table{Data/RM-LOCK.dat};  \label{plots:RM-LOCK:4}
+				\coordinate (top) at (rel axis cs:0,1);% coordinate at top of the first plot
+		\nextgroupplot[title=Medium,xtick=data] 
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={7}{10}] table{Data/HJ-BST.dat};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={7}{10}] table{Data/NM-BST.dat};
+				\addplot[brown, semithick,mark=square] 	[select coords between index={7}{10}] table{Data/CITRUS.dat};
+				\addplot[green, semithick,mark=o] 			[select coords between index={7}{10}] table{Data/RM-LOCK.dat}; 
+		\nextgroupplot[title=Large,xtick=data]
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={11}{14}] table{Data/HJ-BST.dat};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={11}{14}] table{Data/NM-BST.dat};
+				\addplot[brown, semithick,mark=square] 	[select coords between index={11}{14}] table{Data/CITRUS.dat};
+				\addplot[green, semithick,mark=o] 			[select coords between index={11}{14}] table{Data/RM-LOCK.dat};
+		\nextgroupplot[ylabel={Mixed},xtick=data]
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={18}{21}] table{Data/HJ-BST.dat};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={18}{21}] table{Data/NM-BST.dat};
+				\addplot[brown, semithick,mark=square] 	[select coords between index={18}{21}] table{Data/CITRUS.dat};
+				\addplot[green, semithick,mark=o] 			[select coords between index={18}{21}] table{Data/RM-LOCK.dat};
+		\nextgroupplot[xtick=data]
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={22}{25}] table{Data/HJ-BST.dat};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={22}{25}] table{Data/NM-BST.dat};
+				\addplot[brown, semithick,mark=square] 	[select coords between index={22}{25}] table{Data/CITRUS.dat};
+				\addplot[green, semithick,mark=o] 			[select coords between index={22}{25}] table{Data/RM-LOCK.dat};
+		\nextgroupplot[xtick=data]
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={26}{29}] table{Data/HJ-BST.dat};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={26}{29}] table{Data/NM-BST.dat};
+				\addplot[brown, semithick,mark=square] 	[select coords between index={26}{29}] table{Data/CITRUS.dat};
+				\addplot[green, semithick,mark=o] 			[select coords between index={26}{29}] table{Data/RM-LOCK.dat};
+		\nextgroupplot[xlabel={Key Space Size},ylabel={Write-Dominated},xtick=data]
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={33}{36}] table{Data/HJ-BST.dat};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={33}{36}] table{Data/NM-BST.dat};
+				\addplot[brown, semithick,mark=square] 	[select coords between index={33}{36}] table{Data/CITRUS.dat};
+				\addplot[green, semithick,mark=o] 			[select coords between index={33}{36}] table{Data/RM-LOCK.dat};
+		\nextgroupplot[xlabel={Key Space Size},xtick=data]
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={37}{40}] table{Data/HJ-BST.dat};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={37}{40}] table{Data/NM-BST.dat};
+				\addplot[brown, semithick,mark=square] 	[select coords between index={37}{40}] table{Data/CITRUS.dat};
+				\addplot[green, semithick,mark=o] 			[select coords between index={37}{40}] table{Data/RM-LOCK.dat};
+		\nextgroupplot[xlabel={Key Space Size},xtick=data]
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={41}{44}] table{Data/HJ-BST.dat};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={41}{44}] table{Data/NM-BST.dat};
+				\addplot[brown, semithick,mark=square] 	[select coords between index={41}{44}] table{Data/CITRUS.dat};
+				\addplot[green, semithick,mark=o] 			[select coords between index={41}{44}] table{Data/RM-LOCK.dat};						
+				\coordinate (bot) at (rel axis cs:1,0);% coordinate at bottom of the last plot
+	\end{groupplot}
+	\path (top-|current bounding box.west)-- node[anchor=south,rotate=90] {\tiny Relative throughput (million operations/second)} (bot-|current bounding box.west);
+	\path (top|-current bounding box.north)-- coordinate(legendpos) (bot|-current bounding box.north);
+	\matrix[matrix of nodes, anchor=south, draw, inner sep=0.2em, draw] at ([yshift=1ex]legendpos)
+  {
+    \ref{plots:HJ-BST:1}& \tiny HJ-BST & [3pt]
+    \ref{plots:NM-BST:2}& \tiny NM-BST & [3pt]
+    \ref{plots:CITRUS:3}& \tiny CITRUS & [3pt]
+		\ref{plots:RM-LOCK:4}& \tiny CASTLE \\
+	};
+\end{tikzpicture}
+\end{figure}

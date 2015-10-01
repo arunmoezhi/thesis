@@ -1,0 +1,555 @@
+%\documentclass[handout]{beamer}
+\documentclass{beamer}
+\usepackage{comment}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{fixltx2e}
+\usepackage[boxed]{algorithm2e}
+\SetAlFnt{\fontsize{7pt}{8pt}\selectfont \ttfamily}
+\SetAlgoInsideSkip{} 
+\renewcommand\AlCapFnt{\tiny}
+\SetAlCapSkip{1.25ex}
+\SetAlgoCaptionLayout{centering}
+\setlength{\algomargin}{1.5em}
+\SetInd{0.5em}{0.625em}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{shapes.geometric,arrows,fit,matrix,positioning,pgfplots.groupplots}
+\tikzset
+{
+    treenode/.style = {circle, draw=black, align=center, minimum size=1cm},
+    subtree/.style  = {isosceles triangle, draw=black, align=center, minimum height=0.25cm, minimum width=0.25cm, shape border rotate=90, anchor=north},
+    process/.style={rectangle, minimum width=2cm, minimum height=1cm, align=center, text width=2cm, draw},
+    connector/.style={circle, minimum size=1cm, align=center, text width=0.5cm, draw},
+    arrow/.style={thick, ->, >=stealth}
+}
+\usepackage{circuitikz}
+
+\renewcommand\topfraction{0.95}
+\renewcommand\bottomfraction{0.95}
+\renewcommand\textfraction{0.05} 
+\renewcommand\floatpagefraction{0.95}
+\renewcommand{\dbltopfraction}{0.95}
+\renewcommand{\dblfloatpagefraction}{0.95}	
+
+\floatsep 4pt plus 2pt minus 2pt
+\textfloatsep 8pt plus 2pt minus 4pt
+\dblfloatsep 4pt plus 2pt minus 2pt
+\dbltextfloatsep 8pt plus 2pt minus 4pt
+
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \insertframenumber/\inserttotalframenumber
+}
+\title{Concurrent Internal Binary Search Trees}
+\author[Arun]{\includegraphics[height=0.8cm]{figures/utd_logo.jpg}\\
+Arunmoezhi Ramachandran \\
+Supervisor - Neeraj Mittal\\
+}
+\institute[UTDallas]{The University of Texas at Dallas}
+\date{}
+\begin{document}
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+		
+\begin{frame}{Overview}
+	\tableofcontents
+\end{frame}
+
+\section{Introduction}
+\begin{frame}{Introduction}
+\begin{itemize}
+\item \small CPUs aren't getting faster (memory wall, ILP wall and power wall)
+\item \small Shift towards multicore and manycore
+\end{itemize}
+\begin{center}
+\Large {\color{red} Problem}\\
+How to keep all the cores \textbf{busy}?
+\end{center}
+\pause
+\begin{center}
+\Large {\color{blue} Solutions}\\
+Parallel computing (obvious choice)\\
+\pause
+Concurrent computing (a better choice)
+\end{center}
+\end{frame}
+
+\begin{frame}{Concurrency vs Parallelism}
+\begin{center}
+\Large {\color{blue}Concurrency} is not {\color{red}parallelism} (it's better!!)
+\end{center}
+\pause
+\begin{columns}
+\begin{column}[t]{0.48\textwidth}
+\color{red}\rule{\linewidth}{4pt}
+Parallel Computing
+\setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
+\begin{itemize}
+\item decades of research done
+\item Example - Matrix-Matrix Multiplication
+\item \textbf{do} lot of things simultaneously
+\item cannot be done on a single CPU
+\item \textbf{deterministic} control flow
+\item is about \textbf{speedup}
+\item \textbf{hard} to debug
+\end{itemize}
+\end{column}
+\begin{column}[t]{0.48\textwidth}
+\color{blue}\rule{\linewidth}{4pt}
+Concurrent Computing
+\setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
+\begin{itemize}
+\item Relatively new
+\item Example - A web crawler, mouse/keyboard
+\item \textbf{deal} lot of things simultaneously
+\item can be done on a single CPU
+\item \textbf{non-deterministic} control flow
+\item is about \textbf{hiding latency}
+\item \textbf{very hard} to debug
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\section{Design Approaches}
+\begin{frame}{Designing Concurrent Data Structures}
+\begin{itemize}
+\item Shared-memory multiprocessors concurrently execute multiple threads
+\item Threads communicate and synchronize through data structures in shared memory
+\item Threads can interleave in exponential number of ways
+\item Concurrent data structure must preserve its properties for all possible interleavings
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Example - Shared Counter}
+Let $x$ be a shared counter which can be incremented using a function fetchAndIncrement()\\
+\pause
+Here are some possible implementations of this function\\
+\phantom{hello world}
+\SetAlgorithmName{fetchAndIncrement}{}{}
+\renewcommand{\thealgocf}{}
+\begin{minipage}[t]{0.48\textwidth}
+\begin{algorithm}[H]
+\phantom{acquire(lock)\;}
+r1 = x\;
+inc(r1)\;
+x = r1\;
+\phantom{release(lock)\;}
+
+\caption{\tiny sequential}
+\end{algorithm}
+\pause
+\end{minipage}
+\begin{minipage}[t]{0.48\textwidth}
+\begin{algorithm}[H]
+\caption{\tiny Using locks}
+acquire(lock)\;
+r1 = x\;
+inc(r1)\;
+x = r1\;
+release(lock)\;
+
+\end{algorithm}
+\end{minipage}
+\pause
+\begin{center}
+\begin{minipage}[t]{0.65\textwidth}
+\begin{algorithm}[H]
+\caption{\tiny using atomic instructions}
+\Repeat{(x.compareAndSwap(rOld,rNew))}
+{
+rOld = x\;
+rNew = rOld+1\;
+}
+\end{algorithm}
+\end{minipage}
+\end{center}
+\footnotesize compareAndSwap updates(atomically) the value of $x$ to $rNew$ only if the read value of $x$ is equal to $rOld$. Returns \textit{true} if it succeeds in updating the value of $x$
+\end{frame}
+
+\begin{frame}{Design Approaches}
+\begin{center}
+\Large How to handle contention among threads?
+\end{center}
+\pause
+\begin{itemize}
+\item<2-> \Large Blocking Algorithms
+\begin{itemize}
+\item<3-> use locks to resolve contention
+\item<3-> coarse grained or fine grained locking
+\item<3->  {\color{black!50!green} easier to design}
+\item<3->  {\color{red}weaker progress guarantees} (thread owns a lock) 
+\item<3->  {\color{red}are prone to deadlock, priority inversion}
+\end{itemize}
+\phantom{hello world}
+\item<2-> \Large Non-Blocking Algorithms
+\begin{itemize}
+\item<4->  use atomic (Read-Modify-Write) instructions to resolve contention. E.g. Compare-And-Swap(CAS) instruction
+\item<4-> lock-free or wait-free
+\item<4-> {\color{black!50!green}stronger progress guarantees} (operation owns a lock - helping)
+\item<4-> {\color{black!50!green}deadlock or priority inversion not possible}
+\item<4-> {\color{red}harder to design}
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\section{Binary Search Tree}
+\begin{frame}{Binary Search Tree - Defintion}
+A \textit{binary search tree} (BST) is a data structure which meets the following requirements:
+\begin{itemize}
+\item it  is a binary tree (a node can contain atmost two children)
+\item each node contains a key $k$
+\item left subtree of a node contains keys lesser than $k$
+\item right subtree of a node contains keys greater than $k$
+\end{itemize}
+\pause
+Operations on a BST
+\begin{itemize}
+\item \textbf{search($k$)} - returns \textit{true} only if key $k$ is present in the tree
+\item \textbf{insert($k$)} - inserts $k$ into the tree if it does not already exist
+\item \textbf{delete($k$)} - deletes $k$ from the tree if it already exist
+\end{itemize}
+\end{frame}
+
+\begin{frame}{BST - Search}
+\textbf{search($70$)}\\
+\input{figures/BST/searchTrue}
+\end{frame}
+
+\begin{frame}{BST - Search}
+\textbf{search($55$)}\\
+\input{figures/BST/searchFalse}
+\end{frame}
+
+\begin{frame}{BST - Insert}
+\textbf{insert($55$)}\\
+\begin{columns}
+\begin{column}[t]{0.48\textwidth}
+\input{figures/BST/insertA}
+\end{column}
+\pause
+\pause
+\begin{column}[t]{0.5\textwidth}
+\input{figures/BST/insertB}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Types of delete}
+\begin{itemize}
+\item simple - removing a node which has atmost one child
+\item complex - removing a node which has exactly two children
+\end{itemize}
+\end{frame}
+
+\begin{frame}{BST - Simple Delete}
+\textbf{delete($25$)}
+\begin{figure}[b]
+\begin{columns}
+\begin{column}[t]{0.48\textwidth}
+\input{figures/BST/simpleDeleteA}
+\end{column}
+\pause
+\pause
+\begin{column}[t]{0.5\textwidth}
+\input{figures/BST/simpleDeleteB}
+\end{column}
+\end{columns}
+\end{figure}
+\end{frame}
+
+\begin{frame}{BST - Complex Delete}
+\textbf{delete($50$)}
+\begin{figure}[b]
+\begin{columns}
+\begin{column}[t]{0.33\textwidth}
+\input{figures/BST/complexDeleteA}
+\end{column}
+\pause
+\pause
+\pause
+\begin{column}[t]{0.33\textwidth}
+\input{figures/BST/complexDeleteB}
+\end{column}
+\pause
+\begin{column}[t]{0.33\textwidth}
+\input{figures/BST/complexDeleteC}
+\end{column}
+\end{columns}
+\end{figure}
+\end{frame}
+
+\section{Related Works}
+\begin{comment}
+\begin{frame}{Related Works}
+\begin{itemize}
+\item lock-free(node-based) external BST by Ellen et.al[PODC'10]
+\item lock-free(node-based) internal BST by Howley and Jones[SPAA'12]
+\item lock-free(edge-based) external BST by Natarajan and Mittal[PPoPP'14]
+\item RCU-based(node-based) internal BST by Arbel and Attiya[PODC'14]
+\item lock-based(node-based) internal BST by Drachsler et.al[PPoPP'14]
+\end{itemize}
+\end{frame}
+\end{comment}
+\begin{frame}{Related Works}
+\begin{table}[h]
+\small{
+\begin{tabular}{|l|l|c|c|l|}
+\hline
+\textbf{\#} & \multicolumn{1}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}Algorithm\\ Type\end{tabular}}} & \textbf{\begin{tabular}[c]{@{}c@{}}Works\\ At\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}BST\\ Type\end{tabular}} & \multicolumn{1}{c|}{\textbf{Authors}} \\ \hline
+1           & lock free                                                                              & node level                                                  & external                                                    & Ellen et.al{[}PODC'10{]}              \\ \hline
+2           & lock free                                                                              & node level                                                  & internal                                                    & Howley \& Jones{[}SPAA'12{]}          \\ \hline
+3           & lock free                                                                              & edge level                                                  & external                                                    & Natarajan \&Mittal{[}PPoPP'14{]}      \\ \hline
+4           & lock based                                                                             & node level                                                  & internal                                                    & Arbel \& Attiya{[}PODC'14{]}          \\ \hline
+5           & lock based                                                                             & node level                                                  & internal                                                    & Drachsler et.al{[}PPoPP'14{]}         \\ \hline
+\end{tabular}
+}
+\end{table}
+\end{frame}
+\section{Lock Based Binary Search Tree}
+\begin{frame}[c]{Lock Based BST[PPoPP'15 Poster]}
+Contributions
+\begin{itemize}
+\item combine edge-based locking with internal representation of BST
+\item optimistic tree traversal 
+\end{itemize}
+\end{frame}
+
+\begin{frame}[c]{Lock Based BST[PPoPP'15 Poster]}
+\begin{itemize}
+\item common workloads have more searches than updates
+\begin{itemize}
+\item design is optimized for searches
+\item search operations are oblivious to locks
+\end{itemize}
+\pause
+\item Any real life workload will have more inserts than deletes
+\begin{itemize}
+\item insert operations do not obtain any locks
+\item performs only one atomic operation
+\end{itemize}
+\pause
+\item removal of a node in a concurrent BST is challenging
+\begin{itemize}
+\item delete operations uses locks
+\item locks can be obtained on nodes or edges
+\item locking edges instead of nodes increases concurrency
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Lock Based BST - Challenges in search}
+\input{figures/issueInSeek}
+\visible<6>
+{
+\\Keep track of last right turn node and its key. If search terminates at a NULL node, check if the current key in the last right turn node has changed. If yes restart the operation from root.
+}
+\end{frame}
+
+\begin{frame}[c]{Lock Based BST - Delete}
+pseudocode for delete
+\begin{algorithm}[H]
+locate the node to delete\;
+\uIf{simple delete}
+{
+lock the edge $\langle$parent,node$\rangle$\;
+lock the children edges\;
+make the parent point to the non-null child using a simple write instruction\;
+release all locks\;
+}
+\Else(// complex delete)
+{
+lock the edge $\langle$node,rightChild$\rangle$\;
+find the successor\;
+lock the edge $\langle$successorParent,successor$\rangle$\;
+lock the children edges of successor\;
+promote key\;
+remove successor by a making successorParent point to non-null child of successor\;
+release all locks\;
+}
+\end{algorithm}
+\end{frame}
+
+\begin{frame}[c]{Lock Based BST - Simple Delete}
+\input{figures/CASTLEsimpleDelete}
+\end{frame}
+
+\begin{frame}[c]{Lock Based BST - Complex Delete}
+\input{figures/CASTLEcomplexDelete}
+\end{frame}
+
+\begin{frame}{Lock Based BST - More challenges in search}
+A scenario in which the last right turn node is removed
+\input{figures/issueInSeek2}
+\begin{itemize}
+\item<1> \footnotesize Search(13) gets stalled at $Y$ in (a). Its last right turn node is $X$
+\item<2> \footnotesize Delete(6) removes $X$ from the tree in (b). The key stored in $X$ is still 6
+\item<3> \footnotesize Delete(5) results in 13 moving up the tree from $Z$ to $W$ in (c). When search(13) wakes up, it will miss 13 as the key in the last right turn node has not changed
+\end{itemize}
+
+
+\begin{itemize}
+\item<4> \footnotesize In the first traversal search(13) saw the node $X$
+\item<4> \footnotesize In the second traversal there are two cases
+\begin{itemize}
+\item<4> \tiny case1, search(13) did not find $X$ - save the traversal and restart
+\item<4> \tiny case2, search(13) did find $X$ - use the results of previous traversal
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\section{Lock Free Binary Search Tree}
+\begin{frame}[c]{Lock Free BST[ICDCN'15]}
+Contributions
+\begin{itemize}
+\item combine edge-based locking with internal representation of BST 
+\item optimistic tree traversal 
+\pause
+\item lock-free algorithm
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Lock Free BST[ICDCN'15]}
+\begin{itemize}
+\item search and inserts are same as in lock Based BST
+\item to maintain lock-free property, if an insert or delete operation fails, it helps a pending delete operation(if needed)
+\end{itemize} 
+pseudocode for delete
+\begin{algorithm}[H]
+locate the node to delete\;
+flag the children edges for deletion\;
+\uIf{simple delete}
+{
+make the parent point to the non-null child atomically\;
+}
+\Else(// complex delete)
+{
+find the successor\;
+flag the children edges of successor for promotion\;
+promote key\;
+remove successor by a simple delete\;
+replace node with a fresh copy\;
+}
+\end{algorithm}
+\end{frame}
+
+\begin{frame}[c]{Lock Free BST - Simple Delete}
+\begin{itemize}
+\item flag is owned by an operation
+\item if a thread which installed the flag is stalled, other threads can help complete the operation
+\end{itemize}
+\pause
+\input{figures/ICDCNsimpleDelete}
+\end{frame}
+
+\begin{frame}[c]{Lock Free BST - Complex Delete}
+\input{figures/ICDCNcomplexDelete1}
+\end{frame}
+\begin{frame}[c]{Lock Free BST - Complex Delete}
+\input{figures/ICDCNcomplexDelete2}
+\end{frame}
+
+\section{Experimental Evaluation}
+\begin{frame}{Experimental Setup}
+To compare the performance of various concurrent BSTs we considered the following parameters:
+\begin{itemize}
+\item Maximum Tree Size
+  \begin{itemize}
+  \item key space size varied from 2\textsuperscript{13} (8Ki) to 2\textsuperscript{24} (16Mi).
+  \end{itemize}
+\item Relative Distribution of Operations
+  \begin{itemize}
+  \item Read-Dominated\phantom{1}(90\% search, \phantom{1}9\% insert and \phantom{1}1\% delete)
+  \item Mixed\phantom{1234567890}(70\% search, 20\% insert and 10\% delete)
+  \item Write-Dominated (\phantom{1}0\% search, 50\% insert and 50\% delete)
+  \end{itemize}
+\item Maximum degree of Contention
+  \begin{itemize}
+  \item number of threads that can concurrently operate on the tree
+  \item we collected data for 32 threads
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Experimental Setup}
+\small
+{
+\begin{itemize}
+\item Throughput computed as millions of operations per second (MOPS)
+\item each trial was run for 10 seconds
+\item Average over 3 trials
+\item \textit{pre-populated} the tree to 50\% of its maximum size to capture steady state behaviour
+\item beginning of each run consisted of a ``warm-up'' phase whose numbers were excluded in the computed statistics to avoid initial caching effects
+\item The machine we used is a Dell PowerEdge R820 server with 4 Intel E5-4650 @ 2.70GHz 8-core processors (32 cores in total) and 1TB of DDR3 memory with HT disabled. 256KB L2 and 20MB shared L3
+\end{itemize}
+}
+\end{frame}
+
+\begin{frame}{Other Concurrent BSTs}
+\begin{itemize}
+\item a lock-free internal BST by Howley and Jones[SPAA'12], denoted by HJ-BST
+\item a lock-free external BST by Natarajan and Mittal[PPoPP'14], denoted by NM-BST
+\item RCU-based internal BST by Arbel and Attiya[PODC'14], denoted by CITRUS 
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Lock Based BST}
+\input{LockBasedBST}
+\end{frame}
+
+\begin{frame}{Lock Free BST}
+\input{LockFreeBST}
+\end{frame}
+
+\begin{frame}{Results Summary}
+Comparison of different lock-free algorithms in the absence of contention
+\input{figures/comparison}
+\pause
+\begin{itemize}
+\item speedup is calculated over the second best algorithm
+\end{itemize}
+\input{figures/summary}
+\end{frame}
+
+\section{Future Work}
+\begin{frame}{Future Work}
+\begin{itemize}
+\item do local recovery upon failures
+\item develop concurrent K-ary BST which can improve spatial locality
+\item work on other data structures like tries
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Future Work - Local Recovery}
+\begin{itemize}
+\item currently upon failure, an operation restarts from the root
+\item Ellen et.al[PODC'14] have shown that local recovery can be done for external BST
+\item Local recovery on an internal BST is hard due to key movements
+\item We are currently working on extending our algorithms to enable local recovery
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Future Work - K-ary BST}
+\begin{itemize}
+\item ideas from Lock Based BST can be extended to external K-ary BST
+\item updates are relatively easier to handle as they obtain locks
+\item inserts might result in  node splits
+\item searches are hard if we need to maintain their lock-free property
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Future Work - Tries}
+\begin{itemize}
+\item Tries are extensively used in text processing
+\item Tree like structure. So our ideas $can$ $possibly$ be applied
+\end{itemize}
+\end{frame}
+
+\end{document}

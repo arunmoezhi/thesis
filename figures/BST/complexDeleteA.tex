@@ -1,0 +1,30 @@
+\begin{tikzpicture}[scale=0.5, transform shape]
+\newcommand\xShift{1.5}
+\newcommand\yShift{1}
+\node(x) [treenode] at (0, 0) {100};
+\node(xl) [treenode] at ([shift=({-\xShift,-\yShift})]x) {50};
+\node(xr) [treenode] at ([shift=({\xShift,-\yShift})]x) {200};
+\node(xll) [subtree] at ([shift=({-\xShift,-\yShift})]xl) {$\alpha$};
+\node(xlr) [treenode] at ([shift=({\xShift+1.5,-\yShift-1})]xl) {70};
+\node(xlrl) [treenode] at ([shift=({-\xShift,-\yShift})]xlr) {60};
+\node(xlrr) [subtree] at ([shift=({\xShift,-\yShift})]xlr) {$\beta$};
+\node(xlrll) [treenode] at ([shift=({-\xShift,-\yShift})]xlrl) {55};
+\node(xlrlr) [ground] at ([shift=({\xShift,-\yShift-0.25})]xlrl) {};
+\node(xlrlll) [ground] at ([shift=({-\xShift,-\yShift})]xlrll) {};
+\node(xlrllr) [subtree] at ([shift=({\xShift,-\yShift})]xlrll) {$\gamma$};
+\draw[->] (x) -- (xl);
+\draw[->] (x) -- (xr);
+\draw[->] (xl) -- (xll.north);
+\draw[->] (xl) -- (xlr);
+\draw[->] (xlr) -- (xlrl);
+\draw[->] (xlr) -- (xlrr.north);
+\draw[->] (xlrl) -- (xlrll);
+\draw[->] (xlrl) -- (xlrlr);
+\draw[->] (xlrll) -- (xlrlll);
+\draw[->] (xlrll) -- (xlrllr.north);
+\draw<2->[->,thick,color=red] (x) -- (xl);
+\node<2->(xl) [treenode,fill=black!50!green] at ([shift=({-\xShift,-\yShift})]x) {50};
+\draw<3->[->,thick,color=red] (xlrl) -- (xlrll);
+\node<3->(xlrll) [treenode,fill=black!50!green] at ([shift=({-\xShift,-\yShift})]xlrl) {55};
+\node<3->[below right] at (current bounding box.south west) {\Large \textbf{find successor}};
+\end{tikzpicture}

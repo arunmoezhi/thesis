@@ -1,0 +1,26 @@
+\begin{tikzpicture}[scale=0.5, transform shape]
+\draw[->,style=double] (-8,-3) -- (-6,-3){};
+\newcommand\xShift{1.5}
+\newcommand\yShift{1}
+\node(x) [treenode] at (0, 0) {100};
+\node(xl) [treenode] at ([shift=({-\xShift,-\yShift})]x) {50};
+\node(xr) [treenode] at ([shift=({\xShift,-\yShift})]x) {200};
+\node(xll) [treenode] at ([shift=({-\xShift-1,-\yShift-1})]xl) {25};
+\node(xlr) [treenode] at ([shift=({\xShift+1,-\yShift-1})]xl) {70};
+\node(xlll) [ground] at ([shift=({-\xShift,-\yShift})]xll) {};
+\node(xllr) [subtree] at ([shift=({\xShift-0.5,-\yShift})]xll) {$\alpha$};
+\node(xlrl) [treenode] at ([shift=({-\xShift,-\yShift})]xlr) {60};
+\node(xlrr) [subtree] at ([shift=({\xShift,-\yShift})]xlr) {$\beta$};
+\node(xlrll) [treenode,fill=black!50!green] at ([shift=({-\xShift+0.25,-\yShift-0.5})]xlrl) {55};
+\node(xlrlr) [ground] at ([shift=({\xShift,-\yShift-0.25})]xlrl) {};
+\draw[->] (x) -- (xl);
+\draw[->] (x) -- (xr);
+\draw[->] (xl) -- (xll);
+\draw[->] (xl) -- (xlr);
+\draw[->] (xll) -- (xlll);
+\draw[->] (xll) -- (xllr.north);
+\draw[->] (xlr) -- (xlrl);
+\draw[->] (xlr) -- (xlrr.north);
+\draw[->,thick,color=red] (xlrl) -- (xlrll);
+\draw[->] (xlrl) -- (xlrlr);
+\end{tikzpicture}

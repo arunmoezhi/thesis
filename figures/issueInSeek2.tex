@@ -1,0 +1,53 @@
+\begin{figure}
+\centering
+{
+	\begin{tikzpicture}[scale=0.7, transform shape]
+		\newcommand\XA{-5}
+		\newcommand\YA{0}
+		\node[] at (-4.5,-3.5) {(a)};
+		\node (x)		[treenode] 									at (\XA,\YA)       						{$W$ \\ 5};
+		\node (S1)	[subtree,scale=0.5] 				at ([shift=({-1,-0.5})]x)  		{};
+		\node (y0)	[treenode] 									at ([shift=({1.5,-1})]x) 			{$X$ \\ 6};
+		\node (gnd)	[ground]										at ([shift=({-1.5,-1})]y0)		{}; 
+		\node (y1)	[treenode,fill=red] 				at ([shift=({1.5,-1})]y0)   	{$Y$ \\ 14};
+		\node (y2)	[treenode] 									at ([shift=({-1.5,-1})]y1)  	{$Z$ \\ 13};
+		%\node (S2)	[subtree,scale=0.5]					at ([shift=({0.5,-1})]y1)			{}; 
+
+		\path[every node/.style={font=\sffamily\large}]
+		(\XA,\YA+1) 	edge[->,thick] 		node 					{} (x)
+		(x) 		edge[->]								node 					{} (S1.north)
+		(x) 		edge[->]								node 					{} (y0)
+		(y0) 		edge[->,dotted,thick]		node 					{} (gnd)
+		(y0) 		edge[->,dotted,thick]		node 					{} (y1)
+		(y1) 		edge[->]								node 					{} (y2);
+		%(y1) 		edge[->]							node 					{} (S2.north);
+		\pause
+		\renewcommand\XA{0}
+		\node[] at (0.5,-3.5) {(b)};
+		\node (ix)	[treenode] 										at (\XA,\YA)       						{$W$ \\ 5};
+		\node (iS1)	[subtree,scale=0.5] 					at ([shift=({-1,-0.5})]ix)  	{};
+		\node (iy1)	[treenode,fill=red] 					at ([shift=({1.5,-1})]ix)   	{$Y$ \\ 14};
+		\node (iy2)	[treenode] 										at ([shift=({-1,-1.5})]iy1)  	{$Z$ \\ 13};
+		%\node (iS2)	[subtree,scale=0.5]					at ([shift=({0.5,-1.0})]iy1)	{}; 
+
+		\path[every node/.style={font=\sffamily\large}]
+		(\XA,\YA+1) 	edge[->,thick] 		node 					{} (ix)
+		(ix) 		edge[->]								node 					{} (iS1.north)
+		(ix) 		edge[->]								node 					{} (iy1)
+		(iy1) 	edge[->]								node 					{} (iy2);
+		%(iy1) 	edge[->]								node 					{} (iS2.north);
+		\pause
+		\renewcommand\XA{3.8}
+		\node[] at (3.5,-3.5) {(c)};
+		\node (iix)		[treenode] 									at (\XA,\YA)       							{$W$ \\ 13};
+		\node (iiS1)	[subtree,scale=0.5] 				at ([shift=({-1,-0.5})]iix)  		{};
+		\node (iiy1)	[treenode,fill=green] 			at ([shift=({1.25,-1.25})]iix)  {$Y$ \\ 14};
+		\node (iignd)	[ground]										at ([shift=({-1.5,-1})]iiy1)		{}; 
+		
+		\path[every node/.style={font=\sffamily\large}]
+		(iix) 		edge[->]								node 					{} (iiS1.north)
+		(iix) 		edge[->]								node 					{} (iiy1)
+		(iiy1) 		edge[->]								node 					{} (iignd);	
+	\end{tikzpicture}
+}
+\end{figure}

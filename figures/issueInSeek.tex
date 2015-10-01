@@ -1,0 +1,55 @@
+\begin{tikzpicture}[scale=0.55, transform shape,mylabel/.style={thin, draw=black, align=center, minimum width=0.3cm, minimum height=0.3cm,fill=white}]
+		\newcommand\XA{0}
+		\newcommand\YA{0}
+		\node (x)		[treenode] 									at (-6,0)       							{$U$ \\ 50};
+		\node (a)		[subtree] 									at (-7.5,-1)  								{\Large $\alpha$};
+		\node (y0)	[treenode] 									at (-4,-1.5) 									{$V$ \\ 100};
+		\node (y1)	[treenode]									at (-5.5,-3)									{$W$ \\ 60}; 
+		\node (b)		[subtree] 									at (-3,-2.5)    							{\Large $\beta$};
+		\node (y2)	[treenode]									at (-7,-4.5)									{$X$ \\ 55}; 
+		\node (g)		[subtree] 									at (-4,-4)   									{\Large $\gamma$};
+		\node (gnd)	[ground] 										at (-8.5,-5.75)								{}; 
+		\node (o)		[ground] 										at (-5.5,-5.5)  							{};
+		\node (x1) 	[] 													at (-8.5,0) 									{\large lastRightTurn node};
+		\draw[->] (-6, 1.5) --  (x);
+		\draw[->] (x) -- (y0);
+		\draw[->] (x) -- (a.north);
+		\draw[->] (y0) -- (y1);
+		\draw[->] (y0) -- (b.north);
+		\draw[->] (y1) -- (y2);
+		\draw[->] (y1) -- (g.north);
+		\draw[->] (y2) -- (gnd);
+		\draw[->] (y2) -- (o);
+		%% legend
+		\node [thin, draw=black, align=center, minimum width=5cm, minimum height=1.5cm] at (0,-7) {\Large Thread $A$ - search(55) \\ \Large Thread $B$ - delete(50)};	
+		\pause
+		\node (y1)	[treenode, fill=red]		at (-5.5,-3)											{$W$ \\ 60}; 
+		\node (y1l) [rectangle,align=center,minimum size=1cm] at (-8.5,-3) 		{\large Thread $A$ \\stalled here};
+		\pause
+		\node (y2l) [rectangle,align=center,minimum size=1cm] at(-9.5,-4.5) 	{\large key is promoted \\by Thread $B$};
+		\pause
+		\path[every node/.style={font=\sffamily\small}]
+		(-3.25, 0) edge[->,semithick, double] node [above, outer sep=3pt] 		{\large \texttt delete 50} (-0.75, 0);
+
+		\node (ix)	[treenode] 									at (1,0)       								{$U$ \\ 55};
+		\node (ia)	[subtree] 									at (-0.5,-1)  								{\Large $\alpha$};
+		\node (iy0)	[treenode] 									at (3,-1.5) 									{$V$ \\ 100};
+		\node (iy1)	[treenode, fill=red]									at (1.5,-3)					{$W$ \\ 60}; 
+		\node (ib)	[subtree] 									at (4,-2.5)    								{\Large $\beta$};
+		\node (io)	[ground]										at (0,-4)											{}; 
+		\node (ignd)[subtree] 									at (3,-4)   									{\Large $\gamma$};
+    
+    \draw[->] (1, 1.5) --  (ix);
+    \draw[->] (ix) --  (iy0);
+    \draw[->] (ix) --  (ia.north);
+    \draw[->] (iy0) --  (iy1);
+    \draw[->] (iy0) --  (ib.north);
+    \draw[->] (iy1) --  (io);
+    \draw[->] (iy1) --  (ignd.north);
+		\pause
+		\node (iy1)	[treenode, fill=green]									at (1.5,-3)					{$W$ \\ 60};
+		\node (y12) [rectangle,align=center,minimum size=1cm] at (0,-3) 		{\large Thread $A$ \\wakes up};
+		\pause
+		\node (io)	[ground,color=red]										at (0,-4)											{}; 
+		\node (y13) [rectangle,align=center,minimum size=1cm] at (0,-5) 		{\large key not found};
+	\end{tikzpicture}

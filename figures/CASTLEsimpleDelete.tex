@@ -1,0 +1,34 @@
+\begin{tikzpicture}[scale=0.6, transform shape,mylabel/.style={thin, draw=black, align=center, minimum width=0.3cm, minimum height=0.3cm,fill=white}]
+		\newcommand\XA{-3}
+		\newcommand\YA{0}
+		\node (x)		[treenode] 																at (\XA,\YA)       					{$V$ \\ 100};
+		\node (y)		[treenode, fill=black!20] 								at (\XA-1.5,\YA-1.5) 				{$U$ \\ 50};
+		\node (a)		[subtree] 																at (\XA+2,\YA-1)      			{\Large $\alpha$};
+		\node (b)		[subtree] 																at (\XA-3,\YA-2.5)    			{\Large $\beta$};
+		\node (gnd)	[ground] 																	at (\XA+0.5,\YA-2.5)				{}; 
+		\node (xl) 	[rectangle,align=center,minimum size=1cm] at (\XA-2,\YA) 							{\large targetnode's \\ \large parent};
+		\node (yl) 	[] 																				at (\XA-3.25,\YA-1.5) 			{\large targetnode};
+		
+ 		\draw[->] (x) -- (y);
+ 		\draw[->] (y) -- (b.north);
+ 		\draw[->] (y) -- (gnd);
+		\draw[->] (\XA,\YA+1) -- (x);
+		\draw[->] (x) -- (a.north);
+		\pause
+		\draw[->] (x) -- node[mylabel] {$\boldsymbol{l}$} (y);
+		\pause
+		\draw[->] (y) -- node[mylabel] {$\boldsymbol{l}$} (b.north);
+		\pause
+		\draw[->] (y) -- node[mylabel] {$\boldsymbol{l}$} (gnd);
+    \pause
+		\path[every node/.style={font=\sffamily\small}]
+		(\XA+1.5,\YA) edge[->,semithick, double] 							node [above, outer sep=3pt] {\large \texttt delete 50} (\XA+4,\YA);
+		
+		\node (ix)	[treenode] 																at (\XA+6,\YA) 							{$V$ \\ 100};
+		\node (ib)	[subtree] 																at (\XA+4.5,\YA-1)					{\Large $\beta$};
+		\node (ia)	[subtree] 																at (\XA+7.5,\YA-1) 					{\Large $\alpha$};
+
+		\draw[->] (\XA+6,\YA+1) -- (ix);
+		\draw[->] (ix) -- (ib.north);
+		\draw[->] (ix) -- (ia.north);
+	\end{tikzpicture}
