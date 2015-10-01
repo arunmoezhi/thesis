@@ -1,0 +1,84 @@
+\begin{frame}{Binary Search Tree - Defintion}
+A \textit{binary search tree} (BST) is a data structure which meets the following requirements:
+\begin{itemize}
+\item it  is a binary tree (a node can contain atmost two children)
+\item each node contains a key $k$
+\item left subtree of a node contains keys lesser than $k$
+\item right subtree of a node contains keys greater than $k$
+\end{itemize}
+\pause
+Operations on a BST
+\begin{itemize}
+\item \textbf{search($k$)} - returns \textit{true} only if key $k$ is present in the tree
+\item \textbf{insert($k$)} - inserts $k$ into the tree if it does not already exist
+\item \textbf{delete($k$)} - deletes $k$ from the tree if it already exist
+\end{itemize}
+\end{frame}
+
+\begin{frame}{BST - Search}
+\textbf{search($70$)}\\
+\input{figures/BST/searchTrue}
+\end{frame}
+
+\begin{frame}{BST - Search}
+\textbf{search($55$)}\\
+\input{figures/BST/searchFalse}
+\end{frame}
+
+\begin{frame}{BST - Insert}
+\textbf{insert($55$)}\\
+\begin{columns}
+\begin{column}[t]{0.48\textwidth}
+\input{figures/BST/insertA}
+\end{column}
+\pause
+\pause
+\begin{column}[t]{0.5\textwidth}
+\input{figures/BST/insertB}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Types of delete}
+\begin{itemize}
+\item simple - removing a node which has atmost one child
+\item complex - removing a node which has exactly two children
+\end{itemize}
+\end{frame}
+
+\begin{frame}{BST - Simple Delete}
+\textbf{delete($25$)}
+\begin{figure}[b]
+\begin{columns}
+\begin{column}[t]{0.48\textwidth}
+\input{figures/BST/simpleDeleteA}
+\end{column}
+\pause
+\pause
+\begin{column}[t]{0.5\textwidth}
+\input{figures/BST/simpleDeleteB}
+\end{column}
+\end{columns}
+\end{figure}
+\end{frame}
+
+\begin{frame}{BST - Complex Delete}
+\textbf{delete($50$)}
+\begin{figure}[b]
+\begin{columns}
+\begin{column}[t]{0.33\textwidth}
+\input{figures/BST/complexDeleteA}
+\end{column}
+\pause
+\pause
+\pause
+\begin{column}[t]{0.33\textwidth}
+\input{figures/BST/complexDeleteB}
+\end{column}
+\pause
+\begin{column}[t]{0.33\textwidth}
+\input{figures/BST/complexDeleteC}
+\end{column}
+\end{columns}
+\end{figure}
+\end{frame}

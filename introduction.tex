@@ -1,0 +1,54 @@
+\begin{frame}{Introduction}
+\begin{itemize}
+\item \small CPUs aren't getting faster (memory wall, ILP wall and power wall)
+\item \small Shift towards multicore and manycore
+\end{itemize}
+\begin{center}
+\Large {\color{red} Problem}\\
+How to keep all the cores \textbf{busy}?
+\end{center}
+\pause
+\begin{center}
+\Large {\color{blue} Solutions}\\
+Parallel computing (obvious choice)\\
+\pause
+Concurrent computing (a better choice)
+\end{center}
+\end{frame}
+
+\begin{frame}{Concurrency vs Parallelism}
+\begin{center}
+\Large {\color{blue}Concurrency} is not {\color{red}parallelism} (it's better!!)
+\end{center}
+\pause
+\begin{columns}
+\begin{column}[t]{0.48\textwidth}
+\color{red}\rule{\linewidth}{4pt}
+Parallel Computing
+\setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
+\begin{itemize}
+\item decades of research done
+\item Example - Matrix-Matrix Multiplication
+\item \textbf{do} lot of things simultaneously
+\item cannot be done on a single CPU
+\item \textbf{deterministic} control flow
+\item is about \textbf{speedup}
+\item \textbf{hard} to debug
+\end{itemize}
+\end{column}
+\begin{column}[t]{0.48\textwidth}
+\color{blue}\rule{\linewidth}{4pt}
+Concurrent Computing
+\setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
+\begin{itemize}
+\item Relatively new
+\item Example - A web crawler, mouse/keyboard
+\item \textbf{deal} lot of things simultaneously
+\item can be done on a single CPU
+\item \textbf{non-deterministic} control flow
+\item is about \textbf{hiding latency}
+\item \textbf{very hard} to debug
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}

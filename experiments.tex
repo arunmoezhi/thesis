@@ -1,0 +1,60 @@
+\begin{frame}{Experimental Setup}
+To compare the performance of various concurrent BSTs we considered the following parameters:
+\begin{itemize}
+\item Maximum Tree Size
+  \begin{itemize}
+  \item key space size varied from 2\textsuperscript{13} (8Ki) to 2\textsuperscript{24} (16Mi).
+  \end{itemize}
+\item Relative Distribution of Operations
+  \begin{itemize}
+  \item Read-Dominated\phantom{1}(90\% search, \phantom{1}9\% insert and \phantom{1}1\% delete)
+  \item Mixed\phantom{1234567890}(70\% search, 20\% insert and 10\% delete)
+  \item Write-Dominated (\phantom{1}0\% search, 50\% insert and 50\% delete)
+  \end{itemize}
+\item Maximum degree of Contention
+  \begin{itemize}
+  \item number of threads that can concurrently operate on the tree
+  \item we collected data for 32 threads
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Experimental Setup}
+\small
+{
+\begin{itemize}
+\item Throughput computed as millions of operations per second (MOPS)
+\item each trial was run for 10 seconds
+\item Average over 3 trials
+\item \textit{pre-populated} the tree to 50\% of its maximum size to capture steady state behaviour
+\item beginning of each run consisted of a ``warm-up'' phase whose numbers were excluded in the computed statistics to avoid initial caching effects
+\item The machine we used is a Dell PowerEdge R820 server with 4 Intel E5-4650 @ 2.70GHz 8-core processors (32 cores in total) and 1TB of DDR3 memory with HT disabled. 256KB L2 and 20MB shared L3
+\end{itemize}
+}
+\end{frame}
+
+\begin{frame}{Other Concurrent BSTs}
+\begin{itemize}
+\item a lock-free internal BST by Howley and Jones[SPAA'12], denoted by HJ-BST
+\item a lock-free external BST by Natarajan and Mittal[PPoPP'14], denoted by NM-BST
+\item RCU-based internal BST by Arbel and Attiya[PODC'14], denoted by CITRUS 
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Lock Based BST}
+\input{figures/LockBasedBST}
+\end{frame}
+
+\begin{frame}{Lock Free BST}
+\input{figures/LockFreeBST}
+\end{frame}
+
+\begin{frame}{Results Summary}
+Comparison of different lock-free algorithms in the absence of contention
+\input{figures/comparison}
+\pause
+\begin{itemize}
+\item speedup is calculated over the second best algorithm
+\end{itemize}
+\input{figures/summary}
+\end{frame}

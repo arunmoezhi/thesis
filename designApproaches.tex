@@ -1,0 +1,80 @@
+\begin{frame}{Designing Concurrent Data Structures}
+\begin{itemize}
+\item Shared-memory multiprocessors concurrently execute multiple threads
+\item Threads communicate and synchronize through data structures in shared memory
+\item Threads can interleave in exponential number of ways
+\item Concurrent data structure must preserve its properties for all possible interleavings
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Example - Shared Counter}
+Let $x$ be a shared counter which can be incremented using a function fetchAndIncrement()\\
+\pause
+Here are some possible implementations of this function\\
+\phantom{hello world}
+\SetAlgorithmName{fetchAndIncrement}{}{}
+\renewcommand{\thealgocf}{}
+\begin{minipage}[t]{0.48\textwidth}
+\begin{algorithm}[H]
+\phantom{acquire(lock)\;}
+r1 = x\;
+inc(r1)\;
+x = r1\;
+\phantom{release(lock)\;}
+
+\caption{\tiny sequential}
+\end{algorithm}
+\pause
+\end{minipage}
+\begin{minipage}[t]{0.48\textwidth}
+\begin{algorithm}[H]
+\caption{\tiny Using locks}
+acquire(lock)\;
+r1 = x\;
+inc(r1)\;
+x = r1\;
+release(lock)\;
+
+\end{algorithm}
+\end{minipage}
+\pause
+\begin{center}
+\begin{minipage}[t]{0.65\textwidth}
+\begin{algorithm}[H]
+\caption{\tiny using atomic instructions}
+\Repeat{(x.compareAndSwap(rOld,rNew))}
+{
+rOld = x\;
+rNew = rOld+1\;
+}
+\end{algorithm}
+\end{minipage}
+\end{center}
+\footnotesize compareAndSwap updates(atomically) the value of $x$ to $rNew$ only if the read value of $x$ is equal to $rOld$. Returns \textit{true} if it succeeds in updating the value of $x$
+\end{frame}
+
+\begin{frame}{Design Approaches}
+\begin{center}
+\Large How to handle contention among threads?
+\end{center}
+\pause
+\begin{itemize}
+\item<2-> \Large Blocking Algorithms
+\begin{itemize}
+\item<3-> use locks to resolve contention
+\item<3-> coarse grained or fine grained locking
+\item<3->  {\color{black!50!green} easier to design}
+\item<3->  {\color{red}weaker progress guarantees} (thread owns a lock) 
+\item<3->  {\color{red}are prone to deadlock, priority inversion}
+\end{itemize}
+\phantom{hello world}
+\item<2-> \Large Non-Blocking Algorithms
+\begin{itemize}
+\item<4->  use atomic (Read-Modify-Write) instructions to resolve contention. E.g. Compare-And-Swap(CAS) instruction
+\item<4-> lock-free or wait-free
+\item<4-> {\color{black!50!green}stronger progress guarantees} (operation owns a lock - helping)
+\item<4-> {\color{black!50!green}deadlock or priority inversion not possible}
+\item<4-> {\color{red}harder to design}
+\end{itemize}
+\end{itemize}
+\end{frame}

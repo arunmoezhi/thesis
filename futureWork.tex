@@ -1,0 +1,32 @@
+\begin{frame}{Future Work}
+\begin{itemize}
+\item do local recovery upon failures
+\item develop concurrent K-ary BST which can improve spatial locality
+\item work on other data structures like tries
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Future Work - Local Recovery}
+\begin{itemize}
+\item currently upon failure, an operation restarts from the root
+\item Ellen et.al[PODC'14] have shown that local recovery can be done for external BST
+\item Local recovery on an internal BST is hard due to key movements
+\item We are currently working on extending our algorithms to enable local recovery
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Future Work - K-ary BST}
+\begin{itemize}
+\item ideas from Lock Based BST can be extended to external K-ary BST
+\item updates are relatively easier to handle as they obtain locks
+\item inserts might result in  node splits
+\item searches are hard if we need to maintain their lock-free property
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Future Work - Tries}
+\begin{itemize}
+\item Tries are extensively used in text processing
+\item Tree like structure. So our ideas $can$ $possibly$ be applied
+\end{itemize}
+\end{frame}
