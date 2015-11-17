@@ -1,0 +1,223 @@
+%\newenvironment{limitscope}{}{}
+\begin{limitscope}
+\tikzset
+{
+    treenode/.style = {circle, draw=black, align=center, minimum size=1cm},
+    subtree/.style  = {isosceles triangle, draw=black, align=center, minimum height=0.5cm, minimum width=1cm, shape border rotate=90, anchor=north},
+    subtree1/.style  = {isosceles triangle, draw=black, align=center, minimum height=0.5cm, minimum width=0.5cm, shape border rotate=90, anchor=north},
+    process/.style={rectangle, minimum width=2cm, minimum height=1cm, align=center, text width=2cm, draw},
+    connector/.style={circle, minimum size=1cm, align=center, text width=0.5cm, draw},
+    arrow/.style={thick, ->, >=stealth}
+}
+%%%%% icdcn macros - begin
+\newcommand{\terminalnode}{terminal node}
+\newcommand{\targetnode}{target node}
+\newcommand{\accesspath}{access-path}
+\newcommand{\nullFlag}{null-flag}
+\newcommand{\intentFlag}{intent-flag}
+\newcommand{\deleteFlag}{delete-flag}
+\newcommand{\promoteFlag}{promote-flag}
+\newcommand{\anchornode}{anchor node}
+\newcommand{\injection}{injection}
+\newcommand{\discovery}{discovery}
+\newcommand{\cleanup}{cleanup}
+
+\newcommand{\Search}{\textsc{Search}}
+\newcommand{\Insert}{\textsc{Insert}}
+\newcommand{\Delete}{\textsc{Delete}}
+\newcommand{\Seek}{\textsc{Seek}}
+\newcommand{\FindSmallest}{\textsc{FindSmallest}}
+\newcommand{\Inject}{\textsc{Inject}}
+\newcommand{\FindAndMarkSuccessor}{\textsc{FindAndMarkSuccessor}}
+\newcommand{\RemoveSuccessor}{\textsc{RemoveSuccessor}}
+\newcommand{\Cleanup}{\textsc{Cleanup}}
+\newcommand{\InitializeTypeAndUpdateMode}{\textsc{InitializeTypeAndUpdateMode}}
+\newcommand{\UpdateMode}{\textsc{UpdateMode}}
+\newcommand{\HelpTargetNode}{\textsc{HelpTargetNode}}
+\newcommand{\HelpSuccessorNode}{\textsc{HelpSuccessorNode}}
+\newcommand{\MarkChildEdge}{\textsc{MarkChildEdge}}
+\newcommand{\remove}[1]{}
+
+
+\newcommand{\snodeone}{\mathbb{R}}
+\newcommand{\snodetwo}{\mathbb{S}}
+\newcommand{\snodethree}{\mathbb{T}}
+\newcommand{\skey}[1]{\infty_{#1}}
+
+
+\newcommand{\myleft}{le\!f\!t}
+\newcommand{\myright}{right}
+\newcommand{\myparent}{parent}
+
+\newcommand{\LL}{\textsf{LL}}
+\newcommand{\SC}{\textsf{SC}}
+\newcommand{\CAS}{\textsf{CAS}}
+
+\newcommand{\true}{\textsf{true}}
+\newcommand{\false}{\textsf{false}}
+
+%%%%% icdcn macros - end
+\section{The Lock-Free Algorithm}
+\label{sec:algorithm}
+
+For ease of exposition, we describe our algorithm assuming no memory reclamation.
+
+\subsection{Overview of the Algorithm}
+
+Every operation in our algorithm uses \emph{seek} function as a subroutine. The seek function traverses the  tree from the root node until it either finds the target key or reaches a non-binary node whose next edge to be followed points to a null node. We refer to the path traversed by the operation during the seek  as the \emph{\accesspath}, and the last node in the \accesspath{} as the \emph{\terminalnode}. The operation then compares the target key with the stored key (the key present in the \terminalnode). Depending on the result of the comparison and the type of the operation, the operation either terminates or moves to the execution phase. In certain cases in which a key may have moved upward along the \accesspath, the seek function may have to restart and traverse the tree again; details about restarting are provided later. We now describe the next steps for each of the operations one-by-one.
+
+\paragraph*{Search} 
+A search operation starts by invoking seek operation. It returns \true{} if the stored key matches the target key and \false{} otherwise. 
+
+\paragraph*{Insert}
+An insert operation ((shown in \figref{insert})) starts by invoking seek operation. It returns \false{} if the target key matches the stored key; otherwise, it moves to the execution phase. In the execution phase, it attempts to insert the key into the tree as a child node of the last node in the \accesspath{} using a \CAS{} instruction. If the instruction succeeds, then the operation returns \true{}; otherwise, it restarts by invoking the seek function again.
+
+\paragraph*{Delete} 
+A delete operation starts by invoking seek function. It returns \false{} if the stored key does not match the target key; otherwise, it moves to the execution phase. In the execution phase, it attempts to remove the key stored in the \terminalnode{} of the \accesspath. There are two cases depending on whether the \terminalnode{} is a binary node (has two children) or not (has at most one child). In the first case, the operation is referred to as \emph{complex delete operation}. In the second case, it is referred to as \emph{simple delete operation}. In the case of simple delete (shown in \figref{simple}), the \terminalnode{} is removed by changing the pointer at the parent node of the \terminalnode. In the case of complex delete (shown in \figref{complex}), the key to be deleted is replaced with the \emph{next largest} key in the tree, which will be stored in the \emph{leftmost node} of the \emph{right subtree} of the \terminalnode.
+
+\subsection{Details of the Algorithm}
+
+\input{Figures/icdcn/sentinelAndSeek}
+As in most algorithms, we use sentinel keys and three sentinel nodes to handle the boundary cases easily.  The structure of an empty tree with only sentinel keys (denoted by $\skey{0}$, $\skey{1}$ and $\skey{2}$ with $\skey{0} < \skey{1} < \skey{2}$) and sentinel nodes (denoted by $\snodeone$, $\snodetwo$ and $\snodethree$) is shown in \figref{sentinelAndSeek}.
+
+
+Our algorithm, like the one in~\cite{NatMit:2014:PPoPP}, operates at edge level. A delete operation obtains ownership of the edges it needs to work on by marking them. To enable marking, we steal bits from the child addresses of a node. Specifically, we steal \emph{three} bits from each child address to distinguish between three types of marking: 
+%%
+\begin{enumerate*}[label=(\roman*)]
+\item marking for \emph{intent}, 
+\item marking for \emph{deletion} and 
+\item marking for \emph{promotion}.
+\end{enumerate*}
+%%
+The three bits are referred to as \emph{\intentFlag}, \emph{\deleteFlag} and \emph{\promoteFlag}. To avoid the ABA problem, as in Howley and Jones~\cite{HowJon:2012:SPAA}, we use \emph{unique} null pointers. To that end, we steal another bit from the child address, referred to as \emph{\nullFlag}, and use it to indicate whether the address field contains a null or a non-null value. So, when an address changes from a non-null value to a null value, we only set the \nullFlag{} and the contents of the address field are not otherwise modified. This ensures that all null pointers are unique.
+
+Finally, we also steal a bit from the key field to indicate whether the key stored in a node is the original key or the replacement key. This information is used in a complex delete operation to coordinate helping among processes.
+
+
+We next describe the details of the seek function, which is used by all operations (search as well as modify) to traverse the tree after which we describe the details of 
+the execution phase of insert and delete operations.
+
+\subsubsection{The Seek Phase}
+A seek function keeps track of the node in the \accesspath{} at which it took the last ``right turn'' (\emph{i.e.}, it last followed a right edge). Let this ``right turn'' node be referred to as \emph{\anchornode} when the traversal reaches the \terminalnode{}. Note that the \terminalnode{} is the node whose key matched the target key or whose next child edge is set to a null address. For an illustration, please see \figref{sentinelAndSeek}. In the latter case (stored key does not match the target key), it is possible that the key may have moved up in the tree. To ascertain that the seek function did not miss the key because it may have moved up during the traversal, we use the following set of conditions that are \emph{sufficient} (but not necessary) to guarantee that the seek function did not miss the key. First, the \anchornode{} is still part of the tree. Second, the key stored in the \anchornode{} has not changed since it first encountered the \anchornode{} during the (current) traversal. To check for the above two conditions, we determine whether the \anchornode{} is undergoing removal (either delete or promote flag set) by examining its right child edge. We discuss the two cases one-by-one.
+
+\begin{enumerate}[leftmargin=*, label=(\alph*), noitemsep]
+
+\item \emph{Right child edge not marked:}
+In this case, the \anchornode{} is still part of the tree. We next check whether the key stored in the \anchornode{} has changed. If the key has not changed, then the seek function returns the results of the (current) traversal, which consists of three addresses:
+\begin{enumerate*}[label=(\roman*)]
+\item the address of the \terminalnode{}, 
+\item the address of its parent, and
+\item the null address stored in the child field of the \terminalnode{} that caused the traversal to terminate.
+\end{enumerate*}
+The last address is required to ensure that an insert operation works correctly (specifically to ascertain that the child field of the \terminalnode{} has not undergone any change since the completion of the traversal). We refer to it as the \emph{injection point} of the insert operation. On the other hand, if the key has changed, then the seek function restarts from the root of the tree. 
+
+
+\item \emph{Right child edge marked:}
+In this case, we compare the information gathered in the current traversal about the \anchornode{} with that in the previous traversal, if one exists. Specifically, if the \anchornode{} of the previous traversal is same as that of the current traversal  and the keys found in the \anchornode{} in the two traversals also match, then the seek function terminates, but returns the results of the previous traversal (instead of that of the current traversal). This is because the \anchornode{} was definitely part of the tree during the previous traversal since it was reachable from the root of the tree at the beginning of the current traversal. Otherwise, the seek function restarts from the root of the tree.  
+\end{enumerate}
+
+The seek function also keeps track of the \emph{second-to-last} edge in the \accesspath{} (whose endpoints are the parent and grandparent nodes of the \terminalnode), which 
+is used for helping, if there is a conflict. For insert and delete operations, we refer to the \terminalnode{} as the \emph{\targetnode}. 
+
+\subsubsection{The Execution Phase of an Insert Operation}
+
+\begin{comment}
+
+%% Moved to the appendix
+
+\input{Figures/icdcn/flow-insert}
+\input{Figures/icdcn/flow-delete}
+
+\end{comment}
+
+In the execution phase, an insert operation creates a new node containing the target key. It then adds the new node to the tree at the injection point using a \CAS{} instruction. If the \CAS{} instruction succeeds, then (the new node becomes a part of the tree and) the operation terminates; otherwise, the operation determines if it failed because of a \emph{conflicting} delete operation in progress. If there is no conflicting delete operation in progress, then the operation restarts from the seek phase; otherwise it performs helping and then restarts from the seek phase.
+\input{Figures/icdcn/insert}
+
+\subsubsection{The Execution Phase of a Delete Operation}
+The execution of a delete operation starts in \emph{\injection{} mode}. Once the operation has been injected into the tree, it advances to either \emph{\discovery{} mode} or \emph{\cleanup{} mode} depending on the type of the delete operation.
+
+\input{Figures/icdcn/simple}
+
+\input{Figures/icdcn/complex}
+
+\paragraph*{Injection Mode}
+
+In the \injection{} mode, the delete operation marks the three edges involving the \targetnode{} as follows:
+%%
+\begin{enumerate*}[label=(\roman*)]
+\item It first sets the \intentFlag{} on the edge from the parent of the \targetnode{} to the \targetnode{} using a \CAS{} instruction.
+\item It then sets the \deleteFlag{} on the left edge of the \targetnode{} using a \CAS{} instruction.
+\item Finally, it sets the \deleteFlag{} on the right edge of the \targetnode{} using a \CAS{} instruction.
+\end{enumerate*}
+%%
+If the \CAS{} instruction fails at any step, the delete operation performs helping, and either repeats the same step or restarts from the seek phase. Specifically, the delete operation repeats the same step when setting the \deleteFlag{} as long as the \targetnode{} has not been claimed as the successor node by another delete operation. In all other cases, it restarts from the seek phase.
+
+
+We maintain the invariant that an edge, once marked, cannot be unmarked. After marking both the edges of the \targetnode{}, the operation checks whether the \targetnode{} is a binary node or not. If it is a binary node, then the delete operation is classified as complex; otherwise it is classified as simple. Note that the type of the delete operation cannot change once all the three edges have been marked as described above. If the delete operation is complex, then it advances to the \discovery{} mode after which it will advance to the \cleanup{} mode. On the other hand, if it is simple, then it directly advances to the \cleanup{} mode (and skips the \discovery{} mode). Eventually, the \targetnode{} is either removed from the tree (if simple delete) or replaced with a ``new'' node containing the next largest key (if complex delete). 
+
+For a tree node $X$, let $X.\myparent$ denote its parent node, and $X.\myleft$ and $X.\myright$ denote its left and right child node, respectively. Also, hereafter in this section, let $T$ denote the \targetnode{} of the delete operation under consideration.
+
+\paragraph*{Discovery Mode}
+In the \discovery{} mode, a complex delete operation  performs the following steps:
+%%
+\begin{enumerate}[leftmargin=*, noitemsep]
+%%
+\item \textbf{Find Successor Key:} The operation locates the next largest key in the tree, which is the smallest key in the subtree rooted at the right child of $T$. We refer to this key as the \emph{successor key} and the node storing this key as the \emph{successor node}. Hereafter in this section, let $S$ denote the successor node. 
+%%
+\item \textbf{Mark Child Edges of Successor Node:} The operation sets the \promoteFlag{} on both the child edges of $S$ using a \CAS{} instruction. Note that the left child edge of $S$ will be null.  As part of marking the left child edge, we also store the address of $T$ (the \targetnode{}) in the edge. This is done to enable helping in case the successor node is obstructing the progress of another operation. 
+%%
+In case the \CAS{} instruction fails while marking the left child edge, the operation repeats from step~1 after performing helping if needed. On the other hand, if the \CAS{} instruction fails while marking the right child edge, then the marking step is repeated after performing helping if needed. 
+
+%%
+\item \textbf{Promote Successor Key:} The operation replaces the \targetnode's original key with the successor key. At the same time, it also sets the mark bit in the key to indicate that the current key stored in the \targetnode{} is the replacement key and not the original key.
+%%
+\item \textbf{Remove Successor Node:}  The operation removes $S$ (the successor node) by changing the child pointer at$S.\myparent$ that is pointing to $S$ to point to the right child of $S$ using a \CAS{} instruction. If the \CAS{} instruction succeeds, then the operation advances to the \cleanup{} mode. Otherwise, it performs helping if needed. It 
+then finds $S$ again by performing another traversal of the tree starting from the right child of $T$. If the traversal fails to find $S$ (recall that the left edge of $S$ is marked for promotion and contains the address of $T$), then $S$ has already been removed from the tree by another operation as part of helping, and the delete operation advances to the \cleanup{} mode. On advancing to the \cleanup{} mode, the operation sets a flag in $T$  indicating that $S$ has been removed from the tree (and $T$ can now be replaced with a new node) so that other operations trying to help it know not to look for $S$.
+\end{enumerate}
+
+\input{c04/pseudocode}
+
+\paragraph*{Cleanup Mode}
+%%
+There are two cases depending on whether the delete operation is simple or complex. 
+
+\begin{enumerate}[leftmargin=*, label=(\alph*), noitemsep]
+
+\item \textbf{Simple Delete:}
+%%
+In this case, either $T.\myleft$ or $T.\myright$ is pointing to a null node. Note that both $T.\myleft$ and $T.\myright$ may be pointing to null nodes (which in turn will imply that $T$ is a leaf node). Without loss of generality, assume that $T.\myright$ is a null node. The removal of $T$ involves changing the child pointer at $T.\myparent$ that is pointing to $T$ to point to $T.\myleft$ using a \CAS{} instruction. If the \CAS{} instruction succeeds, then the delete operation terminates; otherwise,  it performs another seek on the tree. If the seek function either fails to find the target key or returns a \terminalnode{} different from $T$, then $T$ has been already removed from the tree (by another operation as part of helping) and the delete operation terminates; otherwise, it attempts to remove $T$ from the tree again using possibly the new parent information returned by seek. This process may be repeated multiple times. 
+
+\item \textbf{Complex Delete:}
+Note that, at this point, the key stored in the \targetnode{} is the replacement key (the successor key of the target key). Further, the key as well as both the child edges of the \targetnode{} are marked. The delete operation attempts to replace \targetnode{} with a \emph{new} node, which is basically a copy of \targetnode{} except that all its fields are unmarked. This replacement of $T$ involves changing the child pointer at $T.\myparent$ that is pointing to $T$ to point to the new node. If the \CAS{} instruction succeeds, then the delete operation terminates; otherwise, as in the case of simple delete, it performs another seek on the tree, this time looking for the successor key. If the seek function either fails to find the successor key or returns a \terminalnode{} different from $T$, then $T$ has been already replaced (by another operation as part of helping) and the delete operation terminates. Otherwise, it attempts to replace $T$ again using possibly the new parent information returned by seek. This process may be repeated multiple times.
+\end{enumerate}
+
+\paragraph*{Discussion}
+It can be verified that, in the absence of conflict, a delete operation performs three atomic instructions in the \injection{} mode, three in the \discovery{} mode (if delete is complex), and one in the \cleanup{} mode. 
+
+\begin{comment}
+
+%% Will go into the technical report
+
+\subsubsection{Additional validation during seek}
+
+\input{Figures/icdcn/issueInSeek}
+
+
+During seek we maintain two seek records: current and previous seek records. This is to prevent the scenario shown in Fig.~\ref{fig:issueInSeek}.
+
+\end{comment}
+
+\subsubsection{Helping}
+
+To enable helping, as mentioned earlier, whenever traversing the tree to locate either a target key or a successor key, we keep track of the \emph{last two} edges encountered in the traversal. When a \CAS{} instruction fails, depending on the reason for failure, helping is either performed along the last edge or the second-to-last edge. 
+
+
+\subsection{Formal Description}
+A pseudo-code of our algorithm is given in \algosref{data|structures}{helping}.
+
+\Algoref{data|structures} describes the data structures used in our algorithm. Besides \textsf{Node}, three important data types in our algorithm are: \textsf{Edge}, \textsf{SeekRecord} and \textsf{StateRecord}. The data type \textsf{Edge} is a structure consisting of three fields: the two endpoints and the direction (left or right). The data type \textsf{SeekRecord} is a structure used to store the results of a tree traversal. The data type \textsf{StateRecord} is a structure used to store information about a delete operation (\emph{e.g.}, target edge, type,  current mode, etc.). Note that only objects of type \textsf{Node} are shared between processes; objects of all other types (\emph{e.g.}, \textsf{SeekRecord}, \textsf{StateRecord}) are \emph{local} to a process and not shared with other processes.
+
+The pseudo-code of the seek function is described in \algoref{seek}, which is used by all the operations. The pseudo-codes of the search, insert and delete operations are given in \algoref{search}, \algoref{insert} and \algoref{delete}, respectively. A delete operation executes  function \Inject{} in \injection{} mode, functions \FindAndMarkSuccessor{} and \RemoveSuccessor{} in \discovery{} mode and function \Cleanup{} in \cleanup{} mode. Their pseudo-codes are given in \algoref{inject}, \algoref{findandmark}, \algoref{remove} and \algoref{cleanup}, respectively. The pseudo-codes for helper routines (used by multiple functions) are given in \algoref{helper|1} and \algoref{helper|2}. Finally, the pseudo-codes of functions used to help other (conflicting) delete operations are given in \algoref{helping}.
+
+\input{c04/proof}
+\end{limitscope}

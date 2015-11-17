@@ -1,0 +1,602 @@
+
+\begin{limitscope}
+
+%% To limit the scope of the macros defined below
+
+%% macros for pseudocode
+
+\newcommand{\child}{child}
+\newcommand{\node}{node}
+\newcommand{\parent}{parent}
+\newcommand{\nullAddress}{nullAddress}
+
+\newcommand{\mainSeekRecord}{seekTargetKey}
+\newcommand{\successorSeekRecord}{seekSuccessorKey}
+\newcommand{\seekRecord}{seekRecord}
+
+\newcommand{\key}{key}
+
+\newcommand{\done}{done}
+\newcommand{\result}{result}
+\newcommand{\offset}{o\!f\!f\!set}
+
+\newcommand{\leftChild}{lField}
+\newcommand{\rightChild}{rField}
+
+\newcommand{\field}{\!f\!ield}
+\newcommand{\newField}{newField}
+
+\newcommand{\cKey}{cKey}
+\newcommand{\pKey}{pKey}
+\newcommand{\cNode}{cNode}
+\newcommand{\pNode}{pNode}
+\newcommand{\aNode}{aNode}
+\newcommand{\sNode}{sNode}
+\newcommand{\sParent}{sParent}
+
+
+\newcommand{\match}{match}
+
+\newcommand{\which}{which}
+\newcommand{\address}{address}
+
+\newcommand{\AnchorRecord}{AnchorRecord}
+
+\newcommand{\pSeekRecord}{pSeekRecord}
+\newcommand{\pAnchorRecord}{pAnchorRecord}
+%% \newcommand{\currSeekRecord}{cSeekRecord}
+\newcommand{\anchorRecord}{anchorRecord}
+
+
+\newcommand{\newNode}{newNode}
+
+
+%%%%%\newcommand{\nFlag}{nFlag}
+%%%%%\newcommand{\mFlag}{mFlag}
+%%%%%\newcommand{\lFlag}{lFlag}
+
+\newcommand{\lockArray}{lockArray}
+\newcommand{\size}{size}
+\newcommand{\contents}{addressSeen}
+%% \newcommand{\oldContents}{oldValue}
+\newcommand{\newContents}{lockedAddress}
+
+
+
+
+
+
+
+
+
+\newcommand{\Search}{\textsc{Search}}
+\newcommand{\Insert}{\textsc{Insert}}
+\newcommand{\Delete}{\textsc{Delete}}
+\newcommand{\Seek}{\textsc{Seek}}
+%%%%\newcommand{\FindSmallest}{\textsc{FindSmallest}}
+\newcommand{\Inject}{\textsc{Inject}}
+%%%%\newcommand{\RemoveChild}{\textsc{RemoveChild}}
+%%%%\newcommand{\LockAll}{\textsc{LockAll}}
+%%%%\newcommand{\UnlockAll}{\textsc{UnlockAll}}
+%%%%\newcommand{\ClearFlags}{\textsc{ClearFlags}}
+
+\newcommand{\mline}[1]{\DontPrintSemicolon #1 \PrintSemicolon}
+
+
+\newcommand{\LEFT}{\textsf{LEFT}}
+\newcommand{\RIGHT}{\textsf{RIGHT}}
+
+
+\newcommand{\rarrow}{\!\rightarrow\!}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\DefineKeyWords}{
+%%
+\SetKw{Boolean}{boolean}
+\SetKw{LAnd}{~and~}
+\SetKw{LOr}{~or~}
+\SetKw{LNot}{not}
+\SetKw{Struct}{struct}
+\SetKw{Null}{null}
+\SetKw{True}{true}
+\SetKw{False}{false}
+\SetKw{Break}{break}
+\SetKw{Continue}{continue}
+\SetKw{Enum}{enum}
+\SetKw{Word}{word}
+%%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\begin{algorithm}[t]
+\caption{Data Structures Used} 
+\label{algo:data|structures}
+%%
+\DefineKeyWords
+%%
+\tcp{a tree node}
+\DontPrintSemicolon
+\Struct Node \{\;
+\label{ln:node|begin}
+\PrintSemicolon
+%%
+\Indp 
+   Key $\key$\; 
+   \{ \Boolean, \Boolean, \Boolean, NodePtr \} $\child[2]$\; 
+	 \tcp{ each $\child$ field contains four subfields: $\lFlag$, $\mFlag$, $\nFlag$ and $\address$ }
+\Indm 
+%%
+\}\;
+
+\BlankLine
+
+\tcp{used to store the results of a tree traversal}
+\DontPrintSemicolon
+\Struct SeekRecord \{\;
+\label{ln:seek|record|begin}
+\PrintSemicolon
+%%
+\Indp 
+   NodePtr $\node$\;
+   NodePtr $\parent$\;
+   NodePtr $\nullAddress$\;
+\Indm 
+\}\;
+
+\BlankLine
+
+\tcp{used to store information about an anchor node}
+\DontPrintSemicolon
+\Struct AnchorRecord \{\;
+\label{ln:anchor|record|begin}
+\PrintSemicolon
+%%
+\Indp 
+   NodePtr $\node$\;
+   Key $\key$\;
+\Indm 
+\}\;
+
+\BlankLine
+
+\tcp{used to store information about an edge to lock}
+\DontPrintSemicolon
+\Struct LockRecord \{\;
+\label{ln:lock|record|begin}
+\PrintSemicolon
+\Indp
+   NodePtr $\node$\;
+	 \Enum \{ \LEFT{}, \RIGHT{} \} $\which$\;
+	 \{ \Boolean, NodePtr \} $\contents$\; 
+	 \tcp{ $\contents$ contains two subfields: $\nFlag$ and $\address$ }
+\Indm
+\}\;
+
+\BlankLine
+\tcp{local seek record used when looking for a node}
+SeekRecordPtr $\mainSeekRecord$, $\successorSeekRecord$\;
+%% SeekRecordPtr $\successorSeekRecord$\;
+\tcp{local array used to store the set of edges to lock}
+LockRecord $\lockArray[4]$\;
+\label{lin:structures|end}
+%%
+\end{algorithm}
+
+\begin{algorithm}[htp]
+\caption{Seek Function} 
+\label{algo:seek}
+%%
+\DefineKeyWords
+%%
+\DontPrintSemicolon
+\Seek( $\key$, $\seekRecord$ )\;
+\PrintSemicolon
+\Begin
+{
+   \While{\True}
+   {
+	    \label{lin:seek|begin}
+			\tcp{initialize the variables used in the traversal}
+	    $\pNode$ := $\sNodeOne$; \qquad
+			$\cNode$ := $\sNodeTwo$\;
+			$\address$ := $\sNodeTwo \rarrow \child[\RIGHT].\address$\;
+			$\anchorRecord$ := $\curly{ \sNodeOne, \sKeyOne }$\;
+			\While{\True}
+	    {
+		     \tcp{reached terminal node; read the key stored in the current node}
+		     $\cKey$ := $\cNode \rarrow \key$\;
+		     \If{$\key$ = $\cKey$}
+				 {
+				    $\seekRecord$ := $\curly{ \cNode, \pNode, \address }$\;
+				    \Return\;
+				 }
+		     $\which$ := $\key < \cKey$ ? $\LEFT$ : $\RIGHT$\;
+		     \tcp{read the next address to dereference along with mark and null flags}
+		     $\ang{ \ast, \ast, \nFlag, \address}$ := $\cNode \rarrow \child[\which]$\; 
+		     \If(\tcp*[f]{the null flag is set; reached terminal node}){$\nFlag$}
+		     {		      
+						$\aNode$ := $\anchorRecord \rarrow \node$\;    					
+					  \uIf{$\aNode \rarrow \child[\RIGHT].\mFlag$}
+						{
+						   \tcp{the anchor node is marked; it may no longer be part of the tree}
+							
+						   \uIf{$\anchorRecord$ = $\pAnchorRecord$}
+							 {
+							    \tcp{the anchor record of the current traversal matches that of the previous traversal}
+							    $\seekRecord$ := $\pSeekRecord$\;
+									\Return\;
+							 }
+							 \lElse{ \Break }
+						} 
+					  \Else(\tcp*[f]{the anchor node is definitely part of the tree})
+						{
+							 \uIf(\tcp*[f]{seek can terminate now}){$\aNode \rarrow \key$ $<$ $\key$}
+			         {
+							    $\seekRecord$ := $\curly{ \cNode, \pNode, \address }$\;
+									\Return\;
+							 } 
+							 \lElse{ \Break }
+			      } 
+		     }
+				 \BlankLine
+				 \tcp{update the anchor record if needed}
+		     \If{$\which$ = $\RIGHT$}
+		     {
+			      \tcp{the next edge to be traversed is a right edge; keep track of current node and its key}
+			      $\anchorRecord$ := $\curly{ \cNode, \cKey }$\;
+		     }
+				 \BlankLine
+		     \tcp{traverse the next edge}
+		     $\pNode$ := $\cNode$; \qquad
+		     $\cNode$ : =$\address$\; 		
+				 \label{lin:seek|end}
+	    } 
+	 }
+}
+\end{algorithm}
+
+\begin{algorithm}[htp]
+\caption{Search Operation} 
+\label{algo:search}
+%%
+\DefineKeyWords
+%%
+\DontPrintSemicolon
+\Boolean \Search( $\key$ )\;
+\PrintSemicolon
+%%
+\Begin
+{
+   \Seek( $\key$, $\mainSeekRecord$ )\;
+	 \label{lin:search|begin}
+	 $\node$ := $\mainSeekRecord \rarrow \node$\;
+   \uIf{$\node \rarrow \key$ = $\key$}
+	 { 
+	    
+	    \Return \True; \tcp*[f]{key found}
+	 }
+   \Else
+	 { 
+	    
+	    \Return \False; \tcp*[f]{key not found}
+			\label{lin:search|end}
+	 }
+}
+\end{algorithm}
+
+
+
+
+\begin{algorithm}[htp]
+\caption{Insert Operation} 
+\label{algo:insert}
+%%
+\DefineKeyWords
+%%
+\DontPrintSemicolon
+\Boolean \Insert( $\key$ )\;
+\PrintSemicolon
+%%
+\Begin
+{
+   \While{\True}
+	 {
+      \Seek( $\key$, $\mainSeekRecord$ )\;
+			\label{lin:insert|begin}
+			\BlankLine
+	    $\node$ := $\mainSeekRecord \rarrow \node$\;
+			\uIf{$\node \rarrow \key$ = $\key$}
+	    { 
+	       
+	       \Return \False; \tcp*[f]{key found}
+	    }
+      \Else
+			{ 
+	       \tcp{key not found; add the key to the tree}
+	       
+			   $\newNode$ := create a new node\;
+				 \tcp{initialize its fields}
+				 $\newNode \rarrow \key$ := $\key$\;
+				 $\newNode \rarrow \child[\LEFT]$ := $\ang{ 0_l, 0_m, 1_n, \Null }$\;
+         $\newNode \rarrow \child[\RIGHT]$ := $\ang{ 0_l, 0_m, 1_n, \Null }$\;
+				 \BlankLine
+				 \tcp{determine which child field (left or right) needs to be modified}
+				 $\which$ := $\key < \node \rarrow \key$  ? $\LEFT$ : $\RIGHT$\;
+				 \tcp{fetch the address observed by the seek function in that field}
+			   $\address$ := $\mainSeekRecord \rarrow \nullAddress$\;
+				 \BlankLine
+			   \mline{$\result$ := \CAS( \parbox[t]{1.825in}{$\node \rarrow \child[\which]$, \\ $\ang{ 0_l, 0_m, 1_n, \address }$, \\ $\ang{ 0_l, 0_m, 0_n, \newNode }$ );}\;}
+			
+			   \If{$result$}
+				 {
+				    \tcp{new key successfully added to the tree}
+				    \Return \True\;
+						\label{lin:insert|end}
+				 }
+				 
+				 %% \tcp{restart from the seek phase}
+				
+					
+	    }
+   }
+}
+%%
+\end{algorithm}
+
+
+
+\begin{algorithm}[htp]
+\caption{Delete Operation} 
+\label{algo:delete}
+%%
+\DefineKeyWords
+%%
+\DontPrintSemicolon
+\Boolean \Delete( $\key$ )\;
+\PrintSemicolon
+%%
+\Begin
+{
+   \While{\True}
+	 {
+      \Seek( $\key$, $\mainSeekRecord$ )\;
+			\label{lin:delete|begin}
+	    $\node$ := $\mainSeekRecord \rarrow \node$\;
+			\uIf(\tcp*[f]{key not found}){$\node \rarrow \key$ $\neq$ $\key$}
+	    { 
+	       \Return \False;
+	    }
+      \Else(\tcp*[f]{key found; read contents of target node's children fields})
+			{ 
+			   $\leftChild$ := \ClearFlags( $\node \rarrow \child[\LEFT]$ )\;
+				 $\rightChild$ := \ClearFlags( $\node \rarrow \child[\RIGHT]$ )\;
+				
+				 \uIf(\tcp*[f]simple delete operation){$\leftChild.\nFlag$ ~\LOr~ $\rightChild.\nFlag$}
+				 {
+					  $\parent$ := $\mainSeekRecord \rarrow \parent$\;
+						\lIf{$\key < \parent \rarrow \key$}{ $\which$ := \LEFT }
+						\lElse{ $\which$ := \RIGHT }
+					  $\lockArray[0]$ := $\curly{ \parent, \which, \ang{0, \node} }$\;
+					  $\lockArray[1]$ := $\curly{ \node, \LEFT, \leftChild }$\;
+					  $\lockArray[2]$ := $\curly{ \node, \RIGHT, \rightChild }$\;
+						$\result$ := \LockAll( $\lockArray$, 3 )\;
+						\If(\tcp*[f]{all locks acquired; perform the operation}){$result$}
+						{
+						   \uIf(\tcp*[f]{key still matches; remove the node}){$\node \rarrow \key$ = $\key$}
+							 {
+						      \RemoveChild( $\parent$, $\which$ );
+								  $\match$ := \True\;	
+							 } 
+							 \lElse{ $\match$ := \False }
+							
+							 \UnlockAll( $\lockArray$, 3 )\;
+							 \Return $\match$;
+						}
+				 }
+				 \Else(\tcp*[f]{ complex delete operation; locate the successor node})
+				 {
+						\FindSmallest($\node$, $\rightChild.\address$, $\successorSeekRecord$)\;
+					  $\sNode$ := $\successorSeekRecord \rarrow \node$;
+						$\sParent$ := $\successorSeekRecord \rarrow \parent$\;
+						\tcp{determine the edges to be locked}
+					  $\lockArray[0]$ := $\curly{ \node, \RIGHT, \rightChild }$\;
+					  \uIf{$\node$ $\neq$ $\sParent$}
+						{
+						   \tcp{successor node is not the right child of target node}
+						   $\lockArray[1]$ := $\curly{ \sParent, \LEFT, \ang{ 0, \sNode } }$;
+						   $\size$ := 4;   
+						}
+						\lElse { $\size$ := 3 }
+						$\leftChild$ := \ClearFlags( $\sNode \rarrow \child[\LEFT]$ )\;
+						$\rightChild$ := \ClearFlags( $\sNode \rarrow \child[\RIGHT]$ )\;
+						$\lockArray[\size - 2]$ := $\curly{ \sNode, \LEFT, \leftChild }$\;
+					  $\lockArray[\size - 1]$ := $\curly{ \sNode, \RIGHT, \rightChild }$\;
+						$\result$ := \LockAll( $\lockArray$, $\size$ )\;
+						\If(\tcp*[f]{all locks acquired; perform the operation}){$result$}
+						{
+						   \uIf{$\node \rarrow \key$ = $\key$}
+							 {
+							     \tcp{key still matches; copy key in successor node to target node}
+									 $\node \rarrow \key$ := $\sNode \rarrow \key$\;
+						       \RemoveChild( $\sParent$, \LEFT{} );
+									 $\match$ := \True\;
+							 }		
+							 \lElse{ $\match$ := \False }
+							 \UnlockAll( $\lockArray$, $\size$ )\;
+							 \Return $\match$\;
+							 \label{lin:delete|end}
+						}
+				 } 
+	    }
+   }
+}
+%%
+\end{algorithm}
+
+\begin{algorithm}[htp]
+\caption{Lock and Unlock Functions} 
+\label{algo:lock:unlock}
+%%
+\DefineKeyWords
+%%
+\DontPrintSemicolon
+\Boolean \LockAll( $\lockArray$, $\size$ )\;
+\PrintSemicolon
+%%
+\Begin
+{
+   \For{$i$ $\leftarrow$ $0$ \KwTo $\size-1$}
+	 {
+			\label{lin:lock|begin}
+	    \tcp{acquire lock for the $i$-th entry}
+			$\node$ := $\lockArray[i].\node$\;
+			$\which$ := $\lockArray[i].\which$\;
+			$\newContents$ := $\lockArray[i].\contents$\;
+			$\newContents.\lFlag$ := \True\;
+			\tcp{set the lock flag in the child edge}
+			$\result$ := \CAS($\node \rarrow \child[\which]$, $\lockArray[i].\contents$, $\newContents$)\;
+			\If{\LNot($\result$)}
+			{
+			   \tcp{release all the locks acquired so far}
+			   \UnlockAll( $\lockArray$, $i - 1$ )\;
+				 \Return \False;
+			}
+	 }
+	 \Return \True;
+	 \label{lin:lock|end}
+}
+
+
+\BlankLine
+
+%%
+\DontPrintSemicolon
+\UnlockAll( $\lockArray$, $\size$ )\;
+\PrintSemicolon
+%%
+\Begin
+{
+    \For{$i$ $\leftarrow$ $\size-1$ \KwTo $0$}
+		{
+				\label{lin:unlock|begin}
+		   $\node$ := $\lockArray[i].\node$\;
+			 $\which$ := $\lockArray[i].\which$\;
+			 \tcp{clear the lock flag in the child edge}
+			 $\node \rarrow \child[\which].\lFlag$ := \False\;
+			 \label{lin:unlock|end}
+		}	
+}				
+				
+\end{algorithm}
+
+\begin{algorithm}[htp]
+\caption{Helper Functions used by Delete Operation} 
+\label{algo:helper}
+%%
+\DefineKeyWords
+%%
+\DontPrintSemicolon
+\Word \ClearFlags( \Word $\field$ )\;
+\PrintSemicolon
+%%
+\Begin
+{
+		\label{lin:clearFlags|begin}
+   $\newField$ := $\field$ with lock and mark flags cleared\;
+	 \Return $\newField$\;
+	 \label{lin:clearFlags|end}
+}
+%%
+\BlankLine
+%%
+\DontPrintSemicolon
+\FindSmallest( $\parent$, $\node$, $\seekRecord$ )\;
+\PrintSemicolon
+%%
+\Begin
+{
+		\label{lin:findSmallest|begin}
+   \tcp{initialize the variables used in the traversal}
+   $\pNode$ := $\parent$; \qquad
+	 $\cNode$ := $\node$\;
+	
+	 \BlankLine
+	
+	 \While{\True}
+	 {
+	    $\ang{ \ast, \ast, \nFlag, \address }$ := $\cNode \rarrow \child[\LEFT]$\;
+			
+			\uIf{\LNot($\nFlag$)}
+			{
+			   \tcp{visit the next node}
+			   $\pNode$ := $\cNode$; \qquad
+				 $\cNode$ := $\address$\;
+			}
+			\Else
+			{  
+			   \tcp{reached the successor node}
+			   $\seekRecord$ := $\curly{ \cNode, \pNode, \address }$\;
+			   \Break\;
+				 \label{lin:findSmallest|end}
+			}
+	 }
+	 
+	 
+	 %% \Return\;
+	
+}
+%%
+\BlankLine
+%%
+\DontPrintSemicolon
+\RemoveChild( $\parent$, $\which$ )\;
+%%
+hu
+\PrintSemicolon
+\Begin
+{
+	\label{lin:removeChild|begin}
+   \tcp{determine the address of the child to be removed}
+   $\node$ := $\parent \rarrow \child[\which]$\;
+	 \BlankLine
+   \tcp{mark both the children edges of the node to be removed}
+	 $\node \rarrow \child[\LEFT].\mFlag$ := \True\;
+	 $\node \rarrow \child[\RIGHT].\mFlag$ := \True\;
+   \BlankLine
+	 \tcp{determine whether both the child pointers of the node to be removed are null}
+ 	 %\uIf{\Big(\parbox[c]{1.5in}{$\node \rarrow \child[\LEFT].\nFlag$ ~\LAnd~ \\ $\node \rarrow \child[\RIGHT].\nFlag$}\Big)}
+	 \uIf{$\node \rarrow \child[\LEFT].\nFlag$ ~\LAnd~ $\node \rarrow \child[\RIGHT].\nFlag$}
+	 {
+	    \tcp{set the null flag only}
+						  
+		  $\parent \rarrow \child[\which].\nFlag$ := \True\;
+							
+	 } 
+	 \Else
+	 {
+	    \tcp{switch the pointer at the parent to point to its appropriate grandchild}
+	    \uIf{$\node \rarrow \child[\LEFT].\nFlag$}
+		  {
+			   $\address$ := $\node \rarrow \child[\RIGHT].\address$\;
+			}
+			\lElse
+			{
+			   $\address$ := $\node \rarrow \child[\LEFT].\address$
+			}
+							
+			$\parent \rarrow \child[\which].\address$ := $\address$\;
+			\label{lin:removeChild|end}
+	 }					
+}
+\end{algorithm}
+
+\end{limitscope}

@@ -1,0 +1,56 @@
+\subsection{Details of the Algorithm}
+As in most algorithms, to make it easier to handle special cases, we use sentinel keys and sentinel nodes.  The structure of an empty tree with only sentinel keys (denoted by $\sKeyOne$ and $\sKeyTwo$ with $\sKeyOne{} < \sKeyTwo{}$) and sentinel nodes (denoted by $\sNodeOne$ and $\sNodeTwo$) is shown in \figref{sentinel}.
+\input{Figures/castle/sentinel}
+
+Our algorithm, like the one in~\cite{NatMit:2014:PPoPP}, operates at edge level. A delete operation obtains ownership of the edges it needs to work on by locking them. To enable locking of an edge, we steal a bit from the child addresses of a node referred to as \emph{lock-flag}. We also steal another bit from the child addresses of a node to indicate that the node is undergoing deletion and will be removed from the tree. We denote this bit by \emph{mark-flag}. 
+Finally, to avoid the ABA problem, as in Howley and Jones~\cite{HowJon:2012:SPAA}, we use \emph{unique} null pointers. To that end, we steal yet another bit from the child address, referred to as \emph{null-flag}, and use it to indicate whether the address points to a null or a non-null address. So, when an address changes from a non-null value to a null value, we only set the null-flag and the contents of the address are not otherwise modified. This ensures that all null pointers are unique.
+
+We next describe the details of the seek operation, which is executed by all operations (search as well as modify) after which we describe the details of the execution phase of insert and delete operations.
+
+\subsubsection{The Seek Phase}
+A seek function keeps track of the node in the \accesspath{} at which it took the last ``right turn'' (\emph{i.e.}, it last followed a right edge). Let this ``right turn'' node be referred to as \emph{\anchornode} when the traversal reaches the \terminalnode{}. Note that the \terminalnode{} is the node whose key matched the target key or whose next child edge is set to a null address. For an illustration, please see \figref{seek}. In the latter case (stored key does not match the target key), it is possible that the key may have moved up in the tree. To ascertain that the seek function did not miss the key because it may have moved up during the traversal, we use the following set of conditions that are \emph{sufficient} (but not necessary) to guarantee that the seek function did not miss the key. First, the \anchornode{} is still part of the tree. (For an illustration, see \figref{issueInSeek}) Second, the key stored in the \anchornode{} has not changed since it first encountered the \anchornode{} during the (current) traversal. To check for the above two conditions, we determine whether the \anchornode{} is undergoing deletion by examining it right child edge. We discuss the two cases one-by-one.
+\input{Figures/castle/seek}
+\input{Figures/castle/issueInSeek}
+\begin{enumerate}[label=(\alph*)]
+\item \emph{Right child edge not marked:}
+In this case, the \anchornode{} is still part of the tree. We next check whether the key stored in the \anchornode{} has changed. If the key has not changed, then the seek function returns the results of the (current) traversal, which consists of three addresses:
+	\begin{enumerate*}[label=(\roman*)]
+	\item the address of the \terminalnode{}, 
+	\item the address of its parent, and
+	\item the null address stored in the child field of the \terminalnode{} that caused the traversal to terminate.
+	\end{enumerate*}
+The last address is required to ensure that an insert operation works correctly (specifically to ascertain that the child field of the \terminalnode{} has not undergone any change since the completion of the traversal). We refer to it as the \emph{injection point} of the insert operation. On the other hand, if the key has changed, then the seek function restarts from the root of the tree. A possible optimization is that the seek function restarts only if the target key is now less than the \anchornode{}'s key.
+
+\item \emph{Right child edge marked:}
+In this case, we compare the information gathered in the current traversal about the \anchornode{} with that in the previous traversal, if one exists. Specifically, if the \anchornode{} of the previous traversal is same as that of the current traversal  and the keys found in the \anchornode{} in the two traversals also match, then the seek function terminates, but returns the results of the previous traversal (instead of that of the current traversal). This is because the \anchornode{} was definitely part of the tree during the previous traversal since it was reachable from the root of the tree at the beginning of the current traversal. Otherwise, the seek function restarts from the root of the tree.  
+\end{enumerate}
+
+For insert and delete operations, we refer to the \terminalnode{} as the \emph{\targetnode}. 
+
+\subsubsection{The Execution Phase of an Insert Operation}
+In the execution phase, an insert operation creates a new node containing the target key. It then adds the new node to the tree at the injection point using a \CAS{} instruction. For an illustration, see \figref{insert}. If the \CAS{} instruction succeeds, then (the new node becomes a part of the tree and) the operation terminates; otherwise, the operation restarts from the seek phase. Note that the insert operations are lock-free.
+\input{Figures/castle/insert}
+\subsubsection{The Execution Phase of a Delete Operation}
+The execution of a delete operation starts by checking if the \targetnode{} is a binary node or not. If it is a binary node, then the delete operation is classified as complex; otherwise it is classified as simple. 
+
+For a tree node $X$, let $X.\myparent$ denote its parent node, and $X.\myleft$ and $X.\myright$ denote its left and right child node, respectively. Also, hereafter in this section, let $T$ denote the \targetnode{} of the delete operation under consideration.
+\begin{enumerate}[label=(\alph*)]
+\item \emph{Simple Delete:}
+In this case, either $T.\myleft$ or $T.\myright$ is pointing to a null node. Note that both $T.\myleft$ and $T.\myright$ may be pointing to null nodes in which case $T$ will be a leaf node. Without loss of generality, assume that $T.\myright$ is a null node. The removal of $T$ involves locking the following three edges: $\edge{T.\myparent}{T}$, $\edge{T}{T.\myleft}$ and $\edge{T}{T.\myright}$. For an illustration, see \figref{simple}.
+\input{Figures/castle/simple}
+
+A lock on an edge is obtained by setting the lock-flag in the appropriate child field of the parent node using a \CAS{} instruction. For example, to lock the edge $\edge{X}{Y}$, where $Y$ is the left child of $X$, the lock-flag in the left child of $X$ is set to one. If all the edges are locked successfully, then the operation validates that the key stored in the \targetnode{} still matches the target key. If the validation succeeds, then the operation marks both the children edges of $T$  to indicate that $T$ is going to be removed from the tree. Next, it changes the child pointer at $T.\myparent$ that is pointing to $T$ to point to $T.\myleft$ using a simple write instruction. Finally, the operation releases all the locks and returns \true{}. 
+
+\item \emph{Complex Delete:}
+In this case, both $T.\myleft{}$ and $T.\myright{}$ are pointing to non-null nodes. The operation locates the next largest key in the tree, which is the smallest key in the subtree rooted at the right child of $T$. We refer to this key as the \emph{successor key} and the node storing this key as the \emph{successor node}. Hereafter in this section, let 
+$S$ denote the successor node. Deletion of the key stored in $T$ involves copying  the key stored in $S$ to $T$ and then removing $S$ from the tree. To that end, the following edges are locked by setting the lock-flag on the edge using a \CAS{} instruction: $\edge{T}{T.\myright}$, $\edge{S.\myparent}{S}$, $\edge{S}{S.\myleft}$ and $\edge{S}{S.\myright}$. For an illustration, see \figref{complex}. Note that the first two edges may be same which happens if the successor node is the right child of the target node. Also, since we do not lock the left edge of the \targetnode{}, the left edge may change and may possibly start pointing to a null address. But, that does not impact the correctness of the complex delete operation.
+
+\input{Figures/castle/complex}
+
+If all the edges are locked successfully, then the operation validates that the key stored in the \targetnode{} still matches the target key. If the validation succeeds, then  the operation copies the key stored in $S$ to $T$, and marks both the children edges of $S$ to indicate that $S$ is going to be removed from the tree. Next, it changes the child pointer at $S.\myparent$ that is pointing to $S$ to point to $S.\myright{}$ using a simple write instruction. Finally, the operation releases all the locks and returns \true{}.
+\end{enumerate}
+
+In both cases (simple as well as complex delete), if the operation fails to obtain any of the locks, then it releases all the locks it was able to acquire up to that point, and restarts from the seek phase. Also, after obtaining all the locks, if the key validation fails, then it implies that some other delete operation has removed the key from the tree while the current execution phase was in progress. In that case, the given delete operation releases all the locks,  and simply returns \false{}. Note that using a \CAS{} instruction for setting the lock-flag also enables us to \emph{validate that the child pointer has not changed} since it was last observed in a single step.
+
+%% \subsubsection{Additional validation during seek}
+%% During seek we maintain two seek records: current and previous seek records. This is to prevent the scenario shown in Fig.~\ref{fig:issueInSeek}.

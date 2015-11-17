@@ -1,0 +1,122 @@
+\subsection{Correctness Proof}
+It can be shown that our algorithm satisfies linearizability and lock-freedom properties~\cite{HerSha:2012:Book}. Broadly speaking, linearizability requires that an operation should appear to take effect instantaneously at some point during its execution.  Lock-freedom requires that some process should be able to complete its operation in a finite number of its own steps.
+It is convenient to treat insert and delete operations that do not change the tree as search operations. 
+%%
+We call a tree node \emph{active} if it is reachable from the root of the tree. We call a tree node  \emph{passive} if it was active earlier but is not active any more.
+It can be verified that, if an insert operation completes successfully, then  its \targetnode{} was active when it performed the successful \CAS{} instruction on the node's child edge.
+Likewise, if a delete operation completes successfully, then its \targetnode{} was active when it marked the node's left edge for deletion. Further, for a complex delete, 
+the successor node was active when it marked the node's left edge for promotion.
+
+
+
+%% We are now ready to prove the correctness of our algorithm.
+
+\subsubsection{All Executions are Linearizable}
+
+We show that an arbitrary execution of our algorithm is linearizable by specifying the \emph{linearization point} of each operation. Note that the linearization point of an operation is the point during its execution at which the operation appeared to have taken effect. Our algorithm supports three types of operations: search, insert and delete. 
+%%   
+We now specify the linearization point of each operation.
+%%
+\begin{enumerate}[leftmargin=*, noitemsep]
+
+\item \emph{Insert operation:} The operation is linearized at the point at which it performed the successful \CAS{} instruction that resulted in its target key becoming part of the tree.
+		
+					
+\item \emph{Delete operation:} There are two cases depending on whether the delete operation is simple or complex. If the operation is simple delete, then the operation is linearized at the point at which a successful \CAS{} instruction was performed at the parent of the \targetnode{} that resulted in the \targetnode{} becoming passive. Otherwise, it is linearized at the point at which the original key of the \targetnode{} was replaced with its successor key.
+   
+ 
+   
+\item \emph{Search operation:} There are two cases depending on whether the \targetnode{} was active when the operation read the key stored in the node. 
+If the \targetnode{} was not active, then the operation is linearized at the point at which the \targetnode{} became passive. Otherwise, it is linearized at the 
+point at which the read action was performed.
+                       
+
+\end{enumerate}
+
+
+It can be easily verified that, for any execution of the algorithm, the sequence of operations
+obtained by ordering operations based on their linearization points is legal, \emph{i.e.}, all operations in the sequence satisfy their 
+specification. 
+%%
+This establishes that \emph{our algorithm generates only linearizable executions}.
+
+\begin{comment}
+ 
+Thus we have:
+
+\begin{theorem}
+Every execution of our algorithm is linearizable.
+\end{theorem}
+	
+\end{comment}
+							 
+\subsubsection{All Executions are Lock-Free}
+	
+	
+We say that the system is in a \emph{quiescent state} if no modify operation 
+completes hereafter. We say that the system is in a \emph{potent state} if it 
+has one or more pending modify operations. Note that a quiescence is a \emph{
+stable} property; once the system is in a quiescent state, it stays in a 
+quiescent state. We show that our algorithm is lock-free by proving that 
+a potent state is necessarily non-quiescent provided assuming that some 
+process with a pending modify operation continues to take steps. 
+
+Assume, by the way of contradiction, that there is an execution of the system 
+in which the system eventually reaches a state that is potent as well as 
+quiescent. Note that, once the system has reached a quiescent state, it will 
+eventually reach a state after which the tree will not undergo any structural 
+changes. This is because a modify operation makes at most two structural changes to the 
+tree. So, if the tree is undergoing continuous structural changes, then it 
+clearly implies that modify operations are continuously completing their 
+responses, which contradicts the assumption that the system is in a quiescent 
+state. Further, on reaching such a state, the system will reach a state after 
+which no new edges in the tree are marked. Again, this is because a modify 
+operation marks at most four edges and the set of edges in the tree does not 
+change any more. We call such a system state after  which neither
+the set of edges nor the set of \emph{marked} edges in the tree change any 
+more as a \emph{strongly quiescent state}. Note that, like quiescence, strong 
+quiescence is also a stable property. 
+
+From the above discussion, it follows that the system in a quiescent state will eventually reach a state that is strongly quiescent. Consider the search tree in such a strongly quiescent state. It can be verified that no more modify operations can now be injected into the tree, and, moreover,  
+all modify operations already injected into the tree are delete operations currently ``stuck'' in either \discovery{} or \cleanup{} mode. 
+%%
+Now, consider a process, say $p$, that continues to take steps to execute either its own operation or another operation blocking its progress (directly or indirectly) as part of helping. 
+%%
+Consider the recursive chain of the \emph{helpee} operations that $p$ proceeds to help in order to complete its own operation. Let $\alpha_i$ denote the $i^{th}$ helpee operation in the chain.
+It can be shown that:
+
+\begin{lemma}
+Let $\mathcal{C}_D$ denote the set of all complex delete operations already injected into the tree that are ''stuck'' in the \discovery{} mode. 
+Then,
+%%
+\begin{enumerate}[leftmargin=*, noitemsep]
+%%
+\item $\alpha_1 \in \mathcal{C}_D$, and
+%%
+\item Suppose $p$ is currently helping $\alpha_i$  for some $i \geq 1$ and assume that $\alpha_i \in \mathcal{C}_D$. Let $\alpha_{i+1}$ denote the next operation that $p$ selects to help. Then, 
+%%
+\begin{enumerate*}[label=(\alph*)]
+\item $\alpha_{i+1}$ exists, 
+\item $\alpha_{i+1} \in \mathcal{C}_D$, and
+\item the target node of $\alpha_{i+1}$ is at strictly larger depth than the target node of $\alpha_i$.
+\end{enumerate*}
+%%
+\end{enumerate}
+%%
+\end{lemma}
+
+
+Using the above lemma, we can easily construct a chain of distinct helpee operations whose length exceeds the number of processes---a contradiction. 
+%%
+This establishes that \emph{our algorithm only generates lock-free executions}.
+%%
+
+\begin{comment}
+Thus, we have:
+
+
+\begin{theorem}
+Every execution of our algorithm is lock-free.
+\end{theorem}
+
+\end{comment}

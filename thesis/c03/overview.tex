@@ -1,0 +1,12 @@
+\subsection{Overview of the Algorithm}
+Every operation in our algorithm uses \emph{seek} function as a subroutine. The seek function traverses the  tree from the root node until it either finds the target key or reaches a non-binary node whose next edge to be followed points to a null node. We refer to the path traversed by the operation during the seek  as the \emph{\accesspath}, and the last node in the \accesspath{} as the \emph{\terminalnode}. The operation then compares the target key with the stored key (the key present in the \terminalnode). Depending on the result of the comparison and the type of the operation, the operation either terminates or moves to the execution phase. In certain cases in which a key may have moved upward along the \accesspath, the seek function may have to restart and traverse the tree again; details about restarting are provided later. We now describe the next steps for each of the type of operation one-by-one. 
+
+\paragraph{Search:} 
+A search operation starts by invoking seek operation. It returns \true{} if the stored key matches the target key and \false{} otherwise. 
+
+\paragraph{Insert:}
+An insert operation starts by invoking seek operation. It returns \false{} if the target key matches the stored key; otherwise, it moves to the execution phase. In the execution phase, it attempts to insert the key into the tree as a child node of the last node in the \accesspath{} using a \CAS{} instruction. If the instruction succeeds, then the operation returns \true{}; otherwise, it restarts by invoking the seek function again.
+
+\paragraph{Delete:} 
+A delete operation starts by invoking seek function. It returns \false{} if the stored key does not match the target key; otherwise, it moves to the execution phase. In the execution phase, it attempts to remove the key stored in the \terminalnode{} of the \accesspath. There are two cases depending on whether the \terminalnode{} is a binary node (has two children) or not (has at most one child). In the first case, the operation is referred to as \emph{complex delete operation}. In the second case, it is referred to as \emph{simple delete operation}. In the case of simple delete, the \terminalnode{} is removed by changing the pointer at the parent node of the \terminalnode. In the 
+case of complex delete, the key to be deleted is replaced with the \emph{next largest} key in the tree, which will be stored in the \emph{leftmost node} of the \emph{right subtree} of the \terminalnode.

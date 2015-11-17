@@ -1,0 +1,133 @@
+\section{Pseudo-Code for Helping}
+
+\begin{algorithm}[!htbp]
+\caption{Help(\lastUEdge,\textit{flag})} 
+\SetKw{KwGoTo}{go to}
+\tcp{\textit{flag} is set if the special case for helping applies}
+\tcp{obtain new state record and initialize it}
+
+	
+\label{lin:help|begin}
+$\langle$$n$,$d$,$p$,\Left$\rangle$ := \curr$\rightarrow$\child[{\scriptsize LEFT}]\;
+\uIf{$d$}
+{
+  \tcp{helping at the \targetnode{}}
+	\state$\rightarrow$\node{} :=\lastUEdge$\rightarrow$\child\;
+	\state$\rightarrow$\parent{} :=\lastUEdge$\rightarrow$\parent\;
+	\tcp{mark the right edge if unmarked}
+	UpdateModeAndType(\state)\;
+	\If{\state$\rightarrow$\mode{} = {\scriptsize DISCOVERY}}
+	{
+		 \label{deepHelp}
+		FindAndMarkSuccessor(\state)\;
+	}
+	\If{\state$\rightarrow$\mode{} = {\scriptsize DISCOVERY}}
+	{
+		RemoveSuccessor(\state)\;
+	}
+	\If{\state$\rightarrow$\mode{} = {\scriptsize CLEANUP}}
+	{
+		Cleanup(\state,\textit{flag})\;
+	}
+}
+\Else
+{
+  \tcp{helping at the successor node}
+	\state$\rightarrow$\node{} :=\Left;
+	\state$\rightarrow$\parent{} :=null\;
+	\tcp{initialize seek record in state record}
+	\tcp{mark the right edge if unmarked}
+	RemoveSuccessor(\state)\;
+}
+
+
+\return
+\label{lin:help|end}
+\end{algorithm}
+
+\section{Flowchart of Insert and Delete Operations}
+
+\begin{figure}[!htbp]
+\centering
+{
+	\begin{tikzpicture}[scale=0.9, transform shape]
+	\node (p0) [] {Insert(K)};
+	\node (p1) [process, below of=p0, text width=3cm] {Do a binary search for key K in the tree};
+	\node (p2) [process, below of=p1, yshift=-0.75cm, text width=3.5cm] {Create a new node with key K for insertion};
+	\node (p3) [process, below of=p2, yshift=-0.75cm, text width=3.5cm] {Attempt CAS on appropriate edge to insert the new node};
+	\node (retF) [process, right of=p1, xshift=3cm, text width=1cm, minimum width=1cm] {return false};
+	\node (p4) [process, below of=p3, yshift=-0.75cm, text width=3cm] {check if the edge is marked};
+	\node (retT) [process, right of=p3, xshift=3cm, text width=1cm, minimum width=1cm] {return true};
+	\node (h1) [process, below of=p4, yshift=-0.75cm, text width=0.75cm, minimum width=0.75cm] {help};
+
+	\draw [arrow] (p1) -- node[anchor=west] {K not found} (p2);
+	\draw [arrow] (p1) -- node[anchor=south] {K found} (retF);
+	\draw [arrow] (p2) -- node {} (p3);
+	\draw [arrow] (p3) -- node[anchor=east] {CAS failed} (p4);
+	\draw [arrow] (p3) -- node[anchor=south, align=center, yshift=0.25cm] {CAS \\ successful} (retT);
+	\draw [arrow] (p4) -- node[anchor=west] {Yes} (h1);
+	\draw [arrow] (p4.west) -- ++(-1,0)  node[anchor=south,pos=0.5] {No} |- (p1.west);
+	\draw [arrow] (h1.west) -- ++(-2.5,0) |- node[anchor=south] {} (p1.west);
+	\end{tikzpicture}
+}
+\caption{Sequence of steps in an insert operation \label{fig:flow-insert}}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+{
+	\begin{tikzpicture}[scale=0.9, transform shape]
+	\node (p0) [] {Delete(K)};
+	\node (p1) [process, below of=p0, text width=3cm] {Do a binary search for key K in the tree};
+	\node (p2) [process, below of=p1, yshift=-1cm, text width=3.5cm] {Mark left child edge for delete using CAS};
+	\node (p3) [process, below of=p2, yshift=-1cm, text width=4.2cm] {Mark right child edge for delete using BTS. Check the children edges to determine simple or complex delete};
+	\node (retF) [process, right of=p1, xshift=3.4cm, text width=1cm, minimum width=1cm] {return false};
+	\node (p4) [process, below of=p3, yshift=-1cm, text width=4.2cm] {Attempt CAS to change the edge (parent, target node) to point to the non-null child};
+	\node (retT) [process, right of=p4, xshift=3.4cm, text width=1cm, minimum width=1cm] {return true};
+	\node (C) [connector, right of=p3, xshift=3.4cm] {C};
+	\node (h1) [process, right of=p2, xshift=2.5cm, text width=0.75cm, minimum width=0.75cm] {help};
+	\node (h2) [process, below of=p4, yshift=-1cm, text width=0.75cm, minimum width=0.75cm] {help};
+
+	\draw [arrow] (p1) -- node[anchor=west] {K found} (p2);
+	\draw [arrow] (p1) -- node[anchor=south] {K not found} (retF);
+	\draw [arrow] (p2) -- node[anchor=west, align=center] {CAS successful} (p3);
+	\draw [arrow] (p2) -- node[anchor=south, align=center, yshift=0.25cm] {CAS \\ failed} (h1);
+	\draw[-latex] (h1) to [out=90,in=330,looseness=1] (p1.east);
+	\draw [arrow] (p3) -- node[anchor=east] {simple} (p4);
+	\draw [arrow] (p3) -- node[anchor=south] {Complex} (C);
+	\draw [arrow] (p4) -- node[anchor=south, align=center, yshift=0.25cm] {CAS \\ successful} (retT);
+	\draw [arrow] (p4) -- node[anchor=west] {CAS failed} (h2);
+	\draw [arrow] (h2.west) -- ++(-2,0) |- node[anchor=south] {} (p4.west);
+	\end{tikzpicture}
+
+	\begin{tikzpicture}[scale=0.9, transform shape]
+	\node (C) [connector] {C};
+	\node (p1) [process, below of=C, yshift=-1cm, text width=4cm] {Find Successor: smallest key in the right subtree};
+	\node (p2) [process, below of=p1, yshift=-1cm, text width=4cm] {Mark left child edge for promotion using CAS};
+	\node (p3) [process, below of=p2, yshift=-1cm, text width=5cm] {Mark right child edge for promotion using BTS. Promote successor's key by copying it to the target node using a simple write};
+	\node (h1) [process, right of=p2, xshift=2.5cm, text width=0.75cm, minimum width=0.75cm] {help};
+	\node (p4) [process, below of=p3, yshift=-1cm, text width=5cm] {Attempt CAS to change the edge (successor parent,successor) to point to the right child of successor};
+	\node (p5) [process, below of=p4, yshift=-1cm, text width=5cm] {Create a fresh copy of the target node with the new key and its children edges unmarked};
+	\node (h2) [process, right of=p4, xshift=3.8cm, text width=0.75cm, minimum width=0.75cm] {help};
+	\node (p6) [process, below of=p5, yshift=-1cm, text width=5cm] {Attempt CAS to change the edge (parent, target node) to point to the new node};
+	\node (retT) [process, below of=p6, yshift=-1cm, text width=1cm, minimum width=1cm] {return true};
+	\node (h3) [process, right of=p6, xshift=3.8cm, text width=0.75cm, minimum width=0.75cm] {help};
+
+	\draw [arrow] (C) -- node[] {} (p1);
+	\draw [arrow] (p1) -- node[] {} (p2);
+	\draw [arrow] (p2) -- node[anchor=east] {CAS successful} (p3);
+	\draw [arrow] (p2) -- node[anchor=south, yshift=0.5cm] {CAS failed} (h1);
+	\draw [arrow] (h1.north)  |-  node[] {} (p1.east);
+	\draw [arrow] (p3) -- node[] {} (p4);
+	\draw [arrow] (p4) -- node[anchor=east] {CAS successful} (p5);
+	\draw [arrow] (p4) -- node[anchor=south] {CAS failed} (h2);
+	\draw[-latex] (h2) to [out=270,in=330,looseness=1] (p4.east);
+	\draw [arrow] (p5) -- node[] {} (p6);
+	\draw [arrow] (p6) -- node[anchor=south] {CAS failed} (h3);
+	\draw[-latex] (h3) to [out=270,in=330,looseness=1] (p6.east);
+	\draw [arrow] (p6) -- node[anchor=east] {CAS successful} (retT);
+	\end{tikzpicture}
+\caption{Sequence of steps in a delete operation \label{fig:flow-delete}}
+}
+\end{figure}
+

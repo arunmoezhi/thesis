@@ -1,0 +1,198 @@
+\documentclass[doublespacing]{utdthesis}
+% For one-and-a-half spacing, use: \documentclass[halfspacing]{utdthesis}
+
+%%% Load any desired packages in the space below.
+%%% Warning: Do not load packages that change the margins, headers, or footers!
+%%%
+% Optional: If you want to use Times as your font, load it here.  Note that
+% although package "times" should work, it may not be the best choice.  Newer
+% LaTeX distributions offer "mathptmx" and "newtxtext,newtxmath" as superior
+% replacements.  You should find out which is best for your LaTeX.  (If this
+% sounds confusing, you probably shouldn't use Times at all.)
+%\usepackage{times}
+%
+% Optional: If your LaTeX has microtype, use it to improve text quality:
+\usepackage{microtype}
+%
+% Recommended: If your thesis contains math, use the AMS packages:
+\usepackage{amsmath,amssymb,amsthm}
+%
+% Recommended: If your thesis needs to import graphics, use graphicx:
+\usepackage{graphicx}
+%
+% Recommended: If your bibliography contains web page URLs, the url package
+% improves their appearance (e.g., better line breaking):
+\usepackage{url}
+%
+% Required: To satisfy UTD's formatting requirements for citations, use the
+% "natbib" package.  (Use other citation packages at your own risk; not all
+% are flexible enough to meet UTD's requirements.)  If you wish to use numeric
+% citations, change "authoryear" to "numbers" below.  Use the "chicago" BibTeX
+% style, which most closely matches the Turabian formatting required by UTD.
+% UTD mandates a blank line between each pair of bibliography entries, so set
+% \bibsep as shown below.  Finally, if you are accustomed to using \cite as
+% your citation macro, point it to natbib's \citep macro as shown.
+\usepackage[authoryear]{natbib}
+\bibliographystyle{chicago}
+\setlength{\bibsep}{12pt plus 1pt minus 1pt}
+\let\cite=\citep
+%
+% Required: If you have any wide tables or figures that need to be typeset
+% in landscape, use the rotating package:
+\usepackage{rotating}
+%
+% Optional: If you use hyperref to auto-generate hyperlinks, always load it
+% LAST since it modifies everything else.  In addition, only load hyperref if
+% you use pdftex or pdflatex to generate PDFs directly.  Do NOT use it if you
+% use plain tex or latex to generate a DVI file.  (If you are generating DVI
+% files which you then convert to PDF, you should seriously consider switching
+% to pdflatex.  The DVI format loses information because it cannot support
+% modern PDF document features.  Using pdflatex to generate PDFs directly
+% therefore results in PDFs of significantly higher quality.)
+\usepackage{ifpdf}
+\ifpdf
+  \usepackage{hyperref}
+\fi
+
+\usepackage[ruled,vlined,linesnumbered,noresetcount]{algorithm2e}
+\SetAlFnt{\footnotesize}
+\usepackage[inline]{enumitem}
+\usepackage{verbatim}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{shapes.geometric,arrows,fit,matrix,positioning,pgfplots.groupplots}
+\tikzset
+{
+    treenode/.style = {circle, draw=black, align=center, minimum size=1cm},
+    subtree/.style  = {isosceles triangle, draw=black, align=center, minimum height=0.5cm, minimum width=1cm, shape border rotate=90, anchor=north},
+    process/.style={rectangle, minimum width=2cm, minimum height=1cm, align=center, text width=2cm, draw},
+    connector/.style={circle, minimum size=1cm, align=center, text width=0.5cm, draw},
+    arrow/.style={thick, ->, >=stealth}
+}
+\usepackage{circuitikz}
+
+
+
+%
+%%% End of packages.
+
+%%% Define all your personal macros here (if you have any).
+%
+\providecommand{\hyperref}[2][]{#2}
+
+\newenvironment{exampleclasscode}
+ {\parindent=1cm\begin{verse}}
+ {\end{verse}}
+%
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+
+
+%% macros for references - begin
+\newcommand{\ang}[1]{\langle #1 \rangle}
+\newcommand{\edge}[2]{\ang{{#1}, {#2}}}
+\newcommand{\curly}[1]{\{ #1 \}}
+\newcommand{\secref}[2][Section]{{#1}~\ref{sec:#2}}
+\newcommand{\Secref}[1]{Section~\ref{sec:#1}}
+\newcommand{\figref}[1]{Figure~\ref{fig:#1}}
+\newcommand{\Figref}[1]{Figure~\ref{fig:#1}}
+\newcommand{\figsref}[2]{Figures~\ref{fig:#1}-\ref{fig:#2}}
+\newcommand{\algoref}[1]{Algorithm~\ref{algo:#1}}
+\newcommand{\Algoref}[1]{Algorithm~\ref{algo:#1}}
+\newcommand{\algosref}[3][-]{Algorithms~\ref{algo:#2}{#1}\ref{algo:#3}}
+\newcommand{\enumref}[1]{\ref{enum:#1}}
+\newcommand{\thmref}[2][Theorem]{{#1}~\ref{thm:#2}}
+\newcommand{\Thmref}[2][Theorem]{{#1}~\ref{thm:#2}}
+\newcommand{\lemref}[1]{Lemma~\ref{lem:#1}}
+\newcommand{\Lemref}[1]{Lemma~\ref{lem:#1}}
+\newcommand{\obsref}[2][Observation]{{#1}~\ref{obs:#2}}
+\newcommand{\propref}[1]{Proposition~\ref{prop:#1}}
+\renewcommand{\eqref}[1]{(\ref{eq:#1})}
+\newcommand{\corref}[1]{Corollary~\ref{cor:#1}}
+\newcommand{\tabref}[1]{Table~\ref{tab:#1}}
+\newcommand{\Tabref}[1]{Table~\ref{tab:#1}}
+\newcommand{\remref}[1]{Remark~\ref{rem:#1}}
+\newcommand{\lineref}[1]{line~\ref{lin:#1}}
+\newcommand{\linesref}[3][-]{lines~\ref{lin:#2}{#1}\ref{lin:#3}}
+%% macros for references - end
+%%% End of personal macro definitions.
+
+
+%%% The following definitions MUST come before the document begins.
+%
+\author{Arunmoezhi Ramachandran}
+\title{Concurrent Binary Search Trees: Design and Optimizations}
+\thesistype{Dissertation}
+\degreefull{Doctor of Philosophy}
+\degreeabbr{PhD}
+\subject{Computer Science}
+\graduationmonth{May}
+\graduationyear{2016}
+\prevdegrees{BE, MS} % comma-separated list of PREVIOUS degrees
+
+% List committee members in order.  Mark chairpersons with a "*":
+\committeemember*{Neeraj Mittal}
+\committeemember{Balaji Raghavachari}
+\committeemember{Venkatesan Subbarayan}
+\committeemember{Rob F Van Der Wijngaart}
+%
+%%% End of definitions.
+
+%%% Beginning of actual thesis document.
+
+\begin{document}
+
+\frontmatter
+
+\signaturepage
+\copyrightpage{2015} % optional
+
+\begin{dedication} % optional
+To my parents and sister
+\end{dedication}
+
+\maketitle
+
+\begin{acks}{December 2015}
+Ack page
+\end{acks}
+
+\begin{preface} % may or may not be required, depending on thesis content
+% author may insert additional preface text here
+\prefacetext
+% author may insert additional preface text here
+\end{preface}
+
+\begin{abstract}
+abstract goes here
+\end{abstract}
+
+\tableofcontents
+\listoffigures % required if you have any figures
+\listoftables % required if you have any tables
+
+\mainmatter
+
+%\chapter{Introduction}
+%\label{c:introduction}
+%\input{c01/introduction}
+%\chapter{System Model and related work}
+%\label{c:systemModel}
+%\input{c02/systemModel}
+\chapter{Lock based concurrent binary search trees}
+\label{c:castle}
+\input{c03/castle}
+\chapter{Lock free concurrent binary search tree}
+\label{c:icdcn}
+\input{c04/icdcn}
+%\chapter{Local recovery for concurrent binary search trees}
+%\label{c:localRecovery}
+%\input{c05/localRecovery}
+%\chapter{Experimental evaluation}
+%\label{c:experiments}
+%\input{c06/experiments}
+%\chapter{conclusion}
+%\label{c:conclusion}
+%\input{c07/conclusion}
+\bibliography{Bibliography/citations}
+\end{document}

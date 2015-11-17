@@ -1,0 +1,1280 @@
+\begin{limitscope}
+
+%% To limit the scope of the macros defined below
+
+%% macros for pseudocode
+\newcommand{\leftChild}{le\!f\!t}
+\newcommand{\rightChild}{right}
+\newcommand{\child}{child}
+\newcommand{\canReplace}{readyToReplace}
+\newcommand{\markAndKey}{mKey}
+
+\newcommand{\node}{node}
+\newcommand{\parent}{parent}
+
+\newcommand{\terminalEdge}{lastEdge}
+\newcommand{\targetEdge}{targetEdge}
+\newcommand{\parentTargetEdge}{pTargetEdge}
+\newcommand{\successorEdge}{successorEdge}
+\newcommand{\parentSuccessorEdge}{pSuccessorEdge}
+\newcommand{\injectionEdge}{injectionEdge}
+\newcommand{\penultimateEdge}{pLastEdge}
+
+\newcommand{\targetKey}{targetKey}
+\newcommand{\currentKey}{currentKey}
+
+\newcommand{\newNode}{newNode}
+\newcommand{\reference}{re\!f\!erence}
+\newcommand{\state}{state}
+
+\newcommand{\StateRecord}{StateRecord}
+\newcommand{\AnchorRecord}{AnchorRecord}
+
+\newcommand{\mline}[1]{\DontPrintSemicolon #1 \PrintSemicolon}
+
+\newcommand{\prev}{prev}
+\newcommand{\curr}{curr}
+
+\newcommand{\prevSeekRecord}{pSeekRecord}
+\newcommand{\prevAnchorRecord}{pAnchorRecord}
+%% \newcommand{\currSeekRecord}{cSeekRecord}
+\newcommand{\anchorRecord}{anchorRecord}
+
+\newcommand{\oldContents}{oldValue}
+\newcommand{\newContents}{newValue}
+
+\newcommand{\INJECTION}{\textsf{INJECTION}}
+\newcommand{\DISCOVERY}{\textsf{DISCOVERY}}
+\newcommand{\CLEANUP}{\textsf{CLEANUP}}
+\newcommand{\FINISHED}{\textsf{FINISHED}}
+
+\newcommand{\DELETEFLAG}{\textsf{DELETE\_FLAG}}
+\newcommand{\PROMOTEFLAG}{\textsf{PROMOTE\_FLAG}}
+\newcommand{\INTENTFLAG}{\textsf{INTENT\_FLAG}}
+\newcommand{\flag}{f\!lag}
+
+\newcommand{\COMPLEX}{\textsf{COMPLEX}}
+\newcommand{\SIMPLE}{\textsf{SIMPLE}}
+
+\newcommand{\LEFT}{\textsf{LEFT}}
+\newcommand{\RIGHT}{\textsf{RIGHT}}
+
+\newcommand{\targetSeekRecord}{targetRecord}
+\newcommand{\successorSeekRecord}{successorRecord}
+
+\newcommand{\dFlag}{d}
+\newcommand{\iFlag}{i}
+\newcommand{\pFlag}{p}
+\newcommand{\nFlag}{n}
+\newcommand{\mFlag}{m}
+\newcommand{\lNFlag}{lN}
+\newcommand{\rNFlag}{rN}
+
+\newcommand{\rarrow}{\!\rightarrow\!}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\DefineKeyWords}{
+%%
+\SetKw{Boolean}{Boolean}
+\SetKw{LAnd}{~and~}
+\SetKw{LOr}{~or~}
+\SetKw{LNot}{not}
+\SetKw{Struct}{struct}
+\SetKw{Null}{null}
+\SetKw{True}{true}
+\SetKw{False}{false}
+\SetKw{Break}{break}
+\SetKw{Continue}{continue}
+\SetKw{Enum}{enum}
+%%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% DATA STRUCTURES
+
+
+\begin{algorithm}[!thb]
+%%
+\DefineKeyWords
+%%
+
+%% define data structures used in the algorithm
+
+\DontPrintSemicolon
+\Struct Node \{\;
+\label{ln:node|begin}
+\PrintSemicolon
+\Indp 
+   $\{ \Boolean, \text{Key} \}$ $\markAndKey$\;
+   $\{ \Boolean, \Boolean, \Boolean, \Boolean, \text{NodePtr} \}$ $\child[2]$\;
+   \Boolean $\canReplace$\;
+\Indm
+\}\;
+\label{ln:node|end}
+%%
+\BlankLine
+
+\DontPrintSemicolon
+\Struct Edge \{\;
+\label{ln:edge|begin}
+\PrintSemicolon
+\Indp 
+   %% NodePtr $\parent$\;
+   %% NodePtr $\child$\;
+	 NodePtr $\parent$, $\child$\;
+   \Enum $which$ \{ \LEFT{}, \RIGHT{} \}\;
+\Indm
+\}\;
+\label{ln:edge|end}
+%%
+\BlankLine
+
+\DontPrintSemicolon
+\Struct SeekRecord \{\;
+\PrintSemicolon
+\Indp 
+%%
+   %% Edge $\terminalEdge$\;
+%%
+   %% Edge $\penultimateEdge$\;
+%%
+   %% Edge $\injectionEdge$\;
+   Edge $\terminalEdge$, $\penultimateEdge$, $\injectionEdge$\;
+\Indm
+\}\;
+%%
+\BlankLine
+
+
+\BlankLine
+\DontPrintSemicolon
+\Struct \AnchorRecord{} \{\;
+\PrintSemicolon
+\Indp 
+   NodePtr $\node$\;
+   Key $key$\;
+\Indm
+\}\;
+%%
+
+\BlankLine
+\DontPrintSemicolon
+\Struct \StateRecord{} \{\;
+\PrintSemicolon
+\Indp 
+%%
+   %% int $depth$\;
+   %% Edge $\targetEdge$\;
+	 %% Edge $\parentTargetEdge$\;
+	 Edge $\targetEdge$, $\parentTargetEdge$\;
+%%
+   %% Key $\targetKey$\;
+	 %% Key $\currentKey$\;
+	 Key $\targetKey$, $\currentKey$\;
+   \Enum $mode$ \{ \INJECTION{}, \DISCOVERY{}, \CLEANUP{} \}\;
+   \Enum $type$ \{ \SIMPLE{}, \COMPLEX{} \} \;
+%%
+   \tcp{the next field stores pointer to a seek record; it is used for finding the successor if the delete operation is complex}
+   SeekRecordPtr $\successorSeekRecord$\; 
+\Indm
+\}\;
+%%
+\BlankLine
+\tcp{object to store information about the tree traversal when looking for a given key (used by the seek function)}
+SeekRecordPtr $\targetSeekRecord$ := new seek record\;
+\tcp{object to store information about process' own delete operation}
+\StateRecord{Ptr} $myState$ := new state\;
+
+
+\caption{Data Structures Used}
+\label{algo:data|structures}
+\end{algorithm}
+
+
+
+\begin{algorithm}[!thb]
+%%
+\DefineKeyWords
+
+
+%% SEEK
+
+
+%%
+%% traverses the tree from the root node to a leaf node looking for a given key
+%%
+\DontPrintSemicolon
+\Seek( $key$, $seekRecord$ )\;
+\PrintSemicolon
+\Begin
+{
+   $\prevAnchorRecord$ := $\curly{ \snodetwo{}, \skey{1} }$\;
+   \While{\True}
+   {
+	    \tcp{initialize all variables used in traversal}
+		  $\penultimateEdge$ := $\curly{ \snodeone, \snodetwo, \RIGHT }$; \qquad
+			$\terminalEdge$ := $\curly{ \snodetwo, \snodethree, \RIGHT }$\;
+			$\curr$ := $\snodethree$; \qquad
+			$\anchorRecord$ := $\curly{ \snodetwo{}, \skey{1} }$\;
+			\BlankLine
+			\While{\True}
+			{
+			    \tcp{read the key stored in the current node}
+			    $\ang{ \ast, cKey }$ := $\curr \rarrow \markAndKey$\;
+				  \tcp{find the next edge to follow}
+					$which$ := $key < cKey$ ? \LEFT : \RIGHT\;
+				  $\ang{ \nFlag, \ast, \dFlag, \pFlag, next }$ := $\curr \rarrow \child[which]$\;
+					\tcp{check for the completion of the traversal}
+				  \If{$key = cKey$ \LOr $\nFlag$}
+				  {
+				     \tcp{either key found or no next edge to follow; stop the traversal}
+						 $seekRecord \rarrow \penultimateEdge$ := $\penultimateEdge$\;
+						 $seekRecord \rarrow \terminalEdge$ := $\terminalEdge$\;
+						 $seekRecord \rarrow \injectionEdge$ := $\curly{ \curr, next, which }$\;
+						 \BlankLine
+						 \uIf(\tcp*[h]{keys match}){$key = cKey$}
+						 { 
+						    \Return\;
+						 }
+						 \lElse { \Break }
+				  }
+				  \BlankLine			   
+				  \If{$which$ = \RIGHT}
+				  {
+				     \tcp{next edge to be traversed is a right edge; keep track of the current node and its key}
+						 $\anchorRecord$ := $\ang{ \curr, cKey }$\;
+				  }	
+				  \BlankLine
+				  \tcp{traverse the next edge}
+					$\penultimateEdge$ := $\terminalEdge$; \qquad
+					$\terminalEdge$ := $\curly{ \curr, next, which }$; \qquad
+				  $\curr$ := $next$\; 
+		  }
+		  \tcp{key was not found; check if can stop}
+		  $\ang{ \ast, \ast, \dFlag, \pFlag, \ast }$ := $\anchorRecord.\node \rarrow \child[\RIGHT]$\;			
+			\uIf{\LNot($\dFlag$) \LAnd \LNot($\pFlag$)}
+			{
+			   \tcp{anchor node is still part of the tree; check if anchor node's key has changed}
+				 $\ang{ \ast, aKey }$ := $\anchorRecord.\node \rarrow \markAndKey$\;
+				 \lIf{$\anchorRecord.key$ = $aKey$}
+			   {  
+				    \Return
+				 } 
+			}	
+			\Else
+			{ 
+			   \tcp{check if the anchor record (the node and its key) matches that of the previous traversal}
+			   \If{$\prevAnchorRecord = \anchorRecord$}
+			   {
+				    \tcp{return the results of the previous traversal}
+					  $seekRecord$ := $\prevSeekRecord$\;
+				    \Return\;
+		     }
+			}
+			\tcp{store the results of the traversal and restart}
+			$\prevSeekRecord$ := $seekRecord$; \qquad
+			$\prevAnchorRecord$ := $\anchorRecord$;					
+   }
+} 
+%% End of seek function
+\caption{Seek Function}
+\label{algo:seek}
+\end{algorithm}
+
+
+%% SEARCH
+\begin{algorithm}[!thb]
+%%
+\DefineKeyWords
+\DontPrintSemicolon
+\Boolean \Search( $key$ )\;
+\PrintSemicolon
+\Begin
+{
+   \Seek( $key$, $mySeekRecord$ )\;
+	 \BlankLine
+	 %% $\node$ := $mySeekRecord \rarrow \node$\;
+   $\node$ := $mySeekRecord \rarrow \terminalEdge.\child$\;
+   $\ang{ \ast , nKey }$ := $\node \rarrow \markAndKey$\;
+	 \BlankLine
+   \lIf{nKey = key}{\Return \True}
+   \lElse{\Return \False}
+}
+\caption{Search Operation}
+\label{algo:search}
+\end{algorithm}
+
+%% INSERT
+\begin{algorithm}[tp]
+%%
+\DefineKeyWords
+\DontPrintSemicolon
+\Boolean \Insert( $key$ )\;
+\PrintSemicolon
+\Begin
+{
+   \While{\True}
+	 {
+      \Seek( $key$, $\targetSeekRecord$ )\;
+			\BlankLine
+			$\targetEdge$ := $\targetSeekRecord \rarrow \terminalEdge$\;
+			$\node$ := $\targetEdge.\child$\;
+			$\ang{ \ast , nKey }$ := $\node \rarrow \markAndKey$\; 
+			\lIf{$key = nKey$}{\Return \False}
+			\BlankLine
+			\tcp{create a new node and initialize its fields}
+			$\newNode$ := create a new node\;
+			$\newNode \rarrow \markAndKey$ := $\ang{ 0_m, key }$\;
+			$\newNode \rarrow \child[\LEFT]$ := $\ang{ 1_n, 0_i, 0_d, 0_p, \Null }$\;
+			$\newNode \rarrow \child[\RIGHT]$ := $\ang{ 1_n, 0_i, 0_d, 0_p, \Null }$\;
+			$\newNode \rarrow \canReplace$ := \False\;
+			\BlankLine
+			$which$ := $\targetSeekRecord \rarrow \injectionEdge.which$\;
+			$address$ := $\targetSeekRecord \rarrow \injectionEdge.\child$\;
+			$result$ := \CAS($\node \rarrow \child[which]$, $\ang{ 1_n, 0_i, 0_d, 0_p, address }$, $\ang{ 0_n, 0_i, 0_d, 0_p, \newNode }$)\;
+			\lIf{$result$}{\Return \True}
+			\BlankLine	
+			\tcp{help if needed}
+		  $\ang{ \ast, \ast, \dFlag, \pFlag, \ast }$ := $\node \rarrow \child[which]$\;
+			\lIf{$\dFlag$}
+			{
+			   \HelpTargetNode( $\targetEdge$ )
+			} 
+			\lElseIf{$p$}
+			{  
+			   \HelpSuccessorNode( $\targetEdge$ )
+			}
+	}
+}
+\caption{Insert Operation}
+\label{algo:insert}
+\end{algorithm}
+
+%% DELETE
+\begin{algorithm}[!thb]
+\DefineKeyWords
+\DontPrintSemicolon
+\Boolean \Delete( $key$ )\;
+\PrintSemicolon
+\Begin
+{
+   \tcp{initialize the state record}
+ 	 $myState \rarrow \targetKey$ := $key$\;
+	 $myState \rarrow \currentKey$ := $key$\;
+	 $myState \rarrow mode$ := \INJECTION\;
+	 \BlankLine
+   \While{\True}
+	 {
+      \Seek( $myState \rarrow \currentKey$, $\targetSeekRecord$ )\;
+			\BlankLine
+			$\targetEdge$ := $\targetSeekRecord \rarrow \terminalEdge$\;
+			$\parentTargetEdge$ := $\targetSeekRecord \rarrow \penultimateEdge$\;
+			$\ang{ \ast , nKey }$ := $\targetEdge.\child \rarrow \markAndKey$\; 
+			\BlankLine
+			\If{$myState \rarrow \currentKey \neq nKey$}
+			{
+			   \tcp{the key does not exist in the tree}
+			   \uIf{$myState \rarrow mode$ = \INJECTION}{\Return \False\;}
+				 \lElse{\Return \True}
+			}
+ 	    \BlankLine		   	
+			\tcp{perform appropriate action depending on the mode}
+	    \If{$myState \rarrow mode$ = \INJECTION}
+		  {
+				 \tcp{store a reference to the target edge}
+   	     $myState \rarrow \targetEdge$ := $\targetEdge$\;
+   	     $myState \rarrow \parentTargetEdge$ := $\parentTargetEdge$\;
+				 \tcp{attempt to inject the operation at the node}
+				 %% $result$ := \Inject( $myState$ )\;
+				 \Inject( $myState$ )\;	
+								
+				 								 
+			}
+				 
+			\BlankLine
+				
+			\tcp{mode would have changed if injection was successful}
+				 
+			\If{$myState \rarrow mode \neq$ \INJECTION}
+			{
+				 \tcp{check if the target node found by the seek function matches the one stored in the state record}
+				
+				
+								
+			   \If{$\left(\text{\parbox[c]{1.75in}{$myState \rarrow \targetEdge.\child$ $\neq$  \\ \mbox{}\hfill$\targetEdge.\child$}}\right)$}
+				 {
+				    \Return \True\;
+				 }
+						
+				 \tcp{update the target edge information using the most recent seek}
+				 $myState \rarrow \targetEdge$ := $\targetEdge$\;
+  			 				
+		  }
+				
+			\BlankLine
+			
+				
+			\If{$myState \rarrow mode$ = \DISCOVERY}
+			{
+				 \tcp{complex delete operation; locate the successor node and mark its child edges with promote flag} 
+			   \FindAndMarkSuccessor( $myState$ )\;
+				 
+
+				
+				 
+			}
+			
+			
+			
+			\If{$myState \rarrow mode$ = \DISCOVERY}
+			{
+				 \tcp{complex delete operation; promote the successor node's key and remove the successor node}
+		     \RemoveSuccessor( $myState$ )\;
+						
+			}
+			
+			\BlankLine
+				
+			\If{$myState \rarrow mode$ = \CLEANUP}
+			{
+			   \tcp{either remove the target node (simple delete) or replace it with a new node with all fields unmarked  (complex delete)}
+			   $result$ := \Cleanup( $myState$ )\;
+				 \lIf{$result$}{\Return \True}
+				 \Else{
+				    $\ang{ \ast, nKey }$ := $\targetEdge.\child \rarrow \markAndKey$\;
+						$myState \rarrow \currentKey$ := $nKey$\;
+				 }
+					
+		  }
+
+	 }	
+
+   %% \Return\;
+
+}
+
+
+\caption{Delete Operation}
+\label{algo:delete}
+\end{algorithm}
+
+
+
+
+
+%% INJECT
+
+
+
+
+\begin{algorithm}[!thb]
+%%
+\DefineKeyWords
+
+
+\DontPrintSemicolon
+\Inject( $\state$ )\;
+\PrintSemicolon
+\Begin
+{
+
+   $\targetEdge$ := $\state \rarrow \targetEdge$\;
+  
+	 \tcp{try to set the intent flag on the target edge}
+	 \tcp{retrieve attributes of the target edge}
+	 $\parent$ := $\targetEdge.\parent$\;
+	 $\node$ := $\targetEdge.\child$\;
+	 $which$ := $\targetEdge.which$\;
+	 \BlankLine
+	 \mline{$result$ := \CAS( \parbox[t]{2.075in}{$\parent \rarrow \child[which]$, \\ $\ang{ 0_n, 0_i, 0_d, 0_p, \node }$,  $\ang{ 0_n, 1_i, 0_d, 0_p, \node }$ );}\;}
+	
+	 \If{\LNot($result$)}
+	 {
+	    \tcp{unable to set the intent flag; help if needed}
+			$\ang{ \ast, \iFlag, \dFlag, \pFlag, address }$ := $\parent \rarrow \child[which]$\;
+			\lIf{$\iFlag$}
+			{
+			   \HelpTargetNode( $\targetEdge$ )
+			} 
+			\uElseIf{$\dFlag$}
+			{
+			   \HelpTargetNode( $\state \rarrow \parentTargetEdge$ )\;
+			} 
+			\ElseIf{$\pFlag$}
+			{
+			   \HelpSuccessorNode( $\state \rarrow \parentTargetEdge$ )\;
+			}
+
+      \Return;					
+	 }
+
+   \BlankLine
+	 \tcp{mark the left edge for deletion}
+
+	 $result$ := \MarkChildEdge( $\state$, \LEFT{} )\;
+	 
+	 \lIf{\LNot($result$)}
+	 {
+	    \Return
+	 } 
+	 \tcp{mark the right edge for deletion; cannot fail}
+	 \MarkChildEdge( $\state$, \RIGHT{} )\;
+	   
+	 \BlankLine
+	 \tcp{initialize the type and mode of the operation}
+	 \InitializeTypeAndUpdateMode( $\state$ )\;
+	
+	 %% \Return\;
+	
+	
+	 	
+		
+}
+
+
+\caption{Injecting a Deletion Operation}
+\label{algo:inject}
+\end{algorithm}
+
+
+
+
+
+
+
+
+
+%% FINDANDMARKSUCCESSOR
+
+
+\begin{algorithm}[!thb]
+%%
+\DefineKeyWords
+
+\DontPrintSemicolon
+\FindAndMarkSuccessor( $\state$ )\;
+\PrintSemicolon
+\Begin
+{
+   \tcp{retrieve the addresses from the state record}
+   $\node := \state \rarrow \targetEdge.\child$\;
+	 $seekRecord$ := $\state \rarrow \successorSeekRecord$\; 
+   
+	 \BlankLine
+   \While{\True}
+	 {
+	 
+	    \tcp{read the mark flag of the key in the target node}  
+	    $\ang{ \mFlag, \ast}$ := $\node \rarrow \markAndKey$\; 
+	    
+
+	  	\tcp{find the node with the smallest key in the right subtree}
+	    $result$ := \FindSmallest( $\state$ )\;
+			
+						
+			\BlankLine
+			\If{$\mFlag$ \LOr \LNot($result$)} 
+			{
+			   \tcp{successor node had already been selected \emph{before} the traversal or the right subtree is empty}
+				 \Break\;
+			}
+			
+				
+			\tcp{retrieve the information from the seek record}
+			$\successorEdge$ := $seekRecord \rarrow \terminalEdge$\;
+			%% $\ang{ \nFlag, \ast, \ast, \ast, \leftChild}$ :=  $\successorEdge.\child \rarrow \child[\LEFT]$\;
+			%% \lIf{\LNot($\nFlag$)}{ \Continue }
+			$\leftChild$ := $seekRecord \rarrow \injectionEdge.\child$\;
+			
+			\BlankLine
+			\tcp{read the mark flag of the key under deletion}
+      $\ang{ \mFlag, \ast}$ := $\node \rarrow \markAndKey$\;
+			
+			\If(\tcp*[h]{successor node has already been selected}){$\mFlag$}
+			{
+			   %% \tcp{successor node has already been selected}
+			   %% \lIf{$p$}{ \Break }
+				 %% \lElse{ \Continue }
+				 \Continue\;
+				 
+			}
+			
+			
+		
+
+
+          
+			\tcp{try to set the promote flag on the left edge}
+			\mline{$result$ := \CAS( \parbox[t]{1.875in}{$\successorEdge.\child \rarrow \child[\LEFT]$, \\ 
+			                                             $\ang{ 1_n, 0_i, 0_d, 0_p, \leftChild }$, \\ $\ang{ 1_n, 0_i, 0_d, 1_p, \node }$ );}\;}
+			
+			\lIf{$result$}{\Break}
+			
+			\BlankLine
+			\tcp{attempt to mark the edge failed; recover from the failure and retry if needed}
+			%% $\ang{ n, \ast, d, p, \ast }$ := $\successorEdge.\child \rarrow \child[\LEFT]$\;
+			$\ang{ \nFlag, \ast, \dFlag, \ast, \ast }$ := $\successorEdge.\child \rarrow \child[\LEFT]$\;
+			
+			
+      %% \lIf{$p$}
+      %% {
+      %%    \Break
+      %% }   
+
+      %% \If{\LNot($n$)}
+			%% { 
+			%%   \tcp{the node found has since gained a left child}
+			%%   \Continue\;
+			%% }
+
+			\If{$\nFlag$ \LAnd $\dFlag$}
+			{
+			    \tcp{the node found is undergoing deletion; need to help}
+					
+								
+					%% \mline{\HelpTargetNode( \parbox[t]{1.5in}{$\successorEdge$, \\ $\state \rarrow depth + 1$ );}\;}
+		      \HelpTargetNode( $\successorEdge$ )\;
+       } 
+	 }
+	
+   \BlankLine
+   \tcp{update the operation mode}
+	 \UpdateMode( $\state$ )\;
+	 
+   %% \Return\;
+
+	
+	
+}
+
+\caption{Locating the Successor Node}
+\label{algo:findandmark}
+\end{algorithm}
+
+
+
+
+%% REMOVESUCCESSOR
+
+\begin{algorithm}[!thb]
+%%
+\DefineKeyWords
+
+
+
+\DontPrintSemicolon
+\RemoveSuccessor( $\state$ )\;
+\PrintSemicolon
+\Begin
+{
+   \tcp{retrieve addresses from the state record}
+   $\node$ := $\state \rarrow \targetEdge.\child$\;
+   $seekRecord$ := $\state \rarrow \successorSeekRecord$\;
+
+   \tcp{extract information about the successor node}
+	 %% \tcp{assumes that the state's seek record contains valid information}
+   $\successorEdge$ := $seekRecord \rarrow \terminalEdge$\;
+   
+	 \BlankLine
+	 \tcp{ascertain that the seek record for the successor node contains valid information}
+	 $\ang{ \ast, \ast, \ast, \pFlag, address }$ := $\successorEdge.\child \rarrow \child[\LEFT]$\;
+	 \If{\LNot($\pFlag$) \LOr ($address$ $\neq$ $\node$)}
+	 {
+	    $\node \rarrow \canReplace$ := \True\;
+			\UpdateMode( $\state$ )\;
+	    \Return\;
+	 }
+	
+   \BlankLine
+   \tcp{mark the right edge for promotion if unmarked}
+   %% $\ang{ \ast, \ast, \ast, \pFlag, \ast }$ := $\successorEdge.\child \rarrow \child[\RIGHT]$\;
+   %% \If{\LNot($\pFlag$)}
+   %% {
+   %%   \tcp{set the promote flag on the right edge}
+   %%   \MarkChildEdge( $\state$, \RIGHT{} )\;
+	 %% }
+	 %%
+	 %% \tcp{set the promote flag on the right edge if needed}
+   \MarkChildEdge( $\state$, \RIGHT{} )\;
+ 
+   \BlankLine
+   \tcp{promote the key}
+   $\node \rarrow \markAndKey$ := $\ang{ 1_m, \successorEdge.\child \rarrow \markAndKey }$\;
+
+
+   \While{\True}
+   {
+      \tcp{check if the successor is the right child of the target node itself}
+	    \uIf{$\successorEdge.\parent$ = $\node$}
+	    {
+	       \tcp{need to  modify the right edge of the target node whose delete flag is set}
+				 $dFlag$ := 1; \qquad
+			   $which$ := \RIGHT\;
+	    }
+	    \Else
+	    {
+			   $dFlag$ := 0; \qquad
+			   $which$ := \LEFT\;
+	    }
+      $\ang{ \ast, \iFlag, \ast, \ast, \ast }$ := $\successorEdge.\parent \rarrow \child[which]$\;
+			
+      \BlankLine
+			
+	    $\ang{ \nFlag, \ast, \ast, \ast, \rightChild }$ := $\successorEdge.\child \rarrow \child[\RIGHT]$\;
+	
+	    $\oldContents$ := $\ang{ 0_n, \iFlag, dFlag, 0_p, \successorEdge.\child }$\;
+	    
+			\uIf{$\nFlag$}
+	    {
+			   
+				
+				 \tcp{only set the null flag; do not change the address}
+				
+				 \mline{\parbox[t]{1.75in}{$\newContents$ := \\ \mbox{} \qquad $\ang{ 1_n, 0_i, dFlag, 0_p,  \successorEdge.\child }$;}}
+	     
+				
+	    }
+	    \Else
+	    {
+			  				 
+				 \tcp{switch the pointer to point to the grand child}
+				
+				 $\newContents$ := $\ang{ 0_n, 0_i, dFlag, 0_p, \rightChild }$ \;
+	       
+				 
+	    }
+	 
+      \remove{ \lIf{$result$}{\Break} }
+			
+			\mline{$result$ := \CAS( \parbox[t]{1.77in}{$\successorEdge.\parent \rarrow \child[which]$, \\ $\oldContents$, $\newContents$ );}\;}
+			
+			
+			\lIf{$result$ \LOr $dFlag$}{ \Break }
+	 
+	    
+	    \BlankLine
+			
+			$\ang{ \ast, \ast, \dFlag, \ast, \ast }$ := $\successorEdge.\parent \rarrow \child[which]$;
+			$\penultimateEdge$ := $seekRecord \rarrow \penultimateEdge$\;
+			\If{$\dFlag$ \LAnd ($\penultimateEdge.\parent$ $\neq$ \Null)}
+			{
+			   %% \mline{\HelpTargetNode( \parbox[t]{1.25in}{$\penultimateEdge$, \\ $\state \rarrow depth + 1$ );}\;}
+				 \HelpTargetNode( $\penultimateEdge$ )\;
+			}
+			
+      \BlankLine
+			
+ 	    $result$ := \FindSmallest( $\state$ )\;
+			$\terminalEdge$ := $seekRecord \rarrow \terminalEdge$\;
+	    \If{$\left(\text{\parbox[c]{1.875in}{\LNot($result$) \LOr \\ $\terminalEdge.\child$ $\neq$ $\successorEdge.\child$}}\right)$}
+			{
+			   \tcp{the successor node has already been removed}
+			   \Break\;
+			} 
+			\lElse
+			{
+			   $\successorEdge$ := $seekRecord \rarrow \terminalEdge$
+			}
+
+   }
+
+   \BlankLine
+	 $\node \rarrow \canReplace$ := \True\;
+   %% \If{$\state \rarrow \parent \neq$ \Null}{
+   \UpdateMode( $\state$ )\;
+	 %% }
+	
+	 %% \Return\;
+}
+
+\caption{Removing the Successor Node}
+\label{algo:remove}
+\end{algorithm}
+
+
+
+%% CLEANUP
+
+\begin{algorithm}[!thb]
+%%
+\DefineKeyWords
+
+
+
+\DontPrintSemicolon
+\Boolean \Cleanup( $\state$ )\;
+\PrintSemicolon
+\Begin
+{
+   %% \tcp{retrieve the addresses from the state record}
+   %% $\node$ := $\state \rarrow \node$\;
+	 %% $\parent$ := $\state \rarrow \parent$\;
+	
+	 %% \BlankLine
+	
+	 %% \tcp{determine which edge of the parent needs to be switched} 
+	 %% $\ang{ \ast, pKey }$ := $\parent \rarrow \markAndKey$\;
+	 %% $\ang{ \ast, nKey }$ := $\node \rarrow \markAndKey$\;
+	 %% $pWhich$ := $nKey < pKey$ ? \LEFT : \RIGHT\;
+	 $\ang{\parent, \node, pWhich}$ := $\state \rarrow \targetEdge$\;
+	 
+	
+	 \BlankLine
+	 
+	 \uIf{$\state \rarrow type$ = \COMPLEX}
+	 {
+	  	   
+	    \tcp{replace the node with a new copy in which all fields are unmarked} 
+			$\ang{ \ast, nKey }$ := $\node \rarrow \markAndKey$\;
+			$newNode \rarrow \markAndKey$ := $\ang{ 0_m, nKey }$\;		
+			\BlankLine
+			\tcp{initialize left and right child pointers}
+  		$\ang{ \ast, \ast, \ast, \ast, \leftChild }$ := $\node \rarrow \child[\LEFT]$\;
+			$\newNode \rarrow \child[\LEFT]$  := $\ang{ 0_n, 0_i, 0_d, 0_p, \leftChild }$\;
+			$\ang{ \nFlag, \ast, \ast, \ast, \rightChild }$ := $\node \rarrow \child[\RIGHT]$\;
+			\uIf{$\nFlag$}
+			{
+			  $\newNode \rarrow \child[\RIGHT]$  := $\ang{ 1_n, 0_i, 0_d, 0_p, \Null }$\;
+			}
+			\lElse
+			{
+			  $\newNode \rarrow \child[\RIGHT]$  := $\ang{ 0_n, 0_i, 0_d, 0_p, \rightChild }$
+			}
+			\BlankLine
+			\tcp{initialize the arguments of \CAS{} instruction}
+			$\oldContents$ := $\ang{ 0_n, 1_i, 0_d, 0_p, \node }$\;
+			$\newContents$ := $\ang{ 0_n, 0_i, 0_d, 0_p, \newNode }$\;
+			
+			%% \tcp{switch the edge at the parent}
+			%% \mline{$result$ := \CAS( \parbox[t]{1.875in}{$\parent \rarrow \child[pWhich]$, \\ $\ang{ 0_n, 1_i, 0_d, 0_p, \node }$, $\ang{ 0_n, 0_i, 0_d, 0_p, \newNode }$ );}\;}
+			 
+	
+	 }
+	 \Else(\tcp*[h]{remove the node})
+	 {
+	   			
+	    %% \tcp{remove the node}
+			
+			\tcp{determine to which grand child will the edge at the parent be switched}
+			\uIf{$\node \rarrow \child[\LEFT]$ = $\ang{ 1_n, \ast, \ast, \ast, \ast }$}
+			{
+		     $nWhich$ := \RIGHT\;
+			}
+			\lElse{$nWhich$ := \LEFT}
+			
+			\BlankLine
+			\tcp{initialize the arguments of the \CAS{} instruction}
+			$\oldContents$ := $\ang{ 0_n, 1_i, 0_d, 0_p, \node }$\;
+			$\ang{ \nFlag, \ast, \ast, \ast, address }$ := $\node \rarrow \child[nWhich]$\; 
+  		\uIf(\tcp*[h]{set the null flag only}){$\nFlag$}
+			{
+			   $\newContents$ := $\ang{ 1_n, 0_i, 0_d, 0_p, \node }$\;
+			   %% \tcp{set the null flag only; do not change the address}
+			   %% \mline{$result$ := \CAS( \parbox[t]{1.25in}{$\parent \rarrow \child[pWhich]$, \\ $\ang{ 0_n, 1_i, 0_d, 0_p, \node }$, \\ $\ang{ 1_n, 0_i, 0_d, 0_p, \node }$ );}\;}
+			}
+			\Else(\tcp*[h]{change the pointer to the grand child})
+			{
+			   $\newContents$ := $\ang{ 0_n, 0_i, 0_d, 0_p, address }$ \;
+				 %% \mline{$result$ := \CAS( \parbox[t]{1.25in}{$\parent \rarrow \child[pWhich]$, \\ $\ang{ 0_n, 1_i, 0_d, 0_p, \node }$, \\ $\ang{ 0_n, 0_i, 0_d, 0_p, address }$ );}\;}
+			}
+			
+			
+			
+	 }
+	
+	  \BlankLine
+		\mline{$result$ := \CAS( \parbox[t]{1.75in}{$\parent \rarrow \child[pWhich]$, \\ $\oldContents$, $\newContents$ );}\;}
+		\Return $result$\;
+		
+
+
+
+}
+
+\caption{Cleaning Up the Tree}
+\label{algo:cleanup}
+\end{algorithm}
+
+
+
+
+
+\begin{algorithm}[!thb]
+%%
+\DefineKeyWords
+
+
+\DontPrintSemicolon
+\Boolean \MarkChildEdge( $\state$, $which$ )\;
+\PrintSemicolon
+\Begin
+{
+
+   \uIf{$\state \rarrow mode$ = \INJECTION}
+	 {
+	    $edge$ := $\state \rarrow \targetEdge$\; 
+	    $\flag$ := \DELETEFLAG\;
+	 }
+	 \Else
+	 {
+	    $edge$ := $( \state \rarrow \successorSeekRecord ) \rarrow \terminalEdge$\; 
+	    $\flag$ := \PROMOTEFLAG\;
+	 }
+	 
+	 
+   $\node$ := $edge.\child$\;
+	
+   \BlankLine
+  
+	 \While{\True}
+	 {
+	    $\ang{\nFlag, \iFlag, \dFlag, \pFlag, address}$ := $\node \rarrow \child[which]$\;
+			
+			\uIf{$\iFlag$}
+			{
+			   $helpeeEdge$ := $\curly{ \node, address, which }$\;
+				 %% \HelpTargetNode( $helpeeEdge$, $\state \rarrow depth + 1$ )\;
+				 \HelpTargetNode( $helpeeEdge$ )\;
+				 \Continue\;
+			}
+			\uElseIf{$\dFlag$}
+			{
+			   \uIf{$\flag$ = \PROMOTEFLAG}
+				 {
+				    %% \HelpTargetNode( $edge$, $\state \rarrow depth + 1$  )\;
+						\HelpTargetNode( $edge$ )\;
+						\Return \False\;
+				 } 
+				 \lElse
+				 {
+				    \Return \True
+				 }
+			}
+			\ElseIf{$\pFlag$}
+			{
+			   \uIf{$\flag$ = \DELETEFLAG}
+				 {
+				    %% \HelpSuccessorNode( $edge$, $\state \rarrow depth + 1$  )\;
+						\HelpSuccessorNode( $edge$ )\;
+						\Return \False\;
+				 } 
+				 \lElse
+				 {
+				    \Return \True
+				 }
+			}
+			
+			$\oldContents$ := $\ang{ \nFlag, 0_i, 0_d, 0_p, address }$\;
+			$\newContents$ := $\oldContents \: | \: \flag$\;
+			\mline{$result$ := \CAS( \parbox[t]{1.5in}{$\node \rarrow \child[which]$, $\oldContents$, \\ $\newContents$ );}\;}
+			
+			\lIf{$result$}{ \Break }
+			
+			
+	 }
+
+   \Return \True\;
+}
+
+
+
+\remove{
+
+\end{algorithm}
+
+%% FINDSMALLEST
+
+\begin{algorithm}[!thb]
+%%
+\DefineKeyWords
+}
+
+\BlankLine
+
+\DontPrintSemicolon
+\Boolean \FindSmallest( $\state$ )\;
+\PrintSemicolon
+\Begin
+{
+   \tcp{find the node with the smallest key in the subtree rooted at the right child of the target node}
+	 $\node$ := $\state \rarrow \targetEdge.\child$\;
+	 $seekRecord$ := $\state \rarrow seekRecord$\;
+	 $\ang{ \nFlag, \ast, \ast, \ast, \rightChild }$ := $\node \rarrow \child[\RIGHT]$\;
+	 \If(\tcp*[h]{the right subtree is empty}){$\nFlag$}
+	 {
+	    %% \tcp{the right subtree is empty}
+			\Return \False\;
+	 }
+	
+	 \BlankLine	
+		
+	 \tcp{initialize the variables used in the traversal}
+	 
+	
+	 %% $\ang{ \ast, \ast, \ast, \ast, \rightChild }$ := $\node \rarrow \child[RIGHT]$\;
+	 $\terminalEdge$ := $\ang{ \node, \rightChild, \RIGHT }$\;
+	 $\penultimateEdge$ := $\ang{ \node, \rightChild, \RIGHT }$\;
+		 
+	 %% \BlankLine
+	 	
+	 \While{\True}
+	 {
+	    $\curr$ := $\terminalEdge.\child$\;
+      $\ang{ \nFlag, \ast, \ast, \ast, \leftChild }$ := $\curr \rarrow \child[\LEFT]$\;
+			
+			\If(\tcp*[h]{reached the node with the smallest key}){$\nFlag$}	
+			{
+			   $\injectionEdge$ := $\ang{\curr, \leftChild, \LEFT}$\;
+			   \Break\;
+			}
+				
+			\BlankLine
+			
+			\tcp{traverse the next edge}			
+			$\penultimateEdge$ := $\terminalEdge$\;
+	    $\terminalEdge$ := $\ang{ \curr, \leftChild, \LEFT }$\;
+		
+			
+	 }
+	
+	 \BlankLine
+	 \tcp{initialize seek record and return}
+	 $seekRecord \rarrow \terminalEdge$ := $\terminalEdge$\;
+	 $seekRecord \rarrow \penultimateEdge$ := $\penultimateEdge$\;
+   $seekRecord \rarrow \injectionEdge$ := $\injectionEdge$\;
+	 \Return \True\;
+	
+}
+
+
+
+
+\caption{Helper Routines}
+\label{algo:helper|1}
+\end{algorithm}
+
+
+\begin{algorithm}[!thb]
+%%
+\DefineKeyWords
+
+
+\DontPrintSemicolon
+\InitializeTypeAndUpdateMode( $\state$ )\;
+\PrintSemicolon
+\Begin
+{
+
+   \tcp{retrieve the target node's address from the state record}
+   $\node$ := $\state \rarrow \targetEdge.\child$\;
+	 
+	
+	 \BlankLine
+	 %% $\canReplace$ := $\node \rarrow \canReplace$\;
+	 $\ang{ \lNFlag, \ast, \ast, \ast, \ast }$ := $\node \rarrow \child[\LEFT]$\;
+	 $\ang{ \rNFlag, \ast, \ast, \ast, \ast }$ := $\node \rarrow \child[\RIGHT]$\;
+	
+	 \uIf{$\lNFlag$ \LOr $\rNFlag$}
+	 {
+	    \tcp{one of the child pointers is null}
+	    $\ang{\mFlag, \ast }$ := $\node \rarrow \markAndKey$\;
+	    \lIf{$\mFlag$}
+	    {
+	      $\state \rarrow type$ := \COMPLEX
+	      %% $\node \rarrow \canReplace$ := \True\;
+	    }
+	    \lElse
+	    {
+	      $\state \rarrow type$ := \SIMPLE
+	     }
+	 }
+	 \Else(\tcp*[h]{both child pointers are non-null})
+	 {
+	    %% \tcp{both child pointers are non-null}
+	    $\state \rarrow type$ := \COMPLEX\;
+	 }
+	
+	 \UpdateMode( $\state$ )\;
+	
+	 %% \Return\;
+
+}
+
+\remove{
+
+\end{algorithm}
+
+
+%% UPDATEMODE
+
+\begin{algorithm}[!thb]
+%%
+\DefineKeyWords
+
+}
+
+\BlankLine
+
+\DontPrintSemicolon
+\UpdateMode( $\state$ )\;
+\PrintSemicolon
+\Begin
+{
+	
+	 \tcp{update the operation mode}
+
+	 \BlankLine
+	 \uIf(\tcp*[h]{simple delete}){$\state \rarrow type$ = \SIMPLE}
+	 {
+	    %% \tcp{simple delete}	
+			$\state \rarrow mode$ := \CLEANUP\;
+	 }
+	 \Else(\tcp*[h]{complex delete})
+	 {
+	  	%% \tcp{complex delete}	
+
+      $\node$ := $\state \rarrow \targetEdge.\child$\;
+			\uIf{$\node \rarrow \canReplace$}
+			{
+			   $\state \rarrow mode$ := \CLEANUP\;
+			}
+			\lElse{$\state \rarrow mode$ := \DISCOVERY}
+	 }
+	
+	 %% \Return\;
+}
+
+\caption{Helper Routines}
+\label{algo:helper|2}
+\end{algorithm}
+
+
+
+
+
+
+
+
+
+%% HELP
+
+\begin{algorithm}[!thb]
+%%
+\DefineKeyWords
+
+
+
+
+\DontPrintSemicolon
+%% \HelpTargetNode( $helpeeEdge$, $depth$ )\;
+\HelpTargetNode( $helpeeEdge$ )\;
+\PrintSemicolon
+\Begin
+{
+   %% \lIf{$depth$ = number of processes}{ \Return }
+	 %% \BlankLine		
+	 \tcp{intent flag must be set on the edge}
+	 \tcp{obtain new state record and initialize it}
+	 $\state \rarrow \targetEdge$ := $helpeeEdge$\;
+	 %% $\state \rarrow depth$ := $depth$\;
+	 $\state \rarrow mode$ := \INJECTION\;
+	 \BlankLine	
+	 \tcp{mark the left and right edges if unmarked}
+	 $result$ := \MarkChildEdge( $\state$, \LEFT{} )\;
+	 \lIf{\LNot($result$)}{ 
+	    %% \tcp{promote flag must have been set on the left edge}
+			%% \HelpSuccessorNode( $helpeeEdge$, $depth + 1$ )\;
+	    \Return
+	 }
+	 \MarkChildEdge( $\state$, \RIGHT{} )\;
+	 
+	 \InitializeTypeAndUpdateMode( $\state$ )\;
+	
+			
+	 
+	 \BlankLine
+	
+	 \tcp{perform the remaining steps of a delete operation}
+   \If{$\state \rarrow mode$ = \DISCOVERY}
+	 {
+			%% \tcp{complex delete operation; locate the successor node and mark its child edges with promote flag}		
+	    \FindAndMarkSuccessor( $\state$ )\;
+	 						
+	 }
+			
+	 \BlankLine
+			
+	 \If{$\state \rarrow mode$ = \DISCOVERY}
+	 {
+						
+			%% \tcp{complex delete operation; promote the successor node's key and remove the successor node}
+	    \RemoveSuccessor( $\state$ )\;
+		   						
+	 }
+				
+	 \BlankLine	
+				
+	 \lIf{$\state \rarrow mode$ = \CLEANUP}
+	 {
+	    %% \tcp{either remove the target node (simple delete) or replace it with a new node with unmarked edges (complex delete)}
+	    \Cleanup( $\state$ )
+	 }
+	
+	 %% \Return\;
+}
+
+\remove{
+
+\end{algorithm}	
+	
+
+
+\begin{algorithm}[!thb]
+%%
+\DefineKeyWords
+
+}
+
+\BlankLine
+
+\DontPrintSemicolon
+%% \HelpSuccessorNode( $helpeeEdge$, $depth$ )\;
+\HelpSuccessorNode( $helpeeEdge$ )\;
+\PrintSemicolon
+\Begin
+{
+   %% \lIf{$depth$ = number of processes}{ \Return }
+	 %% \BlankLine
+   \tcp{retrieve the address of the successor node}
+   $\parent$ := $helpeeEdge.\parent$\;
+	 $\node$ := $helpeeEdge.\child$\;
+	 
+	 \tcp{promote flat must be set on the successor node's left edge}
+	 \tcp{retrieve the address of the target node}
+	 $\ang{ \ast, \ast, \ast, \ast, \leftChild }$ := $\node \rarrow \child[\LEFT]$\;
+	 \BlankLine	
+	 \tcp{obtain new state record and initialize it}
+	 $\state \rarrow \targetEdge$ := $\curly{ \Null, \leftChild, \_ }$\;
+	 %% $\state \rarrow depth$ := $depth$\;
+	 $\state \rarrow mode$ := \DISCOVERY\;
+	 $seekRecord$ := $\state \rarrow \successorSeekRecord$\;
+	 \tcp{initialize the seek record in the state record}
+	 $seekRecord \rarrow \terminalEdge$ := $helpeeEdge$\;
+	 $seekRecord \rarrow \penultimateEdge$ := $\curly{ \Null, \parent, \_ }$\;
+   \tcp{promote the successor node's key and remove the successor node}
+	 \RemoveSuccessor( $\state$ )\;
+	 \tcp{no need to perform the cleanup}
+	
+	
+	 %% \Return\;
+
+}
+
+
+\caption{Helping Conflicting Delete Operations}
+\label{algo:helping}
+\end{algorithm}
+\end{limitscope}

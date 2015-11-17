@@ -1,0 +1,68 @@
+\begin{figure}[htp]
+\centering
+{
+	\begin{tikzpicture}[scale=0.625, transform shape]
+	\newcommand\XA{0}
+	\newcommand\YA{0}
+	\newcommand\XB{\XA-1}
+	\newcommand\YB{\YA-3.8}
+	\node (R)			[treenode] 									at (\XA,\YA)       						{$\snodeone$ \\ $\infty$$_0$};
+	\node (gnd)		[ground] 										at ([shift=({-1.5,-1})]R)				{};  
+	\node (S)			[treenode] 									at ([shift=({1.5,-1.35})]R)			{$\snodetwo$ \\ $\infty$$_1$};
+	\node (gndls)	[ground] 										at ([shift=({-1.5,-1})]S)				{}; 
+	\node (T)			[treenode] 									at ([shift=({1.5,-1.35})]S)			{$\snodethree$ \\ $\infty$$_2$};
+%	\node (gndlt)	[ground] 										at ([shift=({-1,-1})]T)				{};  
+	\node (gndt)	[ground] 										at ([shift=({1.5,-1})]T)				{};  
+
+
+	\path[every node/.style={font=\sffamily\small}]
+	(R) 					edge[->] 										node  												{} (S)
+	(R) 					edge[->] 										node 				 									{} (gnd)
+	(S)						edge[->] 										node 													{} (gndls)
+	(S)						edge[->] 										node 													{} (T)
+%	(T)						edge[->] 										node 													{} (gndlt)
+	(T)						edge[->] 										node 													{} (gndt);
+	\renewcommand\XA{0}
+	\renewcommand\YA{-4}
+	\renewcommand\XB{\XA+2}
+	\renewcommand\YB{\YA-6.8}
+	\node (x)		[treenode] 									at (\XA,\YA)       						{$U$ \\ 10};
+	\node (S1)	[subtree1] 									at ([shift=({-1.5,-0.5})]x)  		{\Large $\alpha$};
+	\node (y0)	[treenode] 									at ([shift=({3,-0.5})]x) 			{$V$ \\ 100};
+	\node (y1)	[treenode,fill=black!20]		at ([shift=({-1.5,-1})]y0)		{$W$ \\ 60}; 
+	\node (S2)	[subtree1] 									at ([shift=({2,-0.5})]y0)   	{$\beta$};
+	\node (S3)	[subtree1] 									at ([shift=({-1.5,-1})]y1)  		{\Large $\gamma$};
+	\node (y2)	[treenode]									at ([shift=({1.5,-1})]y1)			{$X$ \\ 55}; 
+	\node (y3)	[treenode]									at ([shift=({-1,-1.5})]y2)		{$Y$ \\ 50}; 
+	\node (S4)	[subtree1] 									at ([shift=({1.5,-0.5})]y2)  	{\Large $\omega$};
+	\node (y4)	[treenode,fill=black!20]		at ([shift=({-1,-1.5})]y3)		{$Z$ \\ 40};
+	\node (S5)	[subtree1] 									at ([shift=({1.5,-0.5})]y3)  	{\Large $\delta$}; 
+	\node (gnd)	[ground] 										at ([shift=({-1,-1})]y4)			{}; 
+	\node (S6)	[subtree1] 									at ([shift=({1.5,-0.5})]y4)  	{\Large $\sigma$}; 
+	\node (y1l) [rectangle,align=center,minimum size=1cm] at (\XA+0.25,\YA-1.4) 				{\large anchor \\ \large node};
+	\node (y4l) [] 													at (\XA-1.0,\YA-5.4) 				{\large \terminalnode};
+	\node (x1) 	[rectangle,align=center,minimum size=1cm]at (\XA-1.75,\YA-6.75) 	{\large injection point};
+
+	\path[every node/.style={font=\sffamily\large}]
+	%(\XA,\YA+1) 	edge[->,thick] 						node 													{} (x)
+	(T)			edge[->,dotted] 								node 													{} (x)
+	(x) 		edge[->]												node 													{} (y0)
+	(x) 		edge[->]												node 													{} (S1.north)
+	(y0) 		edge[->]												node 													{} (y1)
+	(y0) 		edge[->]												node 													{} (S2.north)
+	(y1) 		edge[->]												node 													{} (S3.north)
+	(y1) 		edge[->]												node 													{} (y2)
+	(y2) 		edge[->]												node 													{} (y3)
+	(y2) 		edge[->]												node 													{} (S4.north)
+	(y3) 		edge[->]												node 													{} (y4)
+	(y3) 		edge[->]												node 													{} (S5.north)
+	(y4) 		edge[->]												node 				 									{} (gnd)
+	(y4) 		edge[->]												node 													{} (S6.north);
+		
+ \end{tikzpicture}
+}
+\caption{Nodes in the access path of seek along with sentinel keys and nodes ($\infty_0 < \infty_1 < \infty_2$)}
+\label{fig:sentinelAndSeek}
+\end{figure}
+
+

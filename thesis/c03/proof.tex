@@ -1,0 +1,36 @@
+\subsection{Correctness Proof}
+It is convenient to treat insert and delete operations that do not change the tree as search operations. We call a tree node \emph{active} if it is reachable from the root of the 
+tree. We call a tree node  \emph{passive} if it was active earlier but is not active any more. Note that, before an active node is made passive by a delete operation, both its 
+children edges are \emph{marked}. Also, a \CAS{} instruction performed on an edge (by either an insert operation or a delete operation as part of locking) is successful only if the edge is unmarked. As a result, clearly, if an insert operation completes successfully, then  its target node was active when its edge was modified to make the new node (containing the target key) a part of the tree. Likewise, if a delete operation completes successfully, then all the nodes involved in the operation (up to three nodes) were active when their edges were locked.
+
+\subsubsection{All Executions are Linearizable}
+
+We show that an arbitrary execution of our algorithm is linearizable by specifying the \emph{linearization point} of each operation. Note that the linearization point of an operation is the point during its execution at which the operation appeared to have taken effect. Our algorithm supports three types of operations: search, insert and delete. We now specify the linearization point of each operation.
+
+\begin{enumerate}[leftmargin=*]
+\item \emph{Insert operation:} The operation is linearized at the point at which it performed the successful \CAS{} instruction that resulted in its target key becoming part of the tree.					
+\item \emph{Delete operation:} There are two cases depending on whether the delete operation is simple or complex. If the operation is simple delete, then the operation is linearized at the point at which a successful write step was performed at the parent of the target node that resulted in the target node becoming passive. Otherwise, it is linearized at the point at which the original key of the target node was replaced with its successor key.   
+\item \emph{Search operation:} There are two cases depending on whether the target node was active when the operation read the key stored in the node. If the target node was not active, then the operation is linearized at the point at which the target node became passive. Otherwise, it is linearized at the point at which the read step was performed.
+\end{enumerate}
+
+It can be easily verified that, for any execution of the algorithm, the sequence of operations obtained by ordering operations based on their linearization points is legal, \emph{i.e.}, all operations in the sequence satisfy their specification. 
+
+Thus we have:
+\begin{theorem}
+Every execution of our algorithm is linearizable.
+\end{theorem}
+			 
+\subsubsection{All Executions are Deadlock-Free}	
+We say that the system is in a \emph{quiescent state} if no modify operation completes hereafter. We say that the system is in a \emph{potent state} if it has one or more pending modify operations. Note that quiescence is a \emph{stable property}; once the system is in a quiescent state, it stays in a quiescent state. We show that our algorithm is deadlock-free by proving that a potent state is necessarily non-quiescent. 
+
+
+Note that, in a quiescent state, no edges in the tree can be marked. This is because a delete operation marks edges only after it has successfully obtained all the locks, after which it is guaranteed to complete. This also implies that the tree cannot undergo any changes now because that would imply eventual completion of a modify operation. Thus, once a system has reached a quiescent state, all modify operation currently pending repeatedly alternate between seek and execution phases. We say that the system is in a \emph{strongly-quiescent state} if all pending modify operations started their most recent seek phase \emph{after} the system became quiescent. Note that, like quiescence, strong quiescence is also a stable property. Now, once the system has reached a strongly quiescent state, the following can be easily verified. First, for a given modify operation, every traversal of the tree in the seek phase returns the same target node. Second, for a given delete operation, the set of edges it needs to lock remains the same. 
+
+
+Now, assume that the system eventually reaches a state that is both potent and quiescent. Clearly, from this state, the system will eventually reach a state that is potent and strongly-quiescent. Note that a delete operation in our algorithm locks edges in a \emph{top-down}, \emph{left-right} manner. As a result, there cannot be a ``cycle'' involving delete operations. If a delete operation continues to fail in the execution phase, then it is necessarily because it tried to acquire lock on an already locked edge. (Recall that the set of edges does not change any more and there are no marked edges in the tree.) We can construct a chain of operations such that each operation in the chain tried to lock an edge already locked by the next operation in the chain. Clearly, the length of the chain is bounded. This implies that the last operation in the chain is guaranteed to obtain all the locks and will eventually complete. This contradicts the fact that the system is in a quiescent state. 
+
+
+Thus, we have:
+\begin{theorem}
+Every execution of our algorithm is deadlock-free.
+\end{theorem}

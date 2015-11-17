@@ -1,0 +1,78 @@
+\newenvironment{limitscope}{}{}
+\begin{limitscope}
+%%%%% castle macros - begin
+\newcommand{\accesspath}{access-path}
+\newcommand{\terminalnode}{terminal node}
+
+\newcommand{\true}{\textsf{true}}
+\newcommand{\false}{\textsf{false}}
+
+\newcommand{\CAS}{\textsf{CAS}}
+
+\newcommand{\sNodeOne}{\mathbb{R}}
+\newcommand{\sNodeTwo}{\mathbb{S}}
+\newcommand{\sKeyOne}{\infty_1}
+\newcommand{\sKeyTwo}{\infty_2}
+
+\newcommand{\targetnode}{target node}
+\newcommand{\anchornode}{anchor node}
+
+\newcommand{\myparent}{parent}
+\newcommand{\myleft}{le\!f\!t}
+\newcommand{\myright}{right}
+
+\newcommand{\CASTLE}{\textsc{CASTLE}}
+\newcommand{\CITRUS}{\textsc{CITRUS}}
+\newcommand{\HJBST}{\textsc{LF-IBST}}
+\newcommand{\NMBST}{\textsc{LF-EBST}}
+
+\newcommand{\RemoveChild}{\textsc{RemoveChild}}
+\newcommand{\LockAll}{\textsc{LockAll}}
+\newcommand{\UnlockAll}{\textsc{UnlockAll}}
+\newcommand{\ClearFlags}{\textsc{ClearFlags}}
+\newcommand{\FindSmallest}{\textsc{FindSmallest}}
+
+\newcommand{\lFlag}{lFlag}
+\newcommand{\mFlag}{mFlag}
+\newcommand{\nFlag}{nFlag}
+
+%%%%% castle macros - end
+
+\section{The Lock-Based Algorithm}
+\label{sec:algorithm}
+We first provide an overview of our algorithm. We then describe the algorithm in more detail and also give its pseudo-code. For ease of exposition, we describe our algorithm assuming no memory reclamation, which can be performed using the well-known technique of hazard pointers~\cite{Mic:2004:TPDS}.
+
+\input{c03/overview}
+
+\input{c03/description}
+
+\subsection{Formal Description}
+
+We refer to our algorithm as \CASTLE{} (\underline{C}oncurrent \underline{A}lgorithm for Binary \underline{S}earch \underline{T}ree by \underline{L}ocking \underline{E}dges). 
+
+\input{c03/pseudocode}
+
+A pseudo-code of our algorithm is given in \algosref{data|structures}{helper}.
+Different data structures used in our algorithm are shown in \algoref{data|structures}. Besides tree node, we use three additional records:
+\begin{enumerate*}[label=(\alph*)]
+\item  \emph{seek record:} to store the outcome of a tree traversal both when looking for the target key and the successor key, 
+\item \emph{anchor record:} to store information about the \anchornode{} during the seek phase, and
+\item  \emph{lock record:} to store information about a tree edge that needs to be locked. 
+\end{enumerate*}
+
+The pseudo-code for the seek function is shown in \algoref{seek}. The 
+pseudo-codes for search, insert and delete operations are shown  in 
+\algoref{search}, \algoref{insert} and \algoref{delete}, respectively. 
+\Algoref{lock:unlock} contains the pseudo-code for locking and unlocking a 
+set of tree edges, as specified in an array. Finally, \algoref{helper} contains the pseudo-codes for 
+three helper functions used by a delete operation, namely:
+\begin{enumerate*}[label=(\alph*)]
+\item \ClearFlags{}: to clear lock and mark flags from a child field, 
+\item \FindSmallest{}: to locate the smallest key in a subtree, and
+\item \RemoveChild{}: to remove a given child of a node.
+\end{enumerate*}
+
+In the pseudo-code, to improve clarity, we sometimes use subscripts $l$, $m$ and $n$ to denote lock, mark and null flags, respectively.  
+\input{c03/proof}
+
+\end{limitscope}
