@@ -39,7 +39,7 @@
 %%%%% castle macros - end
 
 \section{The Lock-Based Algorithm}
-\label{sec:algorithm}
+\label{sec:castle-algorithm}
 We first provide an overview of our algorithm. We then describe the algorithm in more detail and also give its pseudo-code. For ease of exposition, we describe our algorithm assuming no memory reclamation, which can be performed using the well-known technique of hazard pointers~\cite{Mic:2004:TPDS}.
 
 \input{c03/overview}
@@ -52,17 +52,17 @@ We refer to our algorithm as \CASTLE{} (\underline{C}oncurrent \underline{A}lgor
 
 \input{c03/pseudocode}
 
-A pseudo-code of our algorithm is given in \algosref{data|structures}{helper}.
-Different data structures used in our algorithm are shown in \algoref{data|structures}. Besides tree node, we use three additional records:
+A pseudo-code of our algorithm is given in \algosref{castle-data|structures}{helper}.
+Different data structures used in our algorithm are shown in \algoref{castle-data|structures}. Besides tree node, we use three additional records:
 \begin{enumerate*}[label=(\alph*)]
 \item  \emph{seek record:} to store the outcome of a tree traversal both when looking for the target key and the successor key, 
 \item \emph{anchor record:} to store information about the \anchornode{} during the seek phase, and
 \item  \emph{lock record:} to store information about a tree edge that needs to be locked. 
 \end{enumerate*}
 
-The pseudo-code for the seek function is shown in \algoref{seek}. The 
+The pseudo-code for the seek function is shown in \algoref{castle-seek}. The 
 pseudo-codes for search, insert and delete operations are shown  in 
-\algoref{search}, \algoref{insert} and \algoref{delete}, respectively. 
+\algoref{castle-search}, \algoref{castle-insert} and \algoref{castle-delete}, respectively. 
 \Algoref{lock:unlock} contains the pseudo-code for locking and unlocking a 
 set of tree edges, as specified in an array. Finally, \algoref{helper} contains the pseudo-codes for 
 three helper functions used by a delete operation, namely:

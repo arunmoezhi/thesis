@@ -105,7 +105,7 @@
 
 \DontPrintSemicolon
 \Struct Node \{\;
-\label{ln:node|begin}
+\label{ln:icdcn-node|begin}
 \PrintSemicolon
 \Indp 
    $\{ \Boolean, \text{Key} \}$ $\markAndKey$\;
@@ -190,7 +190,7 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 
 
 \caption{Data Structures Used}
-\label{algo:data|structures}
+\label{algo:icdcn-data|structures}
 \end{algorithm}
 
 
@@ -281,7 +281,7 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 } 
 %% End of seek function
 \caption{Seek Function}
-\label{algo:seek}
+\label{algo:icdcn-seek}
 \end{algorithm}
 
 
@@ -304,7 +304,7 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
    \lElse{\Return \False}
 }
 \caption{Search Operation}
-\label{algo:search}
+\label{algo:icdcn-search}
 \end{algorithm}
 
 %% INSERT
@@ -350,7 +350,7 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 	}
 }
 \caption{Insert Operation}
-\label{algo:insert}
+\label{algo:icdcn-insert}
 \end{algorithm}
 
 %% DELETE
@@ -362,22 +362,21 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 \Begin
 {
    \tcp{initialize the state record}
- 	 $myState \rarrow \targetKey$ := $key$\;
+ 	 $myState \rarrow \targetKey$ := $key$; $\qquad$
 	 $myState \rarrow \currentKey$ := $key$\;
 	 $myState \rarrow mode$ := \INJECTION\;
 	 \BlankLine
    \While{\True}
 	 {
       \Seek( $myState \rarrow \currentKey$, $\targetSeekRecord$ )\;
-			\BlankLine
-			$\targetEdge$ := $\targetSeekRecord \rarrow \terminalEdge$\;
+			$\targetEdge$ := $\targetSeekRecord \rarrow \terminalEdge$; $\qquad$
 			$\parentTargetEdge$ := $\targetSeekRecord \rarrow \penultimateEdge$\;
 			$\ang{ \ast , nKey }$ := $\targetEdge.\child \rarrow \markAndKey$\; 
 			\BlankLine
 			\If{$myState \rarrow \currentKey \neq nKey$}
 			{
 			   \tcp{the key does not exist in the tree}
-			   \uIf{$myState \rarrow mode$ = \INJECTION}{\Return \False\;}
+			   \lIf{$myState \rarrow mode$ = \INJECTION}{\Return \False}
 				 \lElse{\Return \True}
 			}
  	    \BlankLine		   	
@@ -389,55 +388,34 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
    	     $myState \rarrow \parentTargetEdge$ := $\parentTargetEdge$\;
 				 \tcp{attempt to inject the operation at the node}
 				 %% $result$ := \Inject( $myState$ )\;
-				 \Inject( $myState$ )\;	
-								
-				 								 
+				 \Inject( $myState$ )\;					 								 
 			}
-				 
 			\BlankLine
-				
 			\tcp{mode would have changed if injection was successful}
 				 
 			\If{$myState \rarrow mode \neq$ \INJECTION}
 			{
-				 \tcp{check if the target node found by the seek function matches the one stored in the state record}
-				
-				
-								
-			   \If{$\left(\text{\parbox[c]{1.75in}{$myState \rarrow \targetEdge.\child$ $\neq$  \\ \mbox{}\hfill$\targetEdge.\child$}}\right)$}
+				 \tcp{check if the target node found by the seek function matches the one stored in the state record}			
+			   %%\If{$\left(\text{\parbox[c]{1.75in}{$myState \rarrow \targetEdge.\child$ $\neq$  \\ \mbox{}\hfill$\targetEdge.\child$}}\right)$}
+				 \lIf{$myState \rarrow \targetEdge.\child$ $\neq$ $\targetEdge.\child$}
 				 {
-				    \Return \True\;
-				 }
-						
+				    \Return \True
+				 }						
 				 \tcp{update the target edge information using the most recent seek}
-				 $myState \rarrow \targetEdge$ := $\targetEdge$\;
-  			 				
-		  }
-				
-			\BlankLine
-			
-				
+				 $myState \rarrow \targetEdge$ := $\targetEdge$\; 			 				
+		  }				
+			\BlankLine							
 			\If{$myState \rarrow mode$ = \DISCOVERY}
 			{
 				 \tcp{complex delete operation; locate the successor node and mark its child edges with promote flag} 
-			   \FindAndMarkSuccessor( $myState$ )\;
-				 
-
-				
-				 
-			}
-			
-			
-			
+			   \FindAndMarkSuccessor( $myState$ )\;			 
+			}			
 			\If{$myState \rarrow mode$ = \DISCOVERY}
 			{
 				 \tcp{complex delete operation; promote the successor node's key and remove the successor node}
-		     \RemoveSuccessor( $myState$ )\;
-						
-			}
-			
-			\BlankLine
-				
+		     \RemoveSuccessor( $myState$ )\;						
+			}			
+			\BlankLine				
 			\If{$myState \rarrow mode$ = \CLEANUP}
 			{
 			   \tcp{either remove the target node (simple delete) or replace it with a new node with all fields unmarked  (complex delete)}
@@ -446,43 +424,25 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 				 \Else{
 				    $\ang{ \ast, nKey }$ := $\targetEdge.\child \rarrow \markAndKey$\;
 						$myState \rarrow \currentKey$ := $nKey$\;
-				 }
-					
+				 }					
 		  }
-
 	 }	
-
    %% \Return\;
-
 }
-
-
 \caption{Delete Operation}
-\label{algo:delete}
+\label{algo:icdcn-delete}
 \end{algorithm}
 
-
-
-
-
 %% INJECT
-
-
-
-
 \begin{algorithm}[!thb]
 %%
 \DefineKeyWords
-
-
 \DontPrintSemicolon
 \Inject( $\state$ )\;
 \PrintSemicolon
 \Begin
 {
-
    $\targetEdge$ := $\state \rarrow \targetEdge$\;
-  
 	 \tcp{try to set the intent flag on the target edge}
 	 \tcp{retrieve attributes of the target edge}
 	 $\parent$ := $\targetEdge.\parent$\;
@@ -490,7 +450,6 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 	 $which$ := $\targetEdge.which$\;
 	 \BlankLine
 	 \mline{$result$ := \CAS( \parbox[t]{2.075in}{$\parent \rarrow \child[which]$, \\ $\ang{ 0_n, 0_i, 0_d, 0_p, \node }$,  $\ang{ 0_n, 1_i, 0_d, 0_p, \node }$ );}\;}
-	
 	 \If{\LNot($result$)}
 	 {
 	    \tcp{unable to set the intent flag; help if needed}
@@ -525,15 +484,8 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 	   
 	 \BlankLine
 	 \tcp{initialize the type and mode of the operation}
-	 \InitializeTypeAndUpdateMode( $\state$ )\;
-	
-	 %% \Return\;
-	
-	
-	 	
-		
+	 \InitializeTypeAndUpdateMode( $\state$ );	
 }
-
 
 \caption{Injecting a Deletion Operation}
 \label{algo:inject}
@@ -638,16 +590,10 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 					%% \mline{\HelpTargetNode( \parbox[t]{1.5in}{$\successorEdge$, \\ $\state \rarrow depth + 1$ );}\;}
 		      \HelpTargetNode( $\successorEdge$ )\;
        } 
-	 }
-	
+	 }	
    \BlankLine
    \tcp{update the operation mode}
-	 \UpdateMode( $\state$ )\;
-	 
-   %% \Return\;
-
-	
-	
+	 \UpdateMode( $\state$ );
 }
 
 \caption{Locating the Successor Node}
@@ -658,13 +604,9 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 
 
 %% REMOVESUCCESSOR
-
 \begin{algorithm}[!thb]
 %%
 \DefineKeyWords
-
-
-
 \DontPrintSemicolon
 \RemoveSuccessor( $\state$ )\;
 \PrintSemicolon
@@ -673,13 +615,11 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
    \tcp{retrieve addresses from the state record}
    $\node$ := $\state \rarrow \targetEdge.\child$\;
    $seekRecord$ := $\state \rarrow \successorSeekRecord$\;
-
    \tcp{extract information about the successor node}
 	 %% \tcp{assumes that the state's seek record contains valid information}
    $\successorEdge$ := $seekRecord \rarrow \terminalEdge$\;
-   
 	 \BlankLine
-	 \tcp{ascertain that the seek record for the successor node contains valid information}
+	 \tcp{ascertain that seek record for successor node contains valid information}
 	 $\ang{ \ast, \ast, \ast, \pFlag, address }$ := $\successorEdge.\child \rarrow \child[\LEFT]$\;
 	 \If{\LNot($\pFlag$) \LOr ($address$ $\neq$ $\node$)}
 	 {
@@ -687,30 +627,18 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 			\UpdateMode( $\state$ )\;
 	    \Return\;
 	 }
-	
    \BlankLine
    \tcp{mark the right edge for promotion if unmarked}
-   %% $\ang{ \ast, \ast, \ast, \pFlag, \ast }$ := $\successorEdge.\child \rarrow \child[\RIGHT]$\;
-   %% \If{\LNot($\pFlag$)}
-   %% {
-   %%   \tcp{set the promote flag on the right edge}
-   %%   \MarkChildEdge( $\state$, \RIGHT{} )\;
-	 %% }
-	 %%
-	 %% \tcp{set the promote flag on the right edge if needed}
-   \MarkChildEdge( $\state$, \RIGHT{} )\;
- 
+   \MarkChildEdge( $\state$, \RIGHT{} )\; 
    \BlankLine
    \tcp{promote the key}
    $\node \rarrow \markAndKey$ := $\ang{ 1_m, \successorEdge.\child \rarrow \markAndKey }$\;
-
-
    \While{\True}
    {
       \tcp{check if the successor is the right child of the target node itself}
 	    \uIf{$\successorEdge.\parent$ = $\node$}
 	    {
-	       \tcp{need to  modify the right edge of the target node whose delete flag is set}
+	       \tcp{need to modify the right edge of target node whose delete flag is set}
 				 $dFlag$ := 1; \qquad
 			   $which$ := \RIGHT\;
 	    }
@@ -719,77 +647,49 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 			   $dFlag$ := 0; \qquad
 			   $which$ := \LEFT\;
 	    }
-      $\ang{ \ast, \iFlag, \ast, \ast, \ast }$ := $\successorEdge.\parent \rarrow \child[which]$\;
-			
-      \BlankLine
-			
-	    $\ang{ \nFlag, \ast, \ast, \ast, \rightChild }$ := $\successorEdge.\child \rarrow \child[\RIGHT]$\;
-	
-	    $\oldContents$ := $\ang{ 0_n, \iFlag, dFlag, 0_p, \successorEdge.\child }$\;
-	    
-			\uIf{$\nFlag$}
-	    {
-			   
-				
-				 \tcp{only set the null flag; do not change the address}
-				
-				 \mline{\parbox[t]{1.75in}{$\newContents$ := \\ \mbox{} \qquad $\ang{ 1_n, 0_i, dFlag, 0_p,  \successorEdge.\child }$;}}
-	     
-				
+      $\ang{ \ast, \iFlag, \ast, \ast, \ast }$ := $\successorEdge.\parent \rarrow \child[which]$\;			
+      \BlankLine			
+	    $\ang{ \nFlag, \ast, \ast, \ast, \rightChild }$ := $\successorEdge.\child \rarrow \child[\RIGHT]$\;	
+	    $\oldContents$ := $\ang{ 0_n, \iFlag, dFlag, 0_p, \successorEdge.\child }$\;	    
+			\uIf(\tcp*[f]{only set the null flag; do not change the address}){$\nFlag$}
+	    {				
+				 %\mline{\parbox[t]{1.75in}{$\newContents$ := \\ \mbox{} \qquad $\ang{ 1_n, 0_i, dFlag, 0_p,  \successorEdge.\child }$;}}
+				 $\newContents$ := $\ang{ 1_n, 0_i, dFlag, 0_p,  \successorEdge.\child }$\;
 	    }
-	    \Else
-	    {
-			  				 
-				 \tcp{switch the pointer to point to the grand child}
-				
-				 $\newContents$ := $\ang{ 0_n, 0_i, dFlag, 0_p, \rightChild }$ \;
-	       
-				 
-	    }
-	 
-      \remove{ \lIf{$result$}{\Break} }
-			
-			\mline{$result$ := \CAS( \parbox[t]{1.77in}{$\successorEdge.\parent \rarrow \child[which]$, \\ $\oldContents$, $\newContents$ );}\;}
-			
-			
+	    \Else(\tcp*[f]{switch the pointer to point to the grand child})
+	    {	 				 
+				 $\newContents$ := $\ang{ 0_n, 0_i, dFlag, 0_p, \rightChild }$ \;		 
+	    }	 
+      \remove{ \lIf{$result$}{\Break} }			
+			%\mline{$result$ := \CAS( \parbox[t]{1.77in}{$\successorEdge.\parent \rarrow \child[which]$, \\ $\oldContents$, $\newContents$ );}\;}
+			$result$ := \CAS($\successorEdge.\parent \rarrow \child[which]$,$\oldContents$, $\newContents$)\;
 			\lIf{$result$ \LOr $dFlag$}{ \Break }
-	 
-	    
-	    \BlankLine
-			
-			$\ang{ \ast, \ast, \dFlag, \ast, \ast }$ := $\successorEdge.\parent \rarrow \child[which]$;
+	    %\BlankLine			
+			$\ang{ \ast, \ast, \dFlag, \ast, \ast }$ := $\successorEdge.\parent \rarrow \child[which]$\;
 			$\penultimateEdge$ := $seekRecord \rarrow \penultimateEdge$\;
 			\If{$\dFlag$ \LAnd ($\penultimateEdge.\parent$ $\neq$ \Null)}
 			{
 			   %% \mline{\HelpTargetNode( \parbox[t]{1.25in}{$\penultimateEdge$, \\ $\state \rarrow depth + 1$ );}\;}
 				 \HelpTargetNode( $\penultimateEdge$ )\;
-			}
-			
-      \BlankLine
-			
+			}			
+      \BlankLine			
  	    $result$ := \FindSmallest( $\state$ )\;
 			$\terminalEdge$ := $seekRecord \rarrow \terminalEdge$\;
-	    \If{$\left(\text{\parbox[c]{1.875in}{\LNot($result$) \LOr \\ $\terminalEdge.\child$ $\neq$ $\successorEdge.\child$}}\right)$}
+	    %\If{$\left(\text{\parbox[c]{1.875in}{\LNot($result$) \LOr \\ $\terminalEdge.\child$ $\neq$ $\successorEdge.\child$}}\right)$}
+			\If{\LNot($result$) \LOr $\terminalEdge.\child$ $\neq$ $\successorEdge.\child$}
 			{
-			   \tcp{the successor node has already been removed}
-			   \Break\;
+			   \Break;
+				 \tcp*[f]{the successor node has already been removed}
 			} 
 			\lElse
 			{
 			   $\successorEdge$ := $seekRecord \rarrow \terminalEdge$
 			}
-
    }
-
    \BlankLine
 	 $\node \rarrow \canReplace$ := \True\;
-   %% \If{$\state \rarrow \parent \neq$ \Null}{
-   \UpdateMode( $\state$ )\;
-	 %% }
-	
-	 %% \Return\;
+   \UpdateMode( $\state$ )\;	
 }
-
 \caption{Removing the Successor Node}
 \label{algo:remove}
 \end{algorithm}
@@ -905,8 +805,6 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 \begin{algorithm}[!thb]
 %%
 \DefineKeyWords
-
-
 \DontPrintSemicolon
 \Boolean \MarkChildEdge( $\state$, $which$ )\;
 \PrintSemicolon
@@ -978,10 +876,11 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 
    \Return \True\;
 }
+\caption{Mark Child Edge}
+\label{algo:markChildEdge}
 
 
-
-\remove{
+%\remove{
 
 \end{algorithm}
 
@@ -990,7 +889,7 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 \begin{algorithm}[!thb]
 %%
 \DefineKeyWords
-}
+%}
 
 \BlankLine
 
@@ -1023,37 +922,26 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 	 \While{\True}
 	 {
 	    $\curr$ := $\terminalEdge.\child$\;
-      $\ang{ \nFlag, \ast, \ast, \ast, \leftChild }$ := $\curr \rarrow \child[\LEFT]$\;
-			
+      $\ang{ \nFlag, \ast, \ast, \ast, \leftChild }$ := $\curr \rarrow \child[\LEFT]$\;			
 			\If(\tcp*[h]{reached the node with the smallest key}){$\nFlag$}	
 			{
 			   $\injectionEdge$ := $\ang{\curr, \leftChild, \LEFT}$\;
 			   \Break\;
-			}
-				
-			\BlankLine
-			
+			}				
+			\BlankLine			
 			\tcp{traverse the next edge}			
 			$\penultimateEdge$ := $\terminalEdge$\;
-	    $\terminalEdge$ := $\ang{ \curr, \leftChild, \LEFT }$\;
-		
-			
-	 }
-	
+	    $\terminalEdge$ := $\ang{ \curr, \leftChild, \LEFT }$\;			
+	 }	
 	 \BlankLine
 	 \tcp{initialize seek record and return}
 	 $seekRecord \rarrow \terminalEdge$ := $\terminalEdge$\;
 	 $seekRecord \rarrow \penultimateEdge$ := $\penultimateEdge$\;
    $seekRecord \rarrow \injectionEdge$ := $\injectionEdge$\;
-	 \Return \True\;
-	
+	 \Return \True\;	
 }
-
-
-
-
-\caption{Helper Routines}
-\label{algo:helper|1}
+\caption{Find Smallest}
+\label{algo:findSmallest}
 \end{algorithm}
 
 
@@ -1150,14 +1038,6 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 \caption{Helper Routines}
 \label{algo:helper|2}
 \end{algorithm}
-
-
-
-
-
-
-
-
 
 %% HELP
 
