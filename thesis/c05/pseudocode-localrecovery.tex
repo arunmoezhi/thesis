@@ -1,0 +1,1128 @@
+\begin{limitscope}
+
+%% macros for pseudocode
+\newcommand{\child}{child}
+\newcommand{\node}{node}
+\newcommand{\parent}{parent}
+\newcommand{\mainSeekRecord}{seekTargetKey}
+\newcommand{\successorSeekRecord}{seekSuccessorKey}
+\newcommand{\targetStack}{targetStack}
+\newcommand{\successorStack}{successorStack}
+\newcommand{\successorStackInUse}{successorStackInUse}
+\newcommand{\targetNode}{targetNode}
+\newcommand{\key}{key}
+\newcommand{\done}{done}
+\newcommand{\result}{result}
+\newcommand{\status}{status}
+\newcommand{\restart}{restart}
+\newcommand{\cKey}{key}
+\newcommand{\nKey}{key}
+\newcommand{\cNode}{current}
+\newcommand{\pNode}{parent}
+\newcommand{\nMarked}{marked}
+\newcommand{\which}{which}
+\newcommand{\address}{address}
+\newcommand{\anchor}{anchor}
+\newcommand{\stack}{stack}
+\newcommand{\sTop}{top}
+\newcommand{\sBottom}{bottom}
+\newcommand{\current}{current}
+\remove{
+\newcommand{\traversalRecord}{state}
+\newcommand{\TraversalRecord}{State}
+\newcommand{\opRecord}{opRecord}
+\newcommand{\OpRecord}{OpRecord}
+\newcommand{\seekRecord}{seekRecord}
+\newcommand{\SeekRecord}{SeekRecord}
+}
+\newcommand{\admissible}{admissible}
+\newcommand{\critical}{critical}
+\newcommand{\reference}{re\!f\!erence}
+\newcommand{\OptReturn}[1][]{}
+\newcommand{\injectionPoint}{injectionPoint}
+\newcommand{\Search}{\textsc{Search}}
+\newcommand{\Insert}{\textsc{Insert}}
+\newcommand{\Delete}{\textsc{Delete}}
+\newcommand{\Seek}{\textsc{Seek}}
+\newcommand{\Inject}{\textsc{Inject}}
+%%
+\newcommand{\WFSeekForSearchBOSize}{\textsc{WFSeekForSearchBasedOnSize}}
+\newcommand{\WFSeekForSearchBOHeight}{\textsc{WFSeekForSearchBasedOnHeight}}
+%%
+\newcommand{\WFTraverseTreeBOCount}{\textsc{TraverseBasedOnCount}}
+\newcommand{\WFTraverseTreeBOTimeStamp}{\textsc{TraverseBasedOnTimeStamp}}
+%%
+\remove{
+\newcommand{\SeekForSuccessor}{\textsc{SeekForSuccessor}}
+\newcommand{\NeedSuccessorKey}{\textsc{NeedSuccessorKey}}
+\newcommand{\GetChild}{\textsc{GetChild}}
+\newcommand{\Move}{\textsc{Move}}
+\newcommand{\GetAddress}{\textsc{GetAddress}}
+\newcommand{\IsNull}{\textsc{IsNull}}
+\newcommand{\PopulateSeekRecord}{\textsc{PopulateSeekRecord}}
+}
+\newcommand{\mline}[1]{\DontPrintSemicolon #1 \PrintSemicolon}
+\newcommand{\LEFT}{\textsf{LEFT}}
+\newcommand{\RIGHT}{\textsf{RIGHT}}
+\newcommand{\rarrow}{\!\rightarrow\!}
+\newcommand{\type}{type}
+\newcommand{\limit}{limit}
+\newcommand{\SEARCH}{\textsf{SEARCH}}
+\newcommand{\INSERT}{\textsf{INSERT}}
+\newcommand{\DELETE}{\textsf{DELETE}}
+\newcommand{\STOPFOUND}{\textsf{FOUND}}
+\newcommand{\STOPNOTFOUND}{\textsf{NOT\_FOUND}}
+\newcommand{\ADMISSIBLE}{\textsf{SAFE}}
+\newcommand{\INADMISSIBLE}{\textsf{NOT\_SAFE}}
+\newcommand{\TARGETSTACK}{\textsf{TARGET\_STACK}}
+\newcommand{\SUCCESSORSTACK}{\textsf{SUCCESSOR\_STACK}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\DefineKeyWords}{
+%%
+\SetKw{Boolean}{boolean}
+\SetKw{Integer}{integer}
+\SetKw{LAnd}{~and~}
+\SetKw{LOr}{~or~}
+\SetKw{LNot}{not}
+\SetKw{Struct}{struct}
+\SetKw{Null}{null}
+\SetKw{True}{true}
+\SetKw{False}{false}
+\SetKw{Break}{break}
+\SetKw{Continue}{continue}
+\SetKw{Enum}{enum}
+\SetKw{Word}{word}
+%%
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Data structures used by the local recovery algorithm
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{algorithm}[tb]
+\caption{Data Structures Used} 
+\label{algo:local-data|structures}
+%%
+\DefineKeyWords
+%%
+\tcp{Used to store information about a node visited during tree traversal}
+\DontPrintSemicolon
+\Struct StackEntry \{\;
+\PrintSemicolon
+%%
+\label{lin:local-data|structures:begin}
+\label{lin:local-stack|entry:begin}
+\Indp 
+   NodePtr $\node$\;
+	 \Enum Direction $\which$\;
+   \Integer $\anchor$\;
+\Indm 
+\}\;
+\label{lin:local-stack|entry:end}
+
+\BlankLine
+
+\tcp{Used to store the path from the root node to the current node in the tree}
+\DontPrintSemicolon
+\Struct \TraversalRecord{} \{\;
+\PrintSemicolon
+%%
+\label{lin:local-traversal|record:begin}
+\Indp 
+   StackEntry[~] $\stack$\;
+	 \Integer $\sTop$\;
+	 %% \Integer $\sBottom$\;
+\Indm 
+\}\;
+\label{lin:local-traversal|record:end}
+
+\BlankLine
+
+\tcp{Used to store information about the operation currently in progress}
+\DontPrintSemicolon
+\Struct \OpRecord{} \{\;
+\PrintSemicolon
+%%
+\label{lin:local-op|record:begin}
+\Indp 
+   \Enum Type $\type$\;
+	 Key $\key$\;
+	 \TraversalRecord{} $\targetStack$, $\successorStack$\;
+	 %%\TraversalRecord{} $\successorStack$\;
+	 %% \Boolean $\successorStackInUse$\;
+	 %% NodePtr $\targetNode$\;
+	 NodePtr $\injectionPoint$\;
+	 \BlankLine
+	 \tcp{algorithm-specific fields}
+\Indm
+\}\;
+\label{lin:local-op|record:end}
+
+\BlankLine
+
+\tcp{Used to store the outcome of a tree traversal}
+\DontPrintSemicolon
+\Struct \SeekRecord \{\;
+\PrintSemicolon
+%%
+\label{lin:local-seek|record:begin}
+\Indp 
+   %% \TraversalRecord{}Ptr $\traversalRecord$\;
+	 \tcp{algorithm-specific fields (\emph{e.g.}, target node and its parent)}
+\Indm 
+\}\;
+\label{lin:local-seek|record:end}
+
+\remove{
+   \BlankLine
+%%
+   \tcp{Local records used when executing an operation}
+   \OpRecord{}Ptr $\opRecord$\;
+   SeekRecordPtr $\mainSeekRecord$\;
+   SeekRecordPtr $\successorSeekRecord$\; 
+}
+\label{lin:local-data|structures:end}
+%%
+\end{algorithm}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Functions used for manipulating traversal stack
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{algorithm}[tb]
+\caption{Functions for Manipulating Traversal Stack} 
+\label{algo:local-stack|functions}
+%%
+\DefineKeyWords
+%%
+\tcp{Returns the number of elements in the stack}
+\DontPrintSemicolon
+\Integer \Size( $\traversalRecord$ )\;
+\PrintSemicolon
+\label{lin:local-stack|begin}
+\label{lin:local-size:begin}
+\Begin
+{
+   
+   \Return $\traversalRecord \rarrow \sTop + 1$\;
+	 \label{lin:local-size:end}
+}
+%%
+\BlankLine
+%%
+\tcp{Returns the topmost node in the stack}
+\DontPrintSemicolon
+NodePtr \GetTop( $\traversalRecord$ )\;
+\PrintSemicolon
+\label{lin:local-get|top:begin}
+\Begin
+{
+   
+   $\curly{ \stack, \sTop }$ := $\traversalRecord$\;
+	 \label{lin:local-stack|retrieve}
+	 \Return $\stack[\sTop] \rarrow \node$\;
+	 \label{lin:local-get|top:end}
+}
+%%
+\BlankLine
+%%
+\tcp{Returns the second topmost node in the stack}
+\DontPrintSemicolon
+NodePtr \GetSecondToTop( $\traversalRecord$ )\;
+\label{lin:local-get|second|to|top:begin}
+\PrintSemicolon
+\Begin
+{
+   
+   $\curly{ \stack, \sTop }$ := $\traversalRecord$\;
+	 \Return $\stack[\sTop-1] \rarrow \node$\;
+	 \label{lin:local-get|second|to|top:end}
+}
+%%
+\BlankLine
+%%
+\tcp{Adds the given node to the stack along with its \myanchor{} node}
+\DontPrintSemicolon
+\AddToTop(  $\traversalRecord$, $\node$, $\which$ )\;
+\PrintSemicolon
+\label{lin:local-add|to|top:begin}
+\Begin
+{
+%%
+   
+   $\curly{ \stack, \sTop }$ := $\traversalRecord$\;
+   	
+	 \tcp{find the \myanchor{} node}
+   \lIf{$\which$ = \RIGHT}
+	 {
+	    $\anchor$ := $\sTop$
+	 }
+	 \lElse
+	 {
+	    $\anchor$ := $\stack[\sTop] \rarrow \anchor$
+	 }
+   
+	 \tcp{push the node into the stack}
+   $\stack[\sTop + 1]$ := $\curly{ \node, \which, \anchor }$\;
+	 $\traversalRecord \rarrow \sTop$ := $\sTop + 1$\;
+	 \OptReturn
+	 \label{lin:local-add|to|top:end}
+	
+%%
+}
+%%
+\BlankLine
+%%
+\tcp{Removes the topmost node from the stack}
+\DontPrintSemicolon
+\RemoveFromTop ( $\traversalRecord$ )\;
+\PrintSemicolon
+\label{lin:local-remove|from|top:begin}
+\Begin
+{
+%%
+   
+   $\curly{ \stack, \sTop }$ := $\traversalRecord$\;
+	
+	 \tcp{update the \myanchor{} node of the penultimate entry if needed}
+	 $\anchor$ := $\stack[\sTop - 1] \rarrow \anchor$\;
+	 \If{$\stack[\sTop] \rarrow \anchor$ $<$ $\stack[\anchor] \rarrow \anchor$}
+	 {
+	    $\stack[\anchor] \rarrow \anchor$ := $\stack[\sTop] \rarrow \anchor$\;  
+	 }
+	
+	 \tcp{pop the node from the stack}
+	 $\traversalRecord \rarrow \sTop$ := $\sTop - 1$\;
+	 \OptReturn
+	 \label{lin:local-remove|from|top:end}
+	 	 
+%%
+}
+%%
+\BlankLine
+%%
+\tcp{Pops the stack until a given entry}
+\DontPrintSemicolon
+\RemoveUntilCritical( $\traversalRecord$,  $index$ )\;
+\PrintSemicolon
+\label{lin:local-remove|until|critical:begin}
+\Begin
+{
+  
+   $\traversalRecord \rarrow \sTop$ := $index$\;
+	 \OptReturn
+	 \label{lin:local-remove|until|critical:end}
+
+}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Functions for Manipulating Traversal Stack (Continued)} 
+\label{algo:local-stack|functions|2}
+\DefineKeyWords
+%%
+%\BlankLine
+%%
+\tcp{Remember the \mycritical{} node (to avoid locating it again)}
+\DontPrintSemicolon
+\RememberCritical( $\traversalRecord$,  $\critical$ )\;
+\PrintSemicolon
+\label{lin:local-remember|critical:begin}
+\Begin
+{
+  
+   %% $\curly{ \stack, \sTop }$ := $\traversalRecord$\;  
+	 $\curly{ \stack, \sTop }$ := $\traversalRecord$\;
+   	
+	 $\anchor$ := $\stack[\sTop] \rarrow \anchor$\;
+	 \If{$\critical$ $<$ $\stack[\anchor] \rarrow \anchor$}
+	 {
+	   $\stack[\anchor] \rarrow \anchor$ := $\critical$\;
+	 }
+	 \OptReturn
+	 \label{lin:local-remember|critical:end}
+}
+%%
+\BlankLine
+%%
+\tcp{Returns a given entry in the stack}
+\DontPrintSemicolon
+\{ NodePtr, \Enum Direction, \Integer \} \\
+\qquad\qquad\qquad\qquad \GetFullEntry( $\traversalRecord$,  $index$ )\;
+\PrintSemicolon
+\label{lin:local-get|full|entry:begin}
+\Begin
+{
+   
+   $\curly{ \stack, \sTop }$ := $\traversalRecord$\;
+	 
+	
+	 \remove{
+	
+	    \tcp{find the location of the entry in the stack}
+			
+	    \lIf{$entry$ = $\top$}
+	    {
+	       $index$ := $\sTop$
+	    }
+	    \lElse
+	    {
+	       $index$ := $entry$
+	    }
+	
+	}
+	
+	\lIf{$index$ = $\top$}
+	{
+	   \Return $\stack[\sTop]$
+	}
+	\lElse
+	{
+	   \Return $\stack[index]$
+	}
+	
+
+	\label{lin:local-get|full|entry:end}
+}
+%%
+\BlankLine
+%%
+\tcp{initializes the traversal stack} 
+\DontPrintSemicolon
+\InitializeTraversalRecord( $\traversalRecord$, $\type$ )\;
+\PrintSemicolon
+\label{lin:local-initialize|traversal|record:begin}
+\Begin
+{
+%%
+  
+  \uIf{$\type$ = \TARGETSTACK}
+	{
+		
+	   %% $\traversalRecord \rarrow \stack[0]$ := $\ang{\sNodeOne, -1}$\;
+     %% $\traversalRecord \rarrow \stack[1]$ := $\ang{\sNodeTwo, 0 }$\;
+	   %% $\traversalRecord \rarrow \sTop$ := 1\;
+	   %% $\traversalRecord \rarrow \anchor$ := 0\;
+	   \tcp{initialize the stack using sentinel nodes}
+	   \tcp{sentinel nodes are never removed from the stack}
+	   \tcp{a sentinel node is always a safe starting point for the traversal}
+	}
+	\lElse
+	{
+	   $\traversalRecord \rarrow \sTop$ := -1
+	}
+	
+	\OptReturn
+	\label{lin:local-initialize|traversal|record:end}
+
+%%
+}
+\end{algorithm}
+
+
+\begin{comment}
+
+\begin{algorithm}[tb]
+\caption{Functions for Manipulating Traversal Stack (Continued)} 
+\label{algo:local-stack|functions|2}
+%%
+\DefineKeyWords
+
+\tcp{initializes the traversal stack} 
+\DontPrintSemicolon
+\InitializeTraversalRecord( $\traversalRecord$, $\type$ )\;
+\PrintSemicolon
+\Begin
+{
+%%
+ 
+  \uIf{$\type$ = \TARGETSTACK}
+	{
+		
+	   %% $\traversalRecord \rarrow \stack[0]$ := $\ang{\sNodeOne, -1}$\;
+     %% $\traversalRecord \rarrow \stack[1]$ := $\ang{\sNodeTwo, 0 }$\;
+	   %% $\traversalRecord \rarrow \sTop$ := 1\;
+	   %% $\traversalRecord \rarrow \anchor$ := 0\;
+	   \tcp{initialize the stack using sentinel nodes}
+	   \tcp{the sentinel nodes are never removed from the stack}
+	   \tcp{a sentinel node is always a safe starting point for the traversal}
+	}
+	\lElse{ $\traversalRecord \rarrow \sTop$ := -1 }
+	
+	\OptReturn
+
+%%
+}
+
+\end{algorithm}
+
+\end{comment}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Seek for search operation
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\begin{algorithm}[tb]
+\caption{Seek Function for Target Key (Search Operation)} 
+\label{algo:local-seek:search}
+%%
+\DefineKeyWords
+%%
+\tcp{Traverses the tree starting from the root until either the key is found or a null pointer is encountered}
+%% \tcp{also populates the traversal stack}
+\DontPrintSemicolon
+\Boolean \TraverseTree( $\opRecord$, $\seekRecord$ )\;
+\PrintSemicolon
+\label{lin:local-traverse|tree:begin}
+\Begin
+{
+%%
+   $\traversalRecord$ := $\opRecord \rarrow \targetStack$\;
+	
+	 \tcp{initialize the stack and the variables used in the traversal}
+	 \InitializeTraversalRecord( $\traversalRecord$, \TARGETSTACK{} )\;
+	 \label{lin:local-traverse|tree:initialize}
+	 %% \tcp{initialize the variables used in the traversal}
+   $\cNode$ := \GetTop( $\traversalRecord$ )\;
+	 \label{lin:local-traverse|tree:start}
+	 \BlankLine
+	 \tcp{traverse the tree (starting from $\cNode$)}
+	 \While{\True}
+	 {
+			\label{lin:local-traverse|tree:while:begin}
+	    $\cKey$ := \GetKey( $\cNode$ )\;
+			\label{lin:local-traverse|tree:while:first}
+		  $\which$ := $\opRecord \rarrow \key < \cKey$ ? \LEFT{} : \RIGHT{}\;
+			\label{lin:local-traverse|tree:select}
+		  \tcp{read the next address to de-reference}
+		  %% $\ang{ \ast, \ast, \nFlag, \address}$ := $\cNode \rarrow \child[\which]$\;  
+			$\reference$ := \GetChild( $\cNode$, $\which$ )\;
+			
+			\BlankLine
+			
+		  \lIf{$\opRecord \rarrow \key$ = $\cKey$}
+			{ 
+			   \Return \True 
+				 \label{lin:local-traverse|tree:match}
+			}	     
+			\lIf{\IsNull( $\reference$ )}
+			{ 
+			   \Return \False
+				 \label{lin:local-traverse|tree:null}
+			}	  
+				
+			\BlankLine
+			
+		  \tcp{traverse the next edge}
+		  %% $\pNode$ := $\cNode$;
+			$\address$ := \GetAddress( $\reference$ )\;
+			$\cNode$ := $\address$\;
+			\tcp{push the next node to be visited into the stack}
+			\AddToTop( $\traversalRecord$, $\address$, $\which$ )\;
+			\label{lin:local-traverse|tree:stack}
+			\label{lin:local-traverse|tree:while:end}
+			      
+	  }	
+		
+		\OptReturn[\False]
+		\label{lin:local-traverse|tree:end}
+%%
+}
+%%
+\BlankLine
+%%
+\tcp{Checks if the key being searched for has moved up in the path stored in the stack}
+\DontPrintSemicolon
+\Boolean \ExamineStack( $\opRecord$, $\seekRecord$ )\;
+\PrintSemicolon
+\label{lin:local-examine|stack:begin}
+\Begin
+{
+%%
+  
+   $\result$ := \False\;
+	 $\traversalRecord$ := $\opRecord \rarrow \targetStack$\;
+	 
+	 \BlankLine
+	
+   \tcp{start with the \myanchor{} closest to the topmost node in the stack}
+	 $\curly{ \ast, \ast, \critical }$ := \GetFullEntry( $\traversalRecord$, $\top$ )\;
+	 \label{lin:local-examine|stack:start}	
+			
+	 \BlankLine
+			
+			
+	 \While{\True}
+	 {
+	    \label{lin:local-examine|stack:while:begin}
+	    \tcp{retrieve the node and its closest \myanchor{} node from the stack}
+	    $\curly{ \node, \ast, \anchor }$ := \GetFullEntry( $\traversalRecord$, $\critical$ )\;
+			\tcp{read the attributes of the node}					
+		  $\nMarked$ := \IsMarked( $\node$ )\; 
+			$\nKey$ := \GetKey( $\node$ )\;
+					
+			\uIf{$\opRecord \rarrow \key$ = $\nKey$}
+			{  
+			   \label{lin:local-examine|stack:while:found:begin}
+			   \tcp{the key stored in the node matches the one being searched for}
+			   $\result$ := \True\;
+				 \Break\;
+				 \label{lin:local-examine|stack:while:found:end}
+			} \uElseIf{($\opRecord \rarrow \key$ $<$ $\nKey$) \LOr \LNot($\nMarked$)}
+			{
+			   \label{lin:local-examine|stack:while:not|found:begin}
+			   \tcp{the target key did not exist continuously in the tree}
+			   \Break\;
+				 \label{lin:local-examine|stack:while:not|found:end}
+			} \Else(\tcp*[h]{examine the preceding \myanchor{} node})
+			{			
+			   \label{lin:local-examine|stack:while:continue:begin}
+			   %% \tcp{examine the preceding \myanchor{} node}
+			   $\critical$ := $\anchor$\;
+				 \label{lin:local-examine|stack:while:continue:end}
+			}
+		  \label{lin:local-examine|stack:while:end} 
+   }
+	
+	 %% \BlankLine
+	 
+	 %% \tcp{return the outcome}
+	 %% \PopulateSeekRecord( $\seekRecord$, $\traversalRecord$ )\;
+	 \Return $\result$\;
+	 \label{lin:local-examine|stack:end}	
+%%
+}
+\end{algorithm}
+
+\begin{algorithm}[tb]
+\caption{Seek Function for Target Key (Search Operation) (continued)} 
+\label{algo:local-seek:search:2}
+%%
+\DefineKeyWords
+%%
+%\BlankLine
+%%
+\tcp{Looks for a given key in the tree (invoked by a search operation)}
+\DontPrintSemicolon
+\Boolean \SeekForSearch( $\opRecord$, $\seekRecord$ )\;
+\PrintSemicolon
+\label{lin:local-seek|search:begin}
+\Begin
+{
+%%
+   
+   
+   \tcp{traverse the tree from top to down}
+	 
+	 $\result$ := \TraverseTree( $\opRecord$, $\seekRecord$ )\;
+	 \label{lin:local-seek|search:traverse|tree}	
+	 \If{\LNot($\result$)}	
+	 {
+	     \tcp{check if the key has moved up in the path stored in the stack}
+	     $\result$ := \ExamineStack( $\opRecord$, $\seekRecord$ )\;
+			 \label{lin:local-seek|search:examine|stack}
+	 }
+	
+	 \tcp{return the outcome}
+	 %% \tcp{return the outcome}
+	 \PopulateSeekRecord( $\seekRecord$, $\traversalRecord$ )\;
+	 \Return $\result$\;
+   \label{lin:local-seek|search:end}
+%%
+}
+%%
+\end{algorithm}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Functions used to achieve local recovery
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{algorithm}[tb]
+%\caption{Functions used to Achieve Local Recovery} 
+\caption{validate path}
+\label{algo:local-local:recovery}
+%%
+\DefineKeyWords
+%%
+\tcp{Determines if the path stored in the stack is still valid}
+\tcp{Returns one of the following four values:}
+\tcp{\{ \ADMISSIBLE, \INADMISSIBLE,  \STOPFOUND, \STOPNOTFOUND \}}
+\tcp{May backtrack along the path under certain situations}
+\DontPrintSemicolon
+\Enum Outcome \FindAdmissible( $\opRecord$, $\traversalRecord$ )\;
+\PrintSemicolon
+\label{lin:local-find|admissible:begin}
+\Begin
+{
+%% 
+   
+   \tcp{check if any of the \myanchor{} nodes in the stack has become \myinconsistent{} starting with the one immediately preceding the topmost node in the stack}
+	 %%  \tcp{start with the \myanchor{} node of the topmost node in the stack}
+	 $\curly{ \ast, \ast, \critical }$ := \GetFullEntry( $\traversalRecord$, $\top$ )\;
+	 	
+	 \While{\True}
+	 {
+	    \label{lin:local-find|admissible:while:begin}
+	    \tcp{retrieve the node and its \myanchor{} from the stack}
+	    $\curly{ \node, \ast, \anchor }$ := \GetFullEntry( $\traversalRecord$, $\critical$ )\;
+		  \tcp{read the attributes of the node}
+			$\nMarked$ := \IsMarked( $\node$ )\; 
+			$\nKey$ := \GetKey( $\node$ )\;
+			
+			\BlankLine
+			
+			\uIf{$\opRecord \rarrow \key$ $>$ $\nKey$}
+		  {
+			   \label{lin:local-find|admissible:while:consistent:begin}
+			   \tcp{the \myanchor{} node is still \myconsistent{}}
+				
+				 \uIf{\LNot($\nMarked$)}
+				 { 
+				   
+				    \tcp{the \accesspath is still valid}
+				    \RememberCritical( $\traversalRecord$, $\critical$ )\;
+				    \Return \ADMISSIBLE\;
+				 }
+				 \Else(\tcp*[h]{need to check the previous \myanchor{} node})
+				 {
+				    $\critical$ := $\anchor$\;
+						\label{lin:local-find|admissible:while:continue}
+				 }
+				 \label{lin:local-find|admissible:while:consistent:end}
+				
+			} \uElseIf{$\opRecord \rarrow \key$ $<$ $\nKey$}
+			{
+			   \label{lin:local-find|admissible:while:not|consistent:begin}
+			   \tcp{the \myanchor{} node is no longer consistent}
+			   \uIf{$\opRecord \rarrow \type$ = \DELETE}
+				 { 
+				   
+				    \tcp{the target key did not exist continuously in the tree}
+				    \Return \STOPNOTFOUND\;
+				 }
+				 \Else(\tcp*[h]{the path is not valid})
+				 {
+			       \RemoveUntilCritical( $\traversalRecord$, $\critical$ )\;
+						 \label{lin:local-find|admissible:consistent}
+						 \Return \INADMISSIBLE\;
+				 } 
+				 \label{lin:local-find|admissible:while:not|consistent:end}
+			} \Else(\tcp*[h]{the two keys match})
+			{
+			   \label{lin:local-find|admissible:while:match:begin}
+			   %% \tcp{the key stored in the \myanchor{} node matches the one being searched for}
+				
+						
+				 \RemoveUntilCritical( $\traversalRecord$, $\critical$ )\;
+				 	
+				 
+				 \tcp{stop the traversal}
+				 \Return \STOPFOUND\;
+				 \label{lin:local-find|admissible:while:match:end}
+				
+				 \remove{
+			   \uIf{($\opRecord \rarrow \type$ = \INSERT) \LOr \LNot($\nMarked$)}
+				 { 
+				    \tcp{stop the traversal}
+				    \Return \STOPFOUND\;
+						\label{lin:local-find|admissible:while:match:stop}
+				 } 
+				 \Else
+				 {   
+				    \tcp{the \myanchor{} node is marked; the key may have moved up}
+				    \Return \INADMISSIBLE\;
+						\label{lin:local-find|admissible:while:match:continue}
+						\label{lin:local-find|admissible:while:match:end}
+				 }
+				 }
+				
+				
+			}
+			\label{lin:local-find|admissible:while:end} 
+	 }
+	 
+	 \OptReturn[\INADMISSIBLE]
+	 \label{lin:local-find|admissible:end}
+	  
+%%
+}
+\end{algorithm}
+
+\begin{algorithm}[tb]
+\caption{find a safe node}
+\label{algo:local-local:recovery:2}
+%%
+\DefineKeyWords
+%%
+\BlankLine
+%%
+\tcp{Backtracks along the path stored in the stack until a suitable restart point is found}
+\DontPrintSemicolon
+\Enum Outcome \FindStartPoint( $\opRecord$, $\traversalRecord$ )\;
+\PrintSemicolon
+\label{lin:local-find|start|point:begin}
+\Begin
+{
+%%
+   
+	 \While{\True}
+   {
+	    \label{lin:local-find|start|point:while:begin}
+	    \tcp{backtrack until an unmarked node}
+			$\cNode$ := \GetTop( $\traversalRecord$ )\;
+			\label{lin:local-find|start|point:while:backtrack:begin}
+    		
+	    \While{\IsMarked( $\cNode$ )}
+			{
+			  
+			   \RemoveFromTop( $\traversalRecord$ )\;
+				 $\cNode$ := \GetTop( $\traversalRecord$ )\;
+         
+			}
+			
+			\BlankLine
+
+      \tcp{check if the algorithm needs a clean parent node}
+			\If{\NeedCleanParentNode( $\opRecord$, $\cNode$ )}
+			{ 
+			   \label{lin:local-find|start|point:while:clean:begin}
+				 $\pNode$ := \GetSecondToTop( $\traversalRecord$ )\; 
+				 \If{\LNot(\IsClean( $\pNode$ ))}
+				 {
+				    \tcp{need to backtrack even further}
+						
+											
+				    \RemoveFromTop( $\traversalRecord$ )\;
+						\Continue\;
+						\label{lin:local-find|start|point:while:clean:end}
+						\label{lin:local-find|start|point:while:backtrack:end}
+				 }
+			}
+			
+			
+			\BlankLine
+			
+			\tcp{check if the topmost node in the stack is a suitable restart point}
+		
+	    $\result$ := \FindAdmissible( $\opRecord$, $\traversalRecord$ )\;
+	    \label{lin:local-find|start|point:while:find|admissible}
+		  \lIf{ $\result$ $\neq$ \INADMISSIBLE }
+			{
+			   \Return $\result$
+			}
+			
+			\label{lin:local-find|start|point:while:end}
+	 }
+	
+	 \OptReturn[\ADMISSIBLE]
+	 \label{lin:local-find|start|point:end}
+%%
+}
+%%
+\end{algorithm}
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Seek for target key
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\begin{algorithm}[tb]
+\caption{Seek Function for Target Key (Modify Operation)} 
+\label{algo:local-seek:modify}
+%%
+\DefineKeyWords
+%%
+\tcp{Looks for a given key in the tree (invoked by insert/delete operation)}
+\DontPrintSemicolon
+\Boolean \SeekForModify( $\opRecord$, $\seekRecord$ )\;
+\PrintSemicolon
+\label{lin:local-seek|modify:begin}
+\Begin
+{
+%%
+   
+   $\traversalRecord$ := $\opRecord \rarrow \targetStack$\;
+	 $\result$ := \INADMISSIBLE\;
+	 
+	 \BlankLine
+	
+	 \While{$\result$ = \INADMISSIBLE}
+	 { 
+	    \label{lin:local-seek|modify:while:begin}
+	    \tcp{backtrack to a suitable restart point in the path stored in the stack}
+      $\result$ := \FindStartPoint( $\opRecord$, $\traversalRecord$ )\;
+	    \label{lin:local-seek|modify:while:find|start|point}
+	    \lIf{$\result$ $\in$ $\{ \STOPFOUND, \STOPNOTFOUND \}$}{ \Break }
+			
+			\BlankLine
+			
+	    \tcp{traverse the tree starting from the topmost node in the stack}
+      $\cNode$ := \GetTop( $\traversalRecord$ )\;
+			\label{lin:local-seek|modify:while:traversal:begin}
+	    \While{\True}
+	    {
+			  
+	       $\cKey$ := \GetKey( $\cNode$ )\;
+		     $\which$ := $\opRecord \rarrow \key < \cKey$ ? \LEFT{} : \RIGHT{}\;
+				 \label{lin:local-seek|modify:while:traversal:select}
+		     \tcp{read the next address to de-reference}
+		     $\reference$ := \GetChild( $\cNode$, $\which$ )\;
+			   		
+		     \BlankLine
+				
+		     \If{($\opRecord \rarrow \key$ = $\cKey$) \LOr \IsNull( $\reference$ )}
+			   {
+				    \label{lin:local-seek|modify:while:traversal:stop:begin}
+			      \tcp{either stop or backtrack \& restart }
+			      \uIf{$\opRecord \rarrow \key$ $<$ $\cKey$}
+				    {
+						   \tcp{check if the path traversed is still valid}
+				       $\result$ := \FindAdmissible( $\opRecord$, $\traversalRecord$ )\;
+							 \label{lin:local-seek|modify:while:traversal:find|admissible}
+							 
+							 
+							
+				    } \Else(\tcp*[h]{determine what value to return})
+				    {
+						  
+							 
+							 \label{lin:local-seek|modify:while:traversal:stop}
+							 %% \tcp{determine what value to return}
+							
+							 $\result$ := \STOPFOUND\;
+							 
+						   \If{$\opRecord \rarrow \key$ $\neq$ $\cKey$}
+							 {
+							    \tcp{remember the address read}
+									$\opRecord \rarrow \injectionPoint$ := \\
+									\qquad\qquad \GetAddress( $\reference$ )\;
+							    $\result$ := \STOPNOTFOUND\;
+							 }
+							
+						} 
+				   
+					  \tcp{terminate the current traversal}
+						\Break\;
+						\label{lin:local-seek|modify:while:traversal:stop:end}
+						 
+			   }
+			  				
+				 \BlankLine
+					
+				 \tcp{traverse the next edge}
+			   $\address$ := \GetAddress( $\reference$ )\;
+				 \label{lin:local-seek|modify:while:traversal:move:begin}
+				 $\restart$ := \Move( $\cNode$, $\address$, $\which$ )\;
+				
+				 \If{$\restart$}
+				 {
+				    \tcp{the algorithm wants to restart the traversal}
+						\Break\;
+				 }  
+				 
+				
+				 \tcp{push the node visited into the stack}
+				
+				 \AddToTop( $\traversalRecord$, $\address$, $\which$ )\;
+				 \label{lin:local-seek|modify:while:traversal:move:end}
+			   \label{lin:local-seek|modify:while:traversal:end}
+	    } %% inner while loop
+			
+			
+			
+	    \label{lin:local-seek|modify:while:end}	
+	 }	 %% outer while loop
+		
+	 \BlankLine
+		
+	 \tcp{return the outcome}
+
+	 \PopulateSeekRecord( $\seekRecord$, $\opRecord$ )\;
+	 \label{lin:local-seek|modify:populate}
+	 \Return ($\result$ = \STOPFOUND \  ? \  \True : \False)\;
+   \label{lin:local-seek|modify:end}
+%%
+}
+\end{algorithm}
+
+
+
+
+
+\remove{
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Seek for successor key
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{algorithm}[tb]
+\caption{Seek Function for Successor Key} 
+\label{algo:local-seek:successor}
+%%
+\DefineKeyWords
+%%
+\tcp{Looks for the next largest key with respect to a given key (invoked by a complex delete operation)}
+\DontPrintSemicolon
+\Boolean \SeekForSuccessor( $\opRecord$, $\seekRecord$ )\;
+\PrintSemicolon
+\label{lin:local-seek|successor:begin}
+\Begin
+{
+%%
+   
+   \tcp{the stack used in locating the successor key is initialized before this function is invoked}	
+	 $\traversalRecord$ := $\opRecord \rarrow \successorStack$\;
+	 \While{\True}
+	 {
+	
+	    \label{lin:local-seek|successor:while:begin}
+		  \tcp{backtrack until either an unmarked node or the stack becomes empty}
+			
+	    
+			\While{(\Size( $\traversalRecord$ ) $>$ 1)}      
+			{
+			    \label{lin:local-seek|successor:while:backtrack:begin}
+			    $\cNode$ := \GetTop( $\traversalRecord$ )\;
+					\lIf{\LNot(\IsMarked( $\cNode$ ))}
+					{
+					   \Break
+					} 
+					\lElse
+					{
+					   \RemoveFromTop( $\traversalRecord$ )
+					}
+					\label{lin:local-seek|successor:while:backtrack:end}
+			}
+	
+	    \BlankLine
+			
+			\tcp{backtrack further if a clean parent is needed but the parent is not clean}
+			\If{(\Size( $\traversalRecord$ ) $\geq$ 2)}
+			{
+			   \label{lin:local-seek|successor:while:clean:begin}
+			   \If{\NeedCleanParentNode( $\opRecord$, $\cNode$ )}
+		     {
+				    
+			      \tcp{the parent node should be a clean node}
+				    $\pNode$ := \GetSecondToTop( $\traversalRecord$ )\;
+				    \If{\LNot(\IsClean( $\pNode$ ))}
+				    {
+				       \RemoveFromTop( $\traversalRecord$ )\;
+					     \Continue\;
+							 \label{lin:local-seek|successor:while:clean:end}
+				    }
+			   }
+				
+			}
+			
+			\BlankLine
+			
+	    \tcp{check if the successor key is still needed}
+	    $\reference$ := \NeedSuccessorKey( $\opRecord$ )\;
+			\label{lin:local-seek|successor:while:need|successor}
+			\If{\IsNull( $\reference$ )}{ 
+			   \tcp{successor key no longer required}
+			   \Return \false\;
+			}
+			
+			\BlankLine
+			
+			$\cNode$ := \GetTop( $\traversalRecord$ )\;
+			\uIf{(\Size( $\traversalRecord$ ) = 1)}
+			{
+			   \label{lin:local-seek|successor:while:traversal:if:begin}
+			   %% $\address$ := \GetAddress( $\reference$ )\;
+				 \tcp{visit the node pointed to by the reference returned by \NeedSuccessorKey{} function}
+			   $\which$ := \RIGHT\;
+				 \label{lin:local-seek|successor:while:traversal:if:end}
+			}
+			\Else
+			{
+			   \label{lin:local-seek|successor:while:traversal:else:begin}
+			   \tcp{follow the left child node of the top node, if it exists}
+		 	   $\reference$ := \GetChild( $\cNode$, \LEFT{} )\;
+			   %% \lIf{\IsNull( $\reference$ )}{ \Break }
+				 %% $\address$ := \GetAddress( $\reference$ )\;
+			   $\which$ := \LEFT\;
+				 \label{lin:local-seek|successor:while:traversal:else:end}
+			}
+			
+			\Repeat{\True}
+	    {
+			   \label{lin:local-seek|successor:while:traversal:begin}
+			   \tcp{stop if reference is null}
+				 \lIf{\IsNull( $\reference$ )}{ \Break }
+				
+				 \tcp{obtain the address of the node}
+				 $\address$ := \GetAddress( $\reference$ )\;	
+				
+				 \BlankLine
+				
+				 \tcp{traverse the edge}
+				 $\restart$ := \Move( $\cNode$, $\address$, $\which$ )\;
+				 \label{lin:local-seek|successor:while:traversal:move}
+			   \If{$\restart$}
+			   {
+			      \tcp{the algorithm wants to restart the traversal}
+				    \Break\;
+						\label{lin:local-seek|successor:while:traversal:restart}
+			   }  
+				 
+			   \tcp{push the node visited into the stack}
+				 \AddToTop( $\traversalRecord$, $\address$, $\which$ )\;
+				 \label{lin:local-seek|successor:while:traversal:stack}
+				 \label{lin:local-seek|successor:while:traversal:advance:begin}
+			   $\cNode$ := $\address$\;
+				 \tcp{determine the next node to be visited}
+			   $\reference$ := \GetChild( $\cNode$, \LEFT{} )\;
+			   $\which$ := \LEFT{}\;
+				 \label{lin:local-seek|successor:while:traversal:advance:end}
+				 \label{lin:local-seek|successor:while:traversal:end}
+			}
+			\label{lin:local-seek|successor:while:end}
+	 }
+	
+	
+	 \BlankLine
+	
+	 \tcp{return the outcome}
+	 \PopulateSeekRecord( $\seekRecord$, $\opRecord$ )\;
+	 \Return \True;
+	 \label{lin:local-seek|successor:end}
+%%
+}
+%%
+\end{algorithm}
+
+}
+
+
+\end{limitscope}

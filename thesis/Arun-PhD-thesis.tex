@@ -70,7 +70,8 @@
     arrow/.style={thick, ->, >=stealth}
 }
 \usepackage{circuitikz}
-
+\usepackage{subcaption}
+\usepackage{xparse}
 
 
 %
@@ -100,6 +101,10 @@
 \newcommand{\algoref}[1]{Algorithm~\ref{algo:#1}}
 \newcommand{\Algoref}[1]{Algorithm~\ref{algo:#1}}
 \newcommand{\algosref}[3][-]{Algorithms~\ref{algo:#2}{#1}\ref{algo:#3}}
+\newcommand{\pseudoref}[1]{Pseudo-code~\ref{algo:#1}}
+\newcommand{\Pseudoref}[1]{Pseudo-code~\ref{algo:#1}}
+\newcommand{\pseudosref}[3][-]{Pseudo-codes~\ref{algo:#2}{#1}\ref{algo:#3}}
+\newcommand{\Pseudosref}[3][-]{Pseudo-codes~\ref{algo:#2}{#1}\ref{algo:#3}}
 \newcommand{\enumref}[1]{\ref{enum:#1}}
 \newcommand{\thmref}[2][Theorem]{{#1}~\ref{thm:#2}}
 \newcommand{\Thmref}[2][Theorem]{{#1}~\ref{thm:#2}}
@@ -172,27 +177,34 @@ abstract goes here
 \listoftables % required if you have any tables
 
 \mainmatter
-
+\newenvironment{limitscope}{}{}
 %\chapter{Introduction}
 %\label{c:introduction}
 %\input{c01/introduction}
+
 %\chapter{System Model and related work}
 %\label{c:systemModel}
 %\input{c02/systemModel}
+
 \chapter{Lock based concurrent binary search trees}
 \label{c:castle}
 \input{c03/castle}
+
 \chapter{Lock free concurrent binary search tree}
 \label{c:icdcn}
 \input{c04/icdcn}
-%\chapter{Local recovery for concurrent binary search trees}
-%\label{c:localRecovery}
-%\input{c05/localRecovery}
+
+\chapter{Local recovery for concurrent binary search trees}
+\label{c:localRecovery}
+\input{c05/localRecovery}
+
 %\chapter{Experimental evaluation}
 %\label{c:experiments}
 %\input{c06/experiments}
+
 %\chapter{conclusion}
 %\label{c:conclusion}
 %\input{c07/conclusion}
+
 \bibliography{Bibliography/citations}
 \end{document}

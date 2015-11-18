@@ -1,0 +1,129 @@
+\begin{figure}[t]
+\centering
+{
+	\begin{tikzpicture}[scale=\myfigurescaletwo, transform shape]
+		\newcommand\XA{0}
+		\newcommand\YA{0}
+		\newcommand\XD{1.25}
+		\newcommand\YD{1.5}
+		
+		\node (R)			[treenode] 									at (\XA,\YA)          	  		{$\sNodeOne$ \\ $\sKeyOne$};
+		\node (gndr)	[ground] 										at (\XA-\XD,\YA-\YD)	  			{};  
+		\node (S)			[treenode] 									at (\XA+\XD,\YA-\YD) 		  		{$\sNodeTwo$ \\ $\sKeyTwo$};
+		\node (U)			[treenode] 									at (\XA,\YA-2*\YD)    				{$U$ \\ 10};
+		\node (gnds)	[ground] 									  at (\XA+2*\XD,\YA-2*\YD)			{};
+		\node (A)     [subtree]                   at (\XA-1.5*\XD,\YA-2.75*\YD)    {\Large $\alpha$};
+		\node (V)			[treenode] 									at (\XA+\XD,\YA-3*\YD) 	 	 		{$V$ \\ 100};
+		\node (W)			[treenode,fill=black!20]		at (\XA,\YA-4*\YD)    				{$W$ \\ 30};
+		\node (B)     [subtree]                   at (\XA+2*1.5*\XD,\YA-3.75*\YD) 	{\Large $\beta$};
+	  \node (gndw)	[ground] 										at (\XA-\XD,\YA-5*\YD)	 			{};  
+		\node (X)			[treenode] 									at (\XA+\XD,\YA-5*\YD)   			{$X$ \\ 55};
+		\node (Y)			[treenode,fill=black!20]		at (\XA,\YA-6*\YD)    				{$Y$ \\ 50};
+		\node (C)     [subtree]                   at (\XA+2*1.5*\XD,\YA-5.75*\YD)  {\Large $\gamma$};
+		\node (Z)			[treenode] 									at (\XA-\XD,\YA-7*\YD)    		{$Z$ \\ 40};
+		\node (gndy)	[ground] 										at (\XA+\XD,\YA-7*\YD)	 		  {}; 
+		\node (gndz)	[ground] 										at (\XA-2*\XD,\YA-8*\YD)			{};  
+		\node (D)     [subtree]                   at (\XA+0.5*\XD,\YA-7.75*\YD)    {\Large $\delta$};
+		\node (TR)    [rectangle,align=center,minimum size=1cm] at (\XA-2,\YA) 					{\large \myanchor{} node};
+		\node (TU)    [rectangle,align=center,minimum size=1cm] at (\XA-2,\YA-2*\YD) 		{\large \myanchor{} node};		
+		\node (TW)    [rectangle,align=center,minimum size=1cm] at (\XA-2,\YA-4*\YD) 		{\large \myanchor{} node};
+		%%
+		\node (TY)    [rectangle,align=center,minimum size=1cm] at (\XA-2.75,\YA-6*\YD) 				{\large \myterminal{} node's parent};
+		\node (TZ)    [rectangle,align=center,minimum size=1cm] at (\XA-\XD-2,\YA-7*\YD) 		{\large \myterminal{} node};
+		\node (TGNDZ) [rectangle,align=center,minimum size=1cm] at (\XA-2*\XD-2,\YA-8*\YD) 	{\large injection point};
+				
+		\path[every node/.style={font=\sffamily\large}]
+		(R)     edge[->]           	 node           {} (gndr)
+		(R)     edge[->,very thick]  node           {} (S)
+		(S)     edge[->]           	 node           {} (gnds)
+		(S)     edge[->,very thick]  node           {} (U)
+		(U)     edge[->]           	 node           {} (A.north)
+		(U)     edge[->,very thick]  node           {} (V)
+		(V)     edge[->]           	 node           {} (B.north)
+		(V)     edge[->,very thick]  node           {} (W)
+		(W)     edge[->]           	 node           {} (gndw)
+		(W)     edge[->,very thick]  node           {} (X)
+		(X)     edge[->,very thick]  node           {} (Y)
+		(X)     edge[->]           	 node           {} (C.north)
+		(Y)     edge[->,very thick]  node           {} (Z)
+		(Y)     edge[->]           	 node           {} (gndy)
+		(Z)     edge[->,very thick]  node           {} (gndz)
+		(Z)     edge[->]           	 node           {} (D.north);
+		
+		\begin{comment}
+		
+		\newcommand\XB{\XA+2}
+		\newcommand\YB{\YA-6.8}
+		
+		
+		
+
+
+
+
+	
+	
+		\node (R)			[treenode] 									at (\XA,\YA+2.5)       	{$\sNodeOne$ \\ $\sKeyOne$};
+	  \node (gndr)		[ground] 										at (\XA-1.25,\YA+1.75)			{};  
+	  \node (S)			[treenode] 									at (\XA+1.25,\YA+1.25) 		{$\sNodeTwo$ \\ $\sKeyTwo$};
+	  \node (gnds)	[ground] 										at (\XA+2.5,\YA+0.75)				{}; 
+		%%
+		%%
+		\node (x)		[treenode]		at (\XA,\YA)       						{$U$ \\ 10};
+		\node (x2) [rectangle,align=center,minimum size=1cm] at (\XA-1.25,\YA+0.375) 				{\large anchor \\ \large node};
+		\node (S1)	[subtree] 									at ([shift=({-2,-0.5})]x)  		{\Large $\alpha$};
+		\node (y0)	[treenode] 									at ([shift=({3,-0.5})]x) 			{$V$ \\ 100};
+		\node (y1)	[treenode,fill=black!20]		at ([shift=({-1.5,-1})]y0)		{$W$ \\ 30}; 
+		\node (S2)	[subtree] 									at ([shift=({2,-0.5})]y0)   	{\Large $\beta$};
+		%% \node (S3)	[subtree] 									at ([shift=({-2.5,-1})]y1)  		{\Large $\gamma$};
+		\node (gnd2)	[ground] 										at ([shift=({-1,-1})]y1)			{};
+		\node (y2)	[treenode]									at ([shift=({1.5,-1})]y1)			{$X$ \\ 55}; 
+		\node (y3)	[treenode,,fill=black!20]									at ([shift=({-1,-1.5})]y2)		{$Y$ \\ 50}; 
+		\node (S4)	[subtree] 									at ([shift=({1.5,-0.5})]y2)  	{\Large $\gamma$};
+		%% \node (y4)	[treenode,fill=black!20]		at ([shift=({-1,-1.5})]y3)		{$Z$ \\ 40};
+		\node (y4)	[treenode]		at ([shift=({-1,-1.5})]y3)		{$Z$ \\ 40};
+		%% \node (S5)	[subtree] 									at ([shift=({1.5,-0.5})]y3)  	{\Large $\delta$}; 
+		\node (gnd3)	[ground] 									at ([shift=({1,-1})]y3)  	{}; 
+		\node (gnd)	[ground] 										at ([shift=({-1,-1})]y4)			{}; 
+		\node (S6)  [subtree]                   at ([shift=({1.5,-0.5})]y4)  	{\Large $\delta$}; 
+		\node (y1l) [rectangle,align=center,minimum size=1cm] at (\XA+0.25,\YA-1.4) 				{\large anchor \\ \large node};
+		\node (y4l) [rectangle,align=center,minimum size=1cm] at (\XA-0.25,\YA-5.4) 				{\large terminal \\ \large node};
+		%% \node (x1) 	[rectangle,align=center,minimum size=1cm] at(\XA+1.75,\YA+0.375) 	{}; %%{\large last unmarked \\ \large edge};
+		\node (x1) 	[rectangle,align=center,minimum size=1cm]at (\XA-1.25,\YA-6.75) 	{\large injection \\ \large point};
+    \node (y41) 	[rectangle,align=center,minimum size=1cm]at (\XA + 0.25,\YA-3.875) 	{\large terminal \\ \large node's parent};
+
+		\path[every node/.style={font=\sffamily\large}]
+		%%
+		(R)     edge[->]           	 node           {} (gndr)
+		(R)     edge[->,very thick]  node           {} (S)
+		(S)     edge[->]             node           {} (gnds)
+	  (S)     edge[->,very thick]  node           {} (x)
+		%%
+		%% (\XA,\YA+1) 	edge[->,thin] 		node 					{} (x)
+		(x) 		edge[->,very thick]	 node 					{} (y0)
+		(x) 		edge[->]						 node 					{} (S1.north)
+		(y0) 		edge[->,very thick]	 node 					{} (y1)
+		(y0) 		edge[->]						 node 					{} (S2.north)
+		(y1) 		edge[->]						 node 					{} (gnd2)
+		(y1) 		edge[->,very thick]	 node 					{} (y2)
+		(y2) 		edge[->,very thick]	 node 					{} (y3)
+		(y2) 		edge[->]						 node 					{} (S4.north)
+		(y3) 		edge[->,very thick]	 node 					{} (y4)
+		(y3) 		edge[->]						 node 					{} (gnd3)
+		(y4) 		edge[->,very thick]	 node 				 	{} (gnd)
+		(y4)    edge[->]             node          {} (S6.north);
+		
+		%% legend
+		%%\draw[->] (\XB,\YB) -- (\XB+1, \YB) node[right] {\large ~clean edge};
+		%%\draw[->,thick] (\XB, \YB-0.5) -- (\XB+1, \YB-0.5) node[right] {\large ~marked edge};
+		%%\node (legend) [thin, draw=black, align=center, minimum width=5cm, minimum height=1.25cm] at (\XB+2, \YB-0.3) {};
+		
+		\end{comment}
+		
+ \end{tikzpicture}
+}
+\caption{Nodes in the access path of seek. Shaded nodes denote nodes that have been marked.}
+\label{fig:seek}
+\end{figure}
+
+

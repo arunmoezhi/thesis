@@ -96,7 +96,7 @@
 %% DATA STRUCTURES
 
 
-\begin{algorithm}[!thb]
+\begin{algorithm}[htp]
 %%
 \DefineKeyWords
 %%
@@ -113,13 +113,13 @@
    \Boolean $\canReplace$\;
 \Indm
 \}\;
-\label{ln:node|end}
+\label{ln:icdcn-node|end}
 %%
 \BlankLine
 
 \DontPrintSemicolon
 \Struct Edge \{\;
-\label{ln:edge|begin}
+\label{ln:icdcn-edge|begin}
 \PrintSemicolon
 \Indp 
    %% NodePtr $\parent$\;
@@ -128,7 +128,7 @@
    \Enum $which$ \{ \LEFT{}, \RIGHT{} \}\;
 \Indm
 \}\;
-\label{ln:edge|end}
+\label{ln:icdcn-edge|end}
 %%
 \BlankLine
 
@@ -195,7 +195,7 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 
 
 
-\begin{algorithm}[!thb]
+\begin{algorithm}[htp]
 %%
 \DefineKeyWords
 
@@ -286,7 +286,7 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 
 
 %% SEARCH
-\begin{algorithm}[!thb]
+\begin{algorithm}[htp]
 %%
 \DefineKeyWords
 \DontPrintSemicolon
@@ -308,7 +308,7 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 \end{algorithm}
 
 %% INSERT
-\begin{algorithm}[tp]
+\begin{algorithm}[htp]
 %%
 \DefineKeyWords
 \DontPrintSemicolon
@@ -354,7 +354,7 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 \end{algorithm}
 
 %% DELETE
-\begin{algorithm}[!thb]
+\begin{algorithm}[htp]
 \DefineKeyWords
 \DontPrintSemicolon
 \Boolean \Delete( $key$ )\;
@@ -434,7 +434,7 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 \end{algorithm}
 
 %% INJECT
-\begin{algorithm}[!thb]
+\begin{algorithm}[htp]
 %%
 \DefineKeyWords
 \DontPrintSemicolon
@@ -488,7 +488,7 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 }
 
 \caption{Injecting a Deletion Operation}
-\label{algo:inject}
+\label{algo:icdcn-inject}
 \end{algorithm}
 
 
@@ -502,7 +502,7 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 %% FINDANDMARKSUCCESSOR
 
 
-\begin{algorithm}[!thb]
+\begin{algorithm}[htp]
 %%
 \DefineKeyWords
 
@@ -597,14 +597,14 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 }
 
 \caption{Locating the Successor Node}
-\label{algo:findandmark}
+\label{algo:icdcn-findandmark}
 \end{algorithm}
 
 
 
 
 %% REMOVESUCCESSOR
-\begin{algorithm}[!thb]
+\begin{algorithm}[htp]
 %%
 \DefineKeyWords
 \DontPrintSemicolon
@@ -691,14 +691,14 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
    \UpdateMode( $\state$ )\;	
 }
 \caption{Removing the Successor Node}
-\label{algo:remove}
+\label{algo:icdcn-remove}
 \end{algorithm}
 
 
 
 %% CLEANUP
 
-\begin{algorithm}[!thb]
+\begin{algorithm}[htp]
 %%
 \DefineKeyWords
 
@@ -795,14 +795,14 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 }
 
 \caption{Cleaning Up the Tree}
-\label{algo:cleanup}
+\label{algo:icdcn-cleanup}
 \end{algorithm}
 
 
 
 
 
-\begin{algorithm}[!thb]
+\begin{algorithm}[htp]
 %%
 \DefineKeyWords
 \DontPrintSemicolon
@@ -877,7 +877,7 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
    \Return \True\;
 }
 \caption{Mark Child Edge}
-\label{algo:markChildEdge}
+\label{algo:icdcn-markChildEdge}
 
 
 %\remove{
@@ -886,7 +886,7 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 
 %% FINDSMALLEST
 
-\begin{algorithm}[!thb]
+\begin{algorithm}[htp]
 %%
 \DefineKeyWords
 %}
@@ -941,11 +941,11 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 	 \Return \True\;	
 }
 \caption{Find Smallest}
-\label{algo:findSmallest}
+\label{algo:icdcn-findSmallest}
 \end{algorithm}
 
 
-\begin{algorithm}[!thb]
+\begin{algorithm}[htp]
 %%
 \DefineKeyWords
 
@@ -998,7 +998,7 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 
 %% UPDATEMODE
 
-\begin{algorithm}[!thb]
+\begin{algorithm}[htp]
 %%
 \DefineKeyWords
 
@@ -1036,12 +1036,12 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 }
 
 \caption{Helper Routines}
-\label{algo:helper|2}
+\label{algo:icdcn-helper|2}
 \end{algorithm}
 
 %% HELP
 
-\begin{algorithm}[!thb]
+\begin{algorithm}[htp]
 %%
 \DefineKeyWords
 
@@ -1112,7 +1112,7 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 	
 
 
-\begin{algorithm}[!thb]
+\begin{algorithm}[htp]
 %%
 \DefineKeyWords
 
@@ -1155,6 +1155,6 @@ SeekRecordPtr $\targetSeekRecord$ := new seek record\;
 
 
 \caption{Helping Conflicting Delete Operations}
-\label{algo:helping}
+\label{algo:icdcn-helping}
 \end{algorithm}
 \end{limitscope}

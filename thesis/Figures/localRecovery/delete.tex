@@ -1,0 +1,104 @@
+\begin{figure}[t]
+\centering
+{
+	
+\subcaptionbox{Simple delete\label{fig:simple}}
+{
+\begin{tikzpicture}[scale=\myfigurescale, transform shape]
+
+   %% left subtree
+	 %% nodes
+   \node (v)	[treenode] 									at (0, 0)       		              {$V$ \\ 100};
+	 \node (u)	[treenode, fill=black!20] 	at ([shift=({-1.5,-0.75})]v)    	{$U$ \\ 50};
+	 \node (sl)	[subtree] 									at ([shift=({-1.5,-0.75})]u)      {\Large $\alpha$};
+	 \node (sr)	[subtree] 									at ([shift=({1.5,-0.75})]v)       {\Large $\beta$};
+	 \node (g)	[ground] 										at ([shift=({1.5,-0.75})]u)	    {}; 
+	
+	 %% edges
+	 \path[every node/.style={font=\sffamily\small}]
+		(0, 1)  edge[->]  node {} (v)
+		(v)     edge[->]  node {} (u)
+		(v)     edge[->]  node {} (sr.north)
+		(u)     edge[->]  node {} (sl.north)
+		(u)     edge[->]  node {} (g);
+		
+	 %% arrow indicating operation		
+	 \path[every node/.style={font=\sffamily\small}] 
+	    (2.5, 0) edge[->,semithick, double] node [above, outer sep=5pt] {\large \textsf{delete} 50} (4.5, 0);
+				
+				
+	 %% right subtree
+	 %% nodes
+	 \node (v2)	  [treenode] 									at (7, 0)       		              {$V$ \\ 100};
+	 \node (sl2)	[subtree] 									at ([shift=({-1.5,-0.75})]v2)      {\Large $\alpha$};
+	 \node (sr2)	[subtree] 									at ([shift=({1.5,-0.75})]v2)       {\Large $\beta$};
+   
+	 %% edges
+	 \path[every node/.style={font=\sffamily\small}]
+		(7, 1)  edge[->]  node {} (v2)
+		(v2)     edge[->]  node {} (sr2.north)
+		(v2)     edge[->]  node {} (sl2.north);
+	
+\end{tikzpicture}	
+}
+
+\subcaptionbox{Complex delete\label{fig:complex}}
+{
+\begin{tikzpicture}[scale=\myfigurescale, transform shape]
+
+   %% left subtree
+	 %% nodes
+   \node (u)	[treenode, fill=black!20] 		at (0, 0)       		              {$U$ \\ 50};
+	 \node (v)	[treenode] 									at ([shift=({ 1.5,-0.75})]u)      {$V$ \\ 100};
+	 \node (w)	[treenode] 									at ([shift=({-1,-1.25})]v)     {$W$ \\ 60};
+	 \node (x)	[treenode] 									at ([shift=({-1,-1.25})]w)     {$X$ \\ 55};
+	 \node (g)	[ground] 									  at ([shift=({-1,-1.25})]x)     {};
+   \node (sa)	[subtree] 									at ([shift=({-1.5,-0.75})]u)      {\Large $\alpha$};
+	 \node (sb)	[subtree] 									at ([shift=({ 1.5,-0.75})]v)      {\Large $\beta$};
+	 \node (sg)	[subtree] 									at ([shift=({ 1.5,-0.75})]w)      {\Large $\gamma$};
+	 \node (sd)	[subtree] 									at ([shift=({ 1.5,-0.75})]x)      {\Large $\delta$};
+	
+	 %% edges
+	 \path[every node/.style={font=\sffamily\small}]
+		(0, 1)  edge[->]  node {} (u)
+		(u)     edge[->]  node {} (sa.north)
+		(u)     edge[->]  node {} (v)
+		(v)     edge[->]  node {} (w)
+		(w)     edge[->]  node {} (x)
+		(x)     edge[->]  node {} (g)
+		(v)     edge[->]  node {} (sb.north)
+		(w)     edge[->]  node {} (sg.north)
+		(x)     edge[->]  node {} (sd.north);
+		
+	 %% arrow indicating operation		
+	 \path[every node/.style={font=\sffamily\small}] 
+	    (2.5, 0) edge[->,semithick, double] node [above, outer sep=5pt] {\large \textsf{delete} 50} (4.5, 0);
+			
+		
+	 %% right subtree
+	 %% nodes
+   \node (u2) 	[treenode, fill=black!20] 	at (7, 0)       		               {$U$ \\ 55};
+	 \node (v2)	  [treenode] 									at ([shift=({ 1.5,-0.75})]u2)      {$V$ \\ 100};
+	 \node (w2)	  [treenode] 									at ([shift=({-1,-1.25})]v2)     {$W$ \\ 60};
+   \node (sa2)	[subtree] 									at ([shift=({-1.5,-0.75})]u2)      {\Large $\alpha$};
+	 \node (sb2)	[subtree] 									at ([shift=({ 1.5,-0.75})]v2)      {\Large $\beta$};
+	 \node (sg2)	[subtree] 									at ([shift=({ 1.5,-0.75})]w2)      {\Large $\gamma$};
+	 \node (sd2)	[subtree] 									at ([shift=({-1,-1.25})]w2)      {\Large $\delta$};
+	
+	 %% edges
+	 \path[every node/.style={font=\sffamily\small}]
+		(7, 1)  edge[->]  node {} (u2)
+		(u2)     edge[->]  node {} (sa2.north)
+		(u2)     edge[->]  node {} (v2)
+		(v2)     edge[->]  node {} (w2)
+		(v2)     edge[->]  node {} (sb2.north)
+		(w2)     edge[->]  node {} (sg2.north)
+		(w2)     edge[->]  node {} (sd2.north);
+		
+\end{tikzpicture}
+}
+	
+}
+\caption{An illustration of a delete operation in a binary search tree.}
+\label{fig:delete}
+\end{figure}

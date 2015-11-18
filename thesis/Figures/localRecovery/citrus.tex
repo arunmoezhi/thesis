@@ -1,0 +1,78 @@
+\begin{figure}[!tbph]
+\centering
+{
+	\begin{tikzpicture}[scale=\myfigurescaletwo, transform shape]
+		\newcommand\XA{0}
+		\newcommand\YA{0}
+		\node[text width=5cm] at (0,-3.5)  {(a) Thread $A$ gets stalled at node $V$};
+		\node[text width=5cm] at (6,-3.5)  {(b) Thread $B$ executes delete(10) and node $U$ is removed};
+		\node[text width=5cm] at (12,-3.5) {(c) Thread $B$ executes insert(10) and node $U\prime$ is added. Thread $A$ wakes up and reaches node $U\prime$};
+		\node[text width=5cm] at (12,-9.5) {(d) Thread $B$ executes delete(20) and node $V$ is removed};
+		\node[text width=5cm] at (6,-9.5)  {(e) Thread $B$ executes insert(20) and a node $V\prime$ is added. Thread $A$ wakes up and reaches node $V\prime$};
+		\node (r)		[treenode] 									at (\XA,\YA)       					{$R$ \\ 100};
+		\node (u)		[treenode] 									at ([shift=({-1.25,-1})]r)  {$U$ \\ 10};
+		\node (rr)	[ground]										at ([shift=({+1,-0.75})]r)	{}; 
+		\node (ul)	[ground]										at ([shift=({-1,-0.75})]u)	{}; 
+		\node (ur)	[treenode] 									at ([shift=({+1.25,-1})]u)  {$V$ \\ 20};
+
+		\path[every node/.style={font=\sffamily\large}]
+		(r) 		edge[->]								node 					{} (u)
+		(r) 		edge[->]								node 					{} (rr)
+		(u) 		edge[->]								node 					{} (ul)
+		(u) 		edge[->]								node 					{} (ur)
+				
+		(2, -1) 	edge[->,semithick] node [above, outer sep=2pt] 		{\large \texttt del(10)} (3, -1)
+		(8, -1) 	edge[->,semithick] node [above, outer sep=2pt] 		{\large \texttt ins(10)} (9, -1)
+		(12, -4.25) 	edge[->,semithick] node [left, 	outer sep=2pt] 		{\large \texttt del(20)} (12, -5.25)
+		(9, -7) 	edge[->,semithick] node [above, outer sep=2pt] 		{\large \texttt ins(20)} (8, -7);
+
+		\renewcommand\XA{6}
+		\node (r)		[treenode] 									at (\XA,\YA)       					{$R$ \\ 100};
+		\node (u)		[treenode] 									at ([shift=({-1.25,-1})]r)  {$V$ \\ 20};
+		\node (rr)	[ground]										at ([shift=({+1,-0.75})]r)	{}; 
+
+
+		\path[every node/.style={font=\sffamily\large}]
+		(r) 		edge[->]								node 					{} (u)
+		(r) 		edge[->]								node 					{} (rr);
+		
+		\renewcommand\XA{12}
+		\node (r)		[treenode] 									at (\XA,\YA)       						{$R$ \\ 100};
+		\node (u)		[treenode] 									at ([shift=({-1.25,-1})]r)  	{$V$ \\ 20};
+		\node (rr)	[ground]										at ([shift=({+1,-0.75})]r)		{}; 
+		\node (ul)	[treenode]									at ([shift=({-1.25,-0.75})]u)	{$U\prime$ \\ 10}; 
+		\node (ur)	[ground] 										at ([shift=({+1,-0.75})]u)		{};
+
+		\path[every node/.style={font=\sffamily\large}]
+		(r) 		edge[->]								node 					{} (u)
+		(r) 		edge[->]								node 					{} (rr)
+		(u) 		edge[->]								node 					{} (ul)
+		(u) 		edge[->]								node 					{} (ur);
+		
+		\renewcommand\YA{-6}
+		\node (r)		[treenode] 									at (\XA,\YA)       					{$R$ \\ 100};
+		\node (u)		[treenode] 									at ([shift=({-1.25,-1})]r)  {$U\prime$ \\ 10};
+		\node (rr)	[ground]										at ([shift=({+1,-0.75})]r)	{}; 
+
+
+		\path[every node/.style={font=\sffamily\large}]
+		(r) 		edge[->]								node 					{} (u)
+		(r) 		edge[->]								node 					{} (rr);
+		
+		\renewcommand\XA{6}
+		\node (r)		[treenode] 									at (\XA,\YA)       					{$R$ \\ 100};
+		\node (u)		[treenode] 									at ([shift=({-1.25,-1})]r)  {$U\prime$ \\ 10};
+		\node (rr)	[ground]										at ([shift=({+1,-0.75})]r)	{}; 
+		\node (ul)	[ground]										at ([shift=({-1,-0.75})]u)	{}; 
+		\node (ur)	[treenode] 									at ([shift=({+1.25,-1})]u)  {$V\prime$ \\ 20};
+
+		\path[every node/.style={font=\sffamily\large}]
+		(r) 		edge[->]								node 					{} (u)
+		(r) 		edge[->]								node 					{} (rr)
+		(u) 		edge[->]								node 					{} (ul)
+		(u) 		edge[->]								node 					{} (ur);
+	\end{tikzpicture}
+}
+\caption{A scenario in which contains operation is not wait-free} 
+\label{fig:citrus}
+\end{figure}

@@ -1,0 +1,138 @@
+\begin{figure}[t]
+\centering
+{
+
+\subcaptionbox{Nodes $S$, $U$ and $X$ are \myanchor{} nodes with respect to key 40. \label{fig:anchors|suspended}}[0.23\textwidth]
+{
+
+\begin{tikzpicture}[scale=\myfigurescaletwo, transform shape]
+   
+	 \newcommand\NODEDX{1.25}
+	 \newcommand\NODEDY{1.25}
+	 \newcommand\SUBTREEDX{1.5}
+	 \newcommand\SUBTREEDY{0.75}
+	
+   \node (r)	[treenode] 		                at (0, 0)       		                      	{$R$ \\ 100};
+   \node (s)	[treenode, fill=black!20] 		at ([shift=({ -\NODEDX, -\NODEDY})]r)     	{$S$ \\ 10};
+	 \node (t)	[treenode] 		                at ([shift=({  \NODEDX, -\NODEDY})]s)    		{$T$ \\ 90};
+	 \node (u)	[treenode, fill=black!20] 	  at ([shift=({ -\NODEDX, -\NODEDY})]t)     	{$U$ \\ 20};
+	 \node (v)	[treenode] 										at ([shift=({  \NODEDX, -\NODEDY})]u)     	{$V$ \\ 80};
+	 \node (w)	[treenode] 										at ([shift=({ -\NODEDX, -\NODEDY})]v)     	{$W$ \\ 70};
+	 \node (x)	[treenode, fill=black!20] 		at ([shift=({ -\NODEDX, -\NODEDY})]w)     	{$X$ \\ 30};
+	 \node (y)	[treenode] 										at ([shift=({  \NODEDX, -\NODEDY})]x)     	{$Y$ \\ 60};
+	 \node (z)	[treenode] 										at ([shift=({ -\NODEDX, -\NODEDY})]y)     	{$Z$ \\ 50};
+	 \node (gl) [ground]                      at ([shift=({ -\NODEDX, -\NODEDY})]z)     	{ };
+	 \node (gr) [ground]                      at ([shift=({  \NODEDX, -\NODEDY})]z)     	{ };
+		
+	 \node (sa) [subtree]                     at ([shift=({  \SUBTREEDX, -\SUBTREEDY})]r) {\Large $\alpha$};
+	 \node (sb) [subtree]                     at ([shift=({ -\SUBTREEDX, -\SUBTREEDY})]s) {\Large $\beta$};
+	 \node (sg) [subtree]                     at ([shift=({  \SUBTREEDX, -\SUBTREEDY})]t) {\Large $\gamma$};
+	 \node (sd) [subtree]                     at ([shift=({ -\SUBTREEDX, -\SUBTREEDY})]u) {\Large $\delta$};
+	 \node (ss) [subtree]                     at ([shift=({  \SUBTREEDX, -\SUBTREEDY})]v) {\Large $\sigma$};
+	 \node (st) [subtree]                     at ([shift=({  \SUBTREEDX, -\SUBTREEDY})]w) {\Large $\tau$};
+	 \node (sp) [subtree]                     at ([shift=({ -\SUBTREEDX, -\SUBTREEDY})]x) {\Large $\pi$};
+	 \node (sl) [subtree]                     at ([shift=({  \SUBTREEDX, -\SUBTREEDY})]y) {\Large $\lambda$};	
+	
+	 \node (op) [label={right:$op(40)^{z^{z^z}}$}] at ([shift=({0.375, 0})]y) {};
+	
+	 \path[every node/.style={font=\sffamily\small}]
+	    (0, 1)  edge[->,very thick]  node {} (r)
+		  (r)     edge[->,very thick]  node {} (s)
+			(s)     edge[->,very thick]  node {} (t)
+			(t)     edge[->,very thick]  node {} (u)
+			(u)     edge[->,very thick]  node {} (v)
+			(v)     edge[->,very thick]  node {} (w)
+			(w)     edge[->,very thick]  node {} (x)
+			(x)     edge[->,very thick]  node {} (y)
+			(y)     edge[->,very thick]  node {} (z)
+			(z)     edge[->]  node {} (gl)
+			(z)     edge[->]  node {} (gr)
+			(r)     edge[->]  node {} (sa.north)
+			(s)     edge[->]  node {} (sb.north)
+			(t)     edge[->]  node {} (sg.north)
+			(u)     edge[->]  node {} (sd.north)
+			(v)     edge[->]  node {} (ss.north)
+			(w)     edge[->]  node {} (st.north)
+			(x)     edge[->]  node {} (sp.north)
+			(y)     edge[->]  node {} (sl.north);
+	
+   	
+		
+\end{tikzpicture}
+}
+%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%
+\subcaptionbox{Current status of the three \myanchor{} nodes: 
+\begin{enumerate*}[label=(\roman*)]
+\item $X$ is still consistent but marked, 
+\item $U$ has now become inconsistent, and 
+\item $S$ is still consistent and unmarked. 
+\end{enumerate*}
+\label{fig:anchors|status}}[0.23\textwidth]
+{
+
+\begin{tikzpicture}[scale=\myfigurescaletwo, transform shape]
+   
+	 \newcommand\NODEDX{1.25}
+	 \newcommand\NODEDY{1.25}
+	 \newcommand\SUBTREEDX{1.5}
+	 \newcommand\SUBTREEDY{0.75}
+	
+   \node (r)	[treenode] 		                at (0, 0)       		                      	{$R$ \\ 100};
+   \node (s)	[treenode, fill=black!20] 		at ([shift=({ -\NODEDX, -\NODEDY})]r)     	{$S$ \\ 10};
+	 \node (t)	[treenode] 		                at ([shift=({  \NODEDX, -\NODEDY})]s)    		{$T$ \\ 90};
+	 \node (u)	[treenode, fill=black!20] 	  at ([shift=({ -\NODEDX, -\NODEDY})]t)     	{$U$ \\ 50};
+	 \node (v)	[treenode] 										at ([shift=({  \NODEDX, -\NODEDY})]u)     	{$V$ \\ 80};
+	 \node (w)	[treenode] 										at ([shift=({ -\NODEDX, -\NODEDY})]v)     	{$W$ \\ 70};
+	 \node (x)	[treenode, fill=black!20, dotted] 		at ([shift=({ -\NODEDX, -\NODEDY})]w)     	{$X$ \\ 30};
+	 \node (y)	[treenode] 										at ([shift=({  \NODEDX, -\NODEDY})]x)     	{$Y$ \\ 60};
+	 \node (z)	[treenode, dotted] 						at ([shift=({ -\NODEDX, -\NODEDY})]y)     	{$Z$ \\ 50};
+	 \node (gl) [ground]                      at ([shift=({ -\NODEDX, -\NODEDY})]z)     	{ };
+	 \node (gr) [ground]                      at ([shift=({  \NODEDX, -\NODEDY})]z)     	{ };
+		
+	 \node (sa) [subtree]                     at ([shift=({  \SUBTREEDX, -\SUBTREEDY})]r) {\Large $\alpha$};
+	 \node (sb) [subtree]                     at ([shift=({ -\SUBTREEDX, -\SUBTREEDY})]s) {\Large $\beta$};
+	 \node (sg) [subtree]                     at ([shift=({  \SUBTREEDX, -\SUBTREEDY})]t) {\Large $\gamma$};
+	 \node (sd) [subtree]                     at ([shift=({ -\SUBTREEDX, -\SUBTREEDY})]u) {\Large $\delta$};
+	 \node (ss) [subtree]                     at ([shift=({  \SUBTREEDX, -\SUBTREEDY})]v) {\Large $\sigma$};
+	 \node (st) [subtree]                     at ([shift=({  \SUBTREEDX, -\SUBTREEDY})]w) {\Large $\tau$};
+	 %% \node (sp) [subtree]                     at ([shift=({ -\SUBTREEDX, -\SUBTREEDY})]x) {\Large $\pi$};
+	 \node (sp) [ground]                    	at ([shift=({ -\SUBTREEDX, -\SUBTREEDY})]x) { };
+	 \node (sl) [subtree]                     at ([shift=({  \SUBTREEDX, -\SUBTREEDY})]y) {\Large $\lambda$};	
+	
+	 \node (op) [label={right:$op(40)^{z^{z^z}}$}] at ([shift=({0.375, 0})]y) {};
+	
+	 \path[every node/.style={font=\sffamily\small}]
+	    (0, 1)  edge[->,very thick]  node {} (r)
+		  (r)     edge[->,very thick]  node {} (s)
+			(s)     edge[->,very thick]  node {} (t)
+			(t)     edge[->,very thick]  node {} (u)
+			(u)     edge[->,very thick]  node {} (v)
+			(v)     edge[->,very thick]  node {} (w)
+			%% (w)     edge[->]  node {} (x)
+			(w)     edge[->,very thick]  node {} (y)
+			(x)     edge[->]  node {} (y)
+			%% (y)     edge[->]  node {} (z)
+			(y)     edge[->, very thick]  node {} (gr)
+			(z)     edge[->]  node {} (gl)
+			(z)     edge[->]  node {} (gr)
+			(r)     edge[->]  node {} (sa.north)
+			(s)     edge[->]  node {} (sb.north)
+			(t)     edge[->]  node {} (sg.north)
+			(u)     edge[->]  node {} (sd.north)
+			(v)     edge[->]  node {} (ss.north)
+			(w)     edge[->]  node {} (st.north)
+			(x)     edge[->]  node {} (sp)
+			(y)     edge[->]  node {} (sl.north);
+	
+  
+		
+		
+\end{tikzpicture}
+}
+	
+}
+%%
+\caption{Same subtrees as in \figref{movement|suspended} and \figref{movement|key|moved}, but now with operation $op(40)$ suspended at node $Y$. If $op$ is a search or delete operation, then it can terminate. If $op$ is an insert operation, then it needs to restart from node $U$.}
+\label{fig:anchors}
+\end{figure}

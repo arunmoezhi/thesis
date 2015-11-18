@@ -1,0 +1,41 @@
+\begin{figure}[t]
+\centering
+{
+	\begin{tikzpicture}[scale=\myfigurescale, transform shape]
+		\newcommand\XA{-3}
+		\newcommand\YA{0}
+		\node (x)		[treenode] 									at (\XA,\YA)       		{$V$ \\ 100};
+		\node (y)		[treenode, fill=black!20] 	at (\XA-1.5,\YA-1.5) 	{$U$ \\ 50};
+		\node (a)		[subtree] 									at (\XA+2,\YA-1)      {\Large $\alpha$};
+		\node (b)		[subtree] 									at (\XA-3,\YA-2.5)    {\Large $\beta$};
+		\node (gnd)	[ground] 										at (\XA+0.5,\YA-2.5)	{}; 
+		\node (xl) 	[rectangle,align=center,minimum size=1cm] at (\XA-1.75,\YA) 	{\large \mytarget{} node's \\ \large parent};
+		\node (yl) 	[] 													at (\XA-3.25,\YA-1.5) 		{\large \mytarget{} node};
+
+		\path[every node/.style={font=\sffamily\small}]
+		(\XA,\YA+1) edge[->] 						node 					{} (x)
+		(x) 		edge[->,dotted,thick] 	node  				{} (y)
+		(x) 		edge[->] 								node 				 	{} (a.north)
+		(y) 		edge[->,dotted,thick]		node 					{} (b.north)
+		(y) 		edge[->,dotted,thick]		node 					{} (gnd);
+
+		\path[every node/.style={font=\sffamily\small}]
+		(\XA+1.5,\YA) edge[->,semithick, double] node [above, outer sep=3pt] {\large \textsf{delete} 50} (\XA+4,\YA);
+		\node (ix)	[treenode] 									at (\XA+6,\YA) 			{$V$ \\ 100};
+		\node (ib)	[subtree] 									at (\XA+4.5,\YA-1)	{\Large $\beta$};
+		\node (ia)	[subtree] 									at (\XA+7.5,\YA-1) 	{\Large $\alpha$};
+
+		\path[every node/.style={font=\sffamily\small}]
+		(\XA+6,\YA+1) 	edge[->] 				node 					{} (ix)
+		(ix) 		edge[->] 								node 					{} (ib.north)
+		(ix) 		edge[->] 								node 					{} (ia.north);
+
+		%% legend
+		\draw[->] (\XA+3,\YA-2.9) -- (\XA+4,\YA-2.9) node[right] {\large ~free edge};
+		\draw[->,dotted,thick] (\XA+3,\YA-3.4) -- (\XA+4,\YA-3.4) node[right] {\large ~locked edge};
+		\node [thin, draw=black, align=center, minimum width=5cm, minimum height=1.25cm] at (\XA+5,\YA-3.15) {};	
+	\end{tikzpicture}
+}
+\caption{An illustration of a simple delete operation.}
+\label{fig:simple}
+\end{figure}

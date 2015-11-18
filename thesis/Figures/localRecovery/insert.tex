@@ -1,0 +1,81 @@
+\begin{figure}[t]
+\centering
+{
+\begin{comment}
+
+	\begin{tikzpicture}[scale=\myfigurescale, transform shape]
+		\newcommand\XA{0}
+		\newcommand\YA{0}
+		\node (x)		[treenode,fill=black!20] 		at (\XA,\YA)       						{$U$ \\ 50};
+		\node (S1)	[subtree] 									at ([shift=({-1.5,-0.75})]x)  		{\Large $\alpha$};
+		\node (gnd)	[ground] 										at ([shift=({1.5,-0.75})]x)			{}; 
+		\node (l1) [rectangle,align=center,minimum size=1cm] at (\XA-1.5,\YA) {\large target \\ \large node};
+		\node (l2) [rectangle,align=center,minimum size=1cm] at (\XA+2.675,\YA-1.0) {\large injection \\ \large point};
+		\path[every node/.style={font=\sffamily\small}]
+		(\XA,\YA+1) edge[->] 								node 					{} (x)
+		(x) 				edge[->]								node 					{} (S1.north)
+		(x) 				edge[->,thick]					node 					{} (gnd);
+
+		\path[every node/.style={font=\sffamily\small}]
+		(\XA+2.0,\YA) edge[->,semithick, double] node [above, outer sep=3pt] {\large \textsf{insert} 55} (\XA+4.5,\YA);
+		\renewcommand\XA{6.5}
+		\renewcommand\YA{0}
+		\node (x1)		[treenode,fill=black!20] 		at (\XA,\YA)       						{$U$ \\ 50};
+		\node (S2)	[subtree] 									at ([shift=({-1.5,-.75})]x1)  	{\Large $\alpha$};
+		\node (y)		[treenode,fill=black!20] 		at ([shift=({2,-1.25})]x1)   {$V$ \\ 55};
+		\node (l2) [rectangle,align=center,minimum size=1cm] at (\XA+3.5,\YA-1.25) {\large new \\ \large node};
+    \node (gnd1)	[ground] 										at ([shift=({1.5,-0.75})]y)			{}; 
+		\node (gnd2)	[ground] 										at ([shift=({-1.5,-0.75})]y)		{}; 
+		
+		\path[every node/.style={font=\sffamily\small}]
+		(\XA,\YA+1) edge[->] 								node 					{} (x1)
+		(x1) 				edge[->]								node 					{} (S2.north)
+		(x1) 				edge[->,thick]					node 					{} (y)
+		(y)         edge[->,thick]                node          {} (gnd1)
+		(y)         edge[->,thick]                node          {} (gnd2);
+	\end{tikzpicture}
+	
+\end{comment}
+
+
+\begin{tikzpicture}[scale=\myfigurescale, transform shape]
+   %% left subtree
+	 %% nodes
+   \node (u)	[treenode, fill=black!20] 		at (0, 0)       						 {$U$ \\ 50};
+	 \node (s)  [subtree] 			   						at ([shift=({-1.5,-0.75})]u) {\Large $\alpha$};
+	 \node (g)	[ground] 									    at ([shift=({ 1.5,-0.75})]u) {}; 
+	 %% edges
+	 \path[every node/.style={font=\sffamily\small}]
+	    (0, 1) edge[->]  node {} (u)
+			(u)    edge[->]  node {} (s.north)
+			(u)    edge[->]  node {} (g);
+			
+			
+	 %% arrow indicating operation		
+	 \path[every node/.style={font=\sffamily\small}] 
+	    (2.5, 0) edge[->,semithick, double] node [above, outer sep=5pt] {\large \textsf{insert} 55} (4.5, 0);
+		
+	 %% right subtree
+	 %% nodes
+	 \node (u2)		   [treenode,fill=black!20] 		at (7,0)       						   {$U$ \\ 50};
+	 \node (s2)      [subtree] 									  at ([shift=({-1.5,-0.75})]u2){\Large $\alpha$};
+	 \node (v2)		   [treenode] 		              at ([shift=({ 1.5,-0.75})]u2){$V$ \\ 55};
+	 \node (g2l)	   [ground] 										at ([shift=({ 1.5,-0.75})]v2){}; 
+	 \node (g2r)	   [ground] 										at ([shift=({-1.5,-0.75})]v2){}; 
+	
+	 %% edges			
+	 \path[every node/.style={font=\sffamily\small}]
+	    (7, 1) edge[->]  node {} (u2)
+			(u2)    edge[->]  node {} (s2.north)
+			(u2)    edge[->]  node {} (v2)
+			(v2)    edge[->]  node {} (g2l)
+			(v2)    edge[->]  node {} (g2r);
+ 	
+ 	
+\end{tikzpicture}
+
+
+}
+\caption{An illustration of an insert operation in a binary search tree.}
+\label{fig:insert}
+\end{figure}

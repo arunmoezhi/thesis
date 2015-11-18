@@ -1,0 +1,25 @@
+\begin{figure}[tp]
+\centering
+{
+	\begin{tikzpicture}[scale=\myfigurescale, transform shape]
+	\newcommand\XA{0}
+	\newcommand\YA{0}
+	\newcommand\XB{\XA-1}
+	\newcommand\YB{\YA-3.8}
+	\node (R)			[treenode] 									at (\XA,\YA)       	{$\sNodeOne$ \\ $\sKeyOne$};
+	\node (gnd)		[ground] 										at (\XA-1,\YA-1)			{};  
+	\node (S)			[treenode] 									at (\XA+1,\YA-1.35) 		{$\sNodeTwo$ \\ $\sKeyTwo$};
+	\node (gndls)	[ground] 										at (\XA,\YA-2)				{}; 
+	\node (gndrs)	[ground] 										at (\XA+2,\YA-2)				{}; 
+
+
+	\path[every node/.style={font=\sffamily\small}]
+	(R) 		edge[->] 								node  				{} (S)
+	(R) 		edge[->] 								node 				 	{} (gnd)
+	(S) edge[->] node {} (gndls)
+	(S) edge[->] node {} (gndrs);
+	\end{tikzpicture}
+}
+\caption{Sentinel keys and nodes ($\sKeyOne{} < \sKeyTwo{}$)}
+\label{fig:sentinel}
+\end{figure}

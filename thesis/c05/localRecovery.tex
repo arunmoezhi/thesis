@@ -1,0 +1,94 @@
+\begin{limitscope}
+\tikzset
+{
+    treenode/.style = {circle, draw=black, align=center, minimum size=1cm},
+    subtree/.style  = {isosceles triangle, draw=black, align=center, minimum height=0.5cm, minimum width=1cm, shape border rotate=90, anchor=north},
+    process/.style={rectangle, minimum width=2cm, minimum height=1cm, align=center, text width=2cm, draw},
+    connector/.style={circle, minimum size=1cm, align=center, text width=0.5cm, draw},
+    arrow/.style={thick, ->, >=stealth}
+}
+%%%%% localRecovery macros - begin
+\newcommand{\remove}[1]{}
+\NewDocumentCommand\accesspath{ g g }{\IfNoValueTF{#1}{access-path\xspace}{\IfNoValueTF{#2}{A(#1)\xspace}{A(#1,#2)\xspace}}}
+\newcommand{\myterminal}{terminal}
+\newcommand{\myanchor}{anchor}
+\newcommand{\Myanchor}{Anchor}
+\newcommand{\mytarget}{target}
+\newcommand{\myadmissible}{admissible}
+\newcommand{\mycritical}{critical}
+\newcommand{\mysadmissible}{strongly admissible}
+\newcommand{\mysafe}{safe}
+\newcommand{\myconsistent}{consistent}
+\newcommand{\myinconsistent}{inconsistent}
+\newcommand{\storedpath}{\Pi}
+\newcommand{\prefixpath}[1]{\Pi(#1)}
+\newcommand{\injection}{injection}
+\newcommand{\myleft}{le\!f\!t}
+\newcommand{\myright}{right}
+\newcommand{\myparent}{parent}
+\newcommand{\InitializeTraversalRecord}{\textsc{InitializeTraversalState}}
+\newcommand{\TestForTermination}{\textsc{CanTerminate}}
+\newcommand{\FindStartPoint}{\textsc{FindASafeNode}}
+\newcommand{\FindAdmissible}{\textsc{ValidatePath}}
+\newcommand{\RemoveFromTop}{\textsc{RemoveFromTop}}
+\newcommand{\AddToTop}{\textsc{AddToTop}}
+\newcommand{\GetTop}{\textsc{GetTop}}
+\newcommand{\GetSecondToTop}{\textsc{GetSecondToTop}}
+\newcommand{\RemoveUntilCritical}{\textsc{RemoveUntil}}
+\newcommand{\RememberCritical}{\textsc{RememberCritical}}
+\newcommand{\GetFullEntry}{\textsc{GetFullEntry}}
+\newcommand{\IsMarked}{\textsc{IsMarked}}
+\newcommand{\IsClean}{\textsc{IsClean}}
+\newcommand{\NeedCleanParentNode}{\textsc{NeedCleanParentNode}}
+\newcommand{\AddToBottom}{\textsc{AddToBottom}}
+\newcommand{\MoveFromTargetToSuccessor}{\textsc{MoveFromTargetToSuccessor}}
+\newcommand{\IsEmpty}{\textsc{IsEmpty}}
+\newcommand{\Size}{\textsc{Size}}
+\newcommand{\GetKey}{\textsc{GetKey}}
+\newcommand{\SeekForSuccessor}{\textsc{SeekForSuccessor}}
+\newcommand{\NeedSuccessorKey}{\textsc{NeedSuccessorKey}}
+\newcommand{\GetChild}{\textsc{GetChild}}
+\newcommand{\Move}{\textsc{Move}}
+\newcommand{\GetAddress}{\textsc{GetAddress}}
+\newcommand{\IsNull}{\textsc{IsNull}}
+\newcommand{\PopulateSeekRecord}{\textsc{PopulateSeekRecord}}
+\newcommand{\SeekForModify}{\textsc{SeekForModify}}
+\newcommand{\SeekForSearch}{\textsc{SeekForSearch}}
+\newcommand{\TraverseTree}{\textsc{Traverse}}
+\newcommand{\ExamineStack}{\textsc{ExamineStack}}
+\newcommand{\numberOfProcesses}{p}
+\newcommand{\true}{\textsf{true}}
+\newcommand{\false}{\textsf{false}}
+\newcommand{\STELLAR}{\textsc{STELLAR}}
+\newcommand{\CITRUS}{\textsc{CITRUS}}
+\newcommand{\HJBST}{\textsc{LF-IBST}}
+\newcommand{\NMBST}{\textsc{LF-EBST}}
+\newcommand{\CASTLE}{\textsc{CASTLE}}
+\newcommand{\sNodeOne}{\mathbb{R}}
+\newcommand{\sNodeTwo}{\mathbb{S}}
+\newcommand{\sKeyOne}{-\infty}
+\newcommand{\sKeyTwo}{\infty}
+\newcommand{\traversalRecord}{state}
+\newcommand{\TraversalRecord}{\textsf{State}}
+\newcommand{\opRecord}{opRecord}
+\newcommand{\OpRecord}{\textsf{OpRecord}}
+\newcommand{\seekRecord}{seekRecord}
+\newcommand{\SeekRecord}{\textsf{SeekRecord}}
+\newcommand{\CAS}{\textsf{CAS}}
+\newcommand{\maximumgap}{49\%}
+\newcommand{\maximumdrop}{10\%}
+\newcommand{\dCounters}{DC}
+\newcommand{\iCounters}{IC}
+\newcommand{\labels}{labels}
+\newcommand{\dcounters}{DC}
+\newcommand{\icounters}{IC}
+\newcommand{\myfigurescaletwo}{0.5}
+%%%%% localRecovery macros - end
+\section{The Local Recovery Algorithm}
+\label{sec:local|recovery}
+We first present the main idea behind the algorithm and then provide its pseudo-code with more details.
+\input{c05/overview}
+\input{c05/description}
+
+
+\end{limitscope}
