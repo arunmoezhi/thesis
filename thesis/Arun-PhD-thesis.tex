@@ -1,4 +1,5 @@
 \documentclass[doublespacing]{utdthesis}
+%\documentclass[halfspacing]{utdthesis}
 % For one-and-a-half spacing, use: \documentclass[halfspacing]{utdthesis}
 
 %%% Load any desired packages in the space below.
@@ -88,11 +89,16 @@
 \newtheorem{lemma}{Lemma}
 \newtheorem{theorem}{Theorem}
 
-
+\newcommand{\CAS}{\textsf{CAS}}
+\newcommand{\true}{\textsf{true}}
+\newcommand{\false}{\textsf{false}}
+\newcommand{\castleMaximumgap}{59\%}
+\newcommand{\icdcnMaximumgap}{35\%}
 %% macros for references - begin
 \newcommand{\ang}[1]{\langle #1 \rangle}
 \newcommand{\edge}[2]{\ang{{#1}, {#2}}}
 \newcommand{\curly}[1]{\{ #1 \}}
+\newcommand{\chapterref}[1]{Chapter~\ref{chapter:#1}}
 \newcommand{\secref}[2][Section]{{#1}~\ref{sec:#2}}
 \newcommand{\Secref}[1]{Section~\ref{sec:#1}}
 \newcommand{\figref}[1]{Figure~\ref{fig:#1}}
@@ -178,33 +184,33 @@ abstract goes here
 
 \mainmatter
 \newenvironment{limitscope}{}{}
-%\chapter{Introduction}
-%\label{c:introduction}
-%\input{c01/introduction}
+\chapter{Introduction}
+\label{chapter:introduction}
+\input{c01/introduction}
 
-%\chapter{System Model and related work}
-%\label{c:systemModel}
-%\input{c02/systemModel}
+\chapter{System Model}
+\label{chapter:systemModel}
+\input{c02/systemModel}
 
 \chapter{Lock based concurrent binary search trees}
-\label{c:castle}
+\label{chapter:castle}
 \input{c03/castle}
 
 \chapter{Lock free concurrent binary search tree}
-\label{c:icdcn}
+\label{chapter:icdcn}
 \input{c04/icdcn}
 
 \chapter{Local recovery for concurrent binary search trees}
-\label{c:localRecovery}
+\label{chapter:localRecovery}
 \input{c05/localRecovery}
 
-%\chapter{Experimental evaluation}
-%\label{c:experiments}
-%\input{c06/experiments}
+\chapter{Experimental evaluation}
+\label{chapter:experiments}
+\input{c06/experiments}
 
-%\chapter{conclusion}
-%\label{c:conclusion}
-%\input{c07/conclusion}
+\chapter{conclusion}
+\label{chapter:conclusion}
+\input{c07/conclusion}
 
 \bibliography{Bibliography/citations}
 \end{document}

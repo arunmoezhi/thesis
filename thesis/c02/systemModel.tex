@@ -1,0 +1,21 @@
+\section{Binary Search Tree}
+We assume that a binary search tree (BST) implements a dictionary abstract data type and supports \emph{search}, \emph{insert} and \emph{delete} operations. For convenience, we refer to the insert and delete operations as \emph{modify} operations. A search operation explores the tree for a given key and returns \true{} if the key is present in the tree and \false{} otherwise. An insert operation adds a given key to the tree if the key is not already present in the tree. Duplicate keys are not allowed in our model. A delete operation removes a key from the tree if the key is indeed present in the tree. In both cases, a modify operation returns \true{} if it changed the set of keys present in the tree (added or removed a key) and \false{} otherwise.
+
+A binary search tree satisfies the following properties:
+\begin{enumerate}[label=(\alph*)]
+\item the left subtree of a node contains only nodes with keys less than the node's key, 
+\item the right subtree of a node contains only nodes with keys greater than or equal to the node's key, and
+\item the left and right subtrees of a node are also binary search trees.
+\end{enumerate}
+
+\section{Synchronization Primitives}
+We assume an asynchronous shared memory system that, in addition to read and write instructions, also supports compare-and-swap (\CAS{}) atomic instruction. A compare-and-swap  instruction takes three arguments: $address$, $old$ and $new$; it compares the contents of a memory location ($address$) to a given value ($old$) and, only if they are the same, modifies the contents of that location to a given new value ($new$). The \CAS{} instruction is commonly available in many modern processors such as Intel~64 and AMD64. 
+
+We also use locks and assume that the following properties hold true about the locks
+\begin{enumerate}[label=(\alph*)]
+\item safe: it satisfies the mutual exclusion property, \emph{i.e.}, at most one process can hold the lock at any time, and 
+\item live: it satisfies the deadlock freedom property, \emph{i.e.}, if the lock is free and one or more processes attempt to acquire the lock, then some process is eventually able to acquire the lock.
+\end{enumerate}
+
+\section{Proof of correctness}
+To demonstrate the correctness of our algorithm, we use \emph{linearizability}~\cite{HerWin:1990:TOPLAS} for the safety property and \emph{deadlock-freedom}~\cite{HerSha:2012:Book} for the liveness property. Broadly speaking, linearizability requires that an operation should appear to take effect instantaneously at some point during its execution.  Deadlock-freedom requires that some process with a pending operation be able to complete its operation eventually.
