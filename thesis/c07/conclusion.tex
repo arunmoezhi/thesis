@@ -1,0 +1,21 @@
+In this dissertation we presented a blocking and a non-blocking algorithm for concurrent manipulation of a binary search tree in an asynchronous shared memory system that supports search, insert and delete operations. 
+
+Our \emph{lock-based} algorithm is very simple and looks almost identical to a sequential algorithm. In contrast to other lock-based algorithms, it locks edges rather than nodes. This minimizes the contention window of an operation and improves the system throughput. Since the locks are based on edges and as we steal bits from the children edges, the tree node structure is identical to a sequential tree node. This keeps the memory foot print low and reduces the impact of \emph{memory-allocation}. A desirable feature of this algorithm is that its search and insert operations are lock-free; they do not obtain any locks. As indicated by our experiments, our algorithm has the best performance---compared to other concurrent algorithms for a binary search---when the contention is relatively low. Specifically, it achieved the best performance for medium-sized and larger trees with mixed workloads and read-dominated workloads.
+
+Our \emph{lock-free} algorithm combined ideas from two existing lock-free algorithms and is especially \emph{optimized for the conflict-free scenario}. Specifically, when compared to modify operations exiting internal binary search trees, its modify operations 
+\begin{enumerate*}[label=(\alph*)]
+\item have a smaller contention window, 
+\item allocate fewer objects, 
+\item execute fewer atomic instructions, and 
+\item have a smaller memory footprint. 
+\end{enumerate*}
+Our experiments indicated that our new lock-free algorithm outperforms other lock-free algorithms in most cases.
+
+
+We also presented a new approach to recover from such failures more efficiently in a concurrent binary search tree based on internal representation using \emph{local recovery} by restarting the traversal from the ``middle'' of the tree in order to locate an operation's window. Our approach is sufficiently general in the sense that we were able to apply it to a variety of concurrent binary search trees based on both blocking and non-blocking approaches.
+
+We also presented a framework to allow a concurrent algorithm for maintaining an internal BST to recover locally when traversing the tree to locate a key. Our framework is sufficiently general that we were able to apply it to a variety of concurrent binary search trees based on both blocking and non-blocking approaches. we showed by experiments that our local recovery framework improved the performance of  concurrent BST algorithms under non-uniform key distribution (\emph{e.g.}, Zipfian) for many different workloads.
+
+As a future work, we would like to analyze our local recovery algorithm (and possibly refine it if needed) so that, when applied to a \emph{non-blocking} BST, it yields a concurrent BST whose operations have provably low amortized time complexity. Also, we would like to analyze the effect of local recovery for other standard non-uniform distributions like normal and Poisson on real workloads.
+
+We also would like to extend the ideas used in our algorithms and our local recovery technique to other data structures. A simple extention would be to apply them to $k$-ary search trees and then extend it further to $B$-trees. We also plan to explore other data structures like Bloom-filters which are commonly used in big-data applications.
