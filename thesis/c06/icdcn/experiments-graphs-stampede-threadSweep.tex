@@ -1,0 +1,78 @@
+% Style to select only points from #1 to #2 (inclusive)
+\pgfplotsset
+{
+	select coords between index/.style 2 args=
+	{
+    x filter/.code=
+		{
+        \ifnum\coordindex<#1\def\pgfmathresult{}\fi
+        \ifnum\coordindex>#2\def\pgfmathresult{}\fi
+    }
+	}
+}
+\begin{figure}[htp]
+\centering
+\begin{tikzpicture}
+	\begin{groupplot}[group style={group size= 3 by 3},height=5.5cm,width=5.5cm,max space between ticks=20,minor tick num=1,tick label style={font=\footnotesize}]
+		\nextgroupplot[title=50K keys,ylabel={Read-Dominated},xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={0}{5}] table{Data/icdcn/snb32/threadSweep/citrus.dat};  \label{plots:CITRUS:3}
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={0}{5}] table{Data/icdcn/snb32/threadSweep/HJ-BST.dat};  \label{plots:HJ-BST:3}
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={0}{5}] table{Data/icdcn/snb32/threadSweep/NM-BST.dat};  \label{plots:NM-BST:3}
+				\addplot[green, semithick,mark=o] 			[select coords between index={0}{5}] table{Data/icdcn/snb32/threadSweep/icdcn.dat};  \label{plots:icdcn:3}
+				\coordinate (top) at (rel axis cs:0,1);% coordinate at top of the first plot
+		\nextgroupplot[title=500K keys,xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={6}{11}] table{Data/icdcn/snb32/threadSweep/citrus.dat};  
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={6}{11}] table{Data/icdcn/snb32/threadSweep/HJ-BST.dat};  
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={6}{11}] table{Data/icdcn/snb32/threadSweep/NM-BST.dat};  
+				\addplot[green, semithick,mark=o] 			[select coords between index={6}{11}] table{Data/icdcn/snb32/threadSweep/icdcn.dat}; 
+		\nextgroupplot[title=5M keys,xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={12}{17}] table{Data/icdcn/snb32/threadSweep/citrus.dat};
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={12}{17}] table{Data/icdcn/snb32/threadSweep/HJ-BST.dat};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={12}{17}] table{Data/icdcn/snb32/threadSweep/NM-BST.dat};
+				\addplot[green, semithick,mark=o] 			[select coords between index={12}{17}] table{Data/icdcn/snb32/threadSweep/icdcn.dat};
+		\nextgroupplot[ylabel={Mixed},xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={18}{23}] table{Data/icdcn/snb32/threadSweep/citrus.dat}; 
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={18}{23}] table{Data/icdcn/snb32/threadSweep/HJ-BST.dat};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={18}{23}] table{Data/icdcn/snb32/threadSweep/NM-BST.dat};
+				\addplot[green, semithick,mark=o] 			[select coords between index={18}{23}] table{Data/icdcn/snb32/threadSweep/icdcn.dat};
+		\nextgroupplot[xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={24}{29}] table{Data/icdcn/snb32/threadSweep/citrus.dat}; 
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={24}{29}] table{Data/icdcn/snb32/threadSweep/HJ-BST.dat};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={24}{29}] table{Data/icdcn/snb32/threadSweep/NM-BST.dat};
+				\addplot[green, semithick,mark=o] 			[select coords between index={24}{29}] table{Data/icdcn/snb32/threadSweep/icdcn.dat};
+		\nextgroupplot[xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={30}{35}] table{Data/icdcn/snb32/threadSweep/citrus.dat}; 
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={30}{35}] table{Data/icdcn/snb32/threadSweep/HJ-BST.dat};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={30}{35}] table{Data/icdcn/snb32/threadSweep/NM-BST.dat};
+				\addplot[green, semithick,mark=o] 			[select coords between index={30}{35}] table{Data/icdcn/snb32/threadSweep/icdcn.dat};
+		\nextgroupplot[xlabel={Number of Threads},ylabel={Write-Dominated},xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={36}{41}] table{Data/icdcn/snb32/threadSweep/citrus.dat}; 
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={36}{41}] table{Data/icdcn/snb32/threadSweep/HJ-BST.dat};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={36}{41}] table{Data/icdcn/snb32/threadSweep/NM-BST.dat};
+				\addplot[green, semithick,mark=o] 			[select coords between index={36}{41}] table{Data/icdcn/snb32/threadSweep/icdcn.dat};	
+		\nextgroupplot[xlabel={Number of Threads},xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={42}{47}] table{Data/icdcn/snb32/threadSweep/citrus.dat}; 
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={42}{47}] table{Data/icdcn/snb32/threadSweep/HJ-BST.dat};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={42}{47}] table{Data/icdcn/snb32/threadSweep/NM-BST.dat};
+				\addplot[green, semithick,mark=o] 			[select coords between index={42}{47}] table{Data/icdcn/snb32/threadSweep/icdcn.dat};	
+		\nextgroupplot[xlabel={Number of Threads},xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={48}{53}] table{Data/icdcn/snb32/threadSweep/citrus.dat}; 
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={48}{53}] table{Data/icdcn/snb32/threadSweep/HJ-BST.dat};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={48}{53}] table{Data/icdcn/snb32/threadSweep/NM-BST.dat};
+				\addplot[green, semithick,mark=o] 			[select coords between index={48}{53}] table{Data/icdcn/snb32/threadSweep/icdcn.dat};						
+				\coordinate (bot) at (rel axis cs:1,0);% coordinate at bottom of the last plot
+\end{groupplot}
+	\path (top-|current bounding box.west)-- node[anchor=south,rotate=90] {\small System throughput (million operations/second)} (bot-|current bounding box.west);
+	%\node[right,rotate=90] at (-1.4,-7.2){\small ~Throughput (million ops/sec)};
+	\path (top|-current bounding box.north)-- coordinate(legendpos) (bot|-current bounding box.north);
+	\matrix[matrix of nodes, anchor=south, draw, inner sep=0.2em, draw] at ([xshift=-5ex,yshift=1ex]legendpos)
+  {
+    \ref{plots:HJ-BST:3}& \HJBST{} & [5pt]
+    \ref{plots:NM-BST:3}& \NMBST{} & [5pt]
+    \ref{plots:CITRUS:3}& \CITRUS{} & [5pt]
+		\ref{plots:icdcn:3}& \ICDCN{} \\
+	};
+\end{tikzpicture}
+\caption{Comparison of system throughput of different algorithms. Each row represents a key space size and each column represents a workload type. Higher the throughput, better the performance of the algorithm.}
+\label{fig:icdcn-threadSweep}
+\end{figure}

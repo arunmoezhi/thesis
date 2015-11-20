@@ -1,0 +1,27 @@
+In this section we evaluate \CASTLE{} against three other implementations of a concurrent 
+BST, namely those based on:
+%%
+\begin{enumerate}[label=(\roman*)]
+\item the lock-free internal BST by Howley and Jones~\cite{HowJon:2012:SPAA}, denoted by \HJBST{},
+\item the lock-free external BST by Natarajan and Mittal~\cite{NatMit:2014:PPoPP}, denoted by \NMBST{}, and 
+\item the RCU-based internal BST by Arbel and Attiya~\cite{ArbAtt:2014:PODC}, denoted by \CITRUS{}.
+\end{enumerate}
+%%
+Note that \CITRUS{} is a blocking implementation. The above three implementations were obtained from their respective authors. All implementations were written in C/C++. In our experiments, none of the implementations used garbage collection to reclaim memory. The experimental evaluation in~\cite{HowJon:2012:SPAA, NatMit:2014:PPoPP} showed that, in all cases,  either \HJBST{} or \NMBST{} outperformed the concurrent BST implementation based on Ellen \emph{et al.}'s lock-free algorithm in~\cite{EllFat+:2010:PODC}. So we did not consider it in our experiments. 
+\input{c06/castle/experiments-graphs-stampede-threadSweep}
+\input{c06/castle/experiments-graphs-stampede-keySweep}
+
+The results of our experiments are shown in  \figref{castle-threadSweep} and \figref{castle-keySweep}. In \figref{castle-threadSweep}, the absolute value of the system throughput is plotted against the number of threads (varying from 1 to 32 in powers of 2). Here each column represents a specific workload (read-dominated, mixed or write-dominated) and each row represents a specific key space size (50K, 500K or 5M). In \figref{castle-keySweep}, the relative value of the system throughput with respect to that of \HJBST{} is plotted against the key space size. Here each column represents a range of key space sizes (small, medium and large) and each row represents a specific workload. As the peak performance for all the four algorithms (for all cases) occurred at 32 threads, we set the number of threads to 32 while varying the key space size from $2^{13}$ to $2^{24}$.
+
+As both \figref{castle-threadSweep} and \figref{castle-keySweep} show, for smaller key space sizes, \NMBST{} achieves the best system throughput. This is not surprising since \NMBST{} is optimized for high contention scenarios. For medium and large key space sizes, \CASTLE{} achieves the best system throughput for all three workload types in almost all the cases (except when the workload is write-dominated and the key space size is in the lower half of the medium range). The maximum gap between \CASTLE{} and the next best performer is around 59\% which occurs at 500K key space size, read-dominated workload and 32 threads.
+
+We believe that some of the reasons for the better performance of  \CASTLE{} over the other three concurrent algorithms, especially when the contention is relatively low,  are as follows. First, as explained in~\cite{NatMit:2014:PPoPP}, operating at edge-level rather than at node-level reduces the contention among operations. Second, using a \CAS{} instruction for locking an edge also validates that the edge has not undergone any change since it was last observed. Third, locking edges as late as possible minimizes the blocking effect of the locks.
+%%
+\input{Figures/castle/comparison}
+
+\Tabref{castle-comparison} shows a comparison of \HJBST{}, \NMBST{} and \CASTLE{} with respect to the number of objects allocated dynamically and the number of synchronization primitives executed per modify operation in the absence of contention. We omitted \CITRUS{} in this comparison since it based on a different framework. As \Tabref{castle-comparison} shows, our algorithm allocates fewer objects dynamically than the two lock-free algorithms (one for insert operations and none for a delete operations). Further, again as \Tabref{castle-comparison} shows, our algorithm executes  much fewer synchronization primitives than \HJBST{}. It executes the same  number of  synchronization primitives as \NMBST{} for insert and simple delete operations and only one more for complex delete operations. This is important since a synchronization primitive is usually much more expensive to execute than a simple read or write instruction. Finally, we observed in our experiments that \CASTLE{} had a smaller memory footprint than all the three implementations (by a factor of two or more) since it uses internal representation of a search tree and allocates fewer objects dynamically. As a result, it was likely able to benefit from caching to a larger degree than the other algorithms.
+
+In our experiments, we observed that, for key space  sizes larger than 10K, the likelihood of an operation restarting was extremely low (less than 0.1\%) even for a write-dominated workload. This implies that, in at least 99.9\% of the cases, an operation was able to complete without encountering any conflicts. Thus, for key space sizes larger than 10K, we expect \CASTLE{} to outperform the implementation based on the lock-free algorithm described in~\cite{EllFat+:2014:PODC}, which is basically derived from the one in~\cite{EllFat+:2010:PODC}.
+
+%\input{c06/castle/experiments-graphs-opus-keySweep}
+%\input{c06/castle/experiments-graphs-opus-keySweep-allWorkloads}

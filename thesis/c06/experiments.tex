@@ -1,0 +1,36 @@
+We now describe the results of the comparative evaluation of different implementations of a concurrent BST using simulated workloads. This chapter is organized as follows. Performance evaluation of our lock-based algorithm is described in \secref{experiments:castle} followed by our lock-free algorithm described in \secref{experiments:icdcn}. Performance evaluation of our local recovery technique is described in \secref{experiments:localRecovery}.
+
+\section{Experimental Setup} 
+We conducted our experiments on a single large-memory node in stampede\footnote{https://www.tacc.utexas.edu/systems/stampede} cluster at TACC (Texas Advanced Computing Center). This node is a Dell PowerEdge R820 server with 4 Intel E5-4650 8-core processors (32 cores in total) and 1TB of DDR3 memory. Hyper-threading has been disabled on the node. It runs CentOS 6.3 operating system.  
+
+To better understand the scalability of our algorithms we also conducted experiments on a single Intel Xeon Phi SE10P Coprocessor\footnote{http://www.intel.com/content/www/us/en/processors/xeon/xeon-phi-detail.html} having 61 1.1 GHz cores with 4 hardware threads per core and 8GB of GDDR5 memory.
+
+We used Intel C/C++ compiler (version 2013.2.146) with optimization flag set to O3. We used GNU Scientific Library to generate random numbers. We used Intel's \emph{TBB Malloc}~\cite{Rei:2007:Book} as the dynamic memory allocator since it provided superior performance to C/C+ default allocator in a multi-threaded environment.
+
+To compare the performance of different implementations, we considered the following parameters:
+\begin{enumerate}[leftmargin=*, noitemsep]
+\item \textbf{Relative Distribution of Operations:} We considered three different workload  distributions: 
+						\begin{enumerate*}[label=(\alph*)]
+						\item \emph{read-dominated:} 90\% search, 5\% insert and 5\% delete, 
+						\item \emph{mixed:} 70\% search, 15\% insert and 15\% delete, and
+						\item \emph{write-dominated:} 0\% search, 50\% insert and 50\% delete.
+						\end{enumerate*}
+\item \textbf{Maximum Degree of Contention:} This depends on number of threads that can concurrently operate on the tree. On 32 core machine, we varied the number of threads 
+from 1 to 32 in powers of two. On 61 core machine we varied the number of threads from 1 to 244 in multiples of 61.
+\item \textbf{Maximum Tree Size:} This depends on the size of the key space. To get the peak throughput, we set the number of threads to be the value where the peak performance is achieved and we varied key space size from 2\textsuperscript{13} (8Ki) to 2\textsuperscript{24} (16Mi).  To understand the scalability of the algorithms, we varied the number of threads and considered four different key ranges: 2,000 (2k), 20,000 (20K), 200,000 (200K) and 2 million (2M) keys.
+\end{enumerate}
+
+We compared the performance of different algorithms with respect to \emph{system throughput}, given by the number of operations executed per unit time. In each run of the experiment, we ran each algorithm for 10 seconds, and calculated the total number of operations completed by the end of the run to determine the system throughput. The results were averaged over 10 runs. To capture only the steady state behaviour, we \textit{pre-populated} the tree to 50\% of its maximum size, prior to starting a simulation run. The beginning of each run consisted of a 1 second ``warm-up'' phase whose numbers were excluded in the computed statistics to avoid initial caching effects. 
+
+\section{Lock based tree}
+\label{sec:experiments:castle}
+\input{c06/castle/castle}
+\section{Lock free tree}
+\label{sec:experiments:icdcn}
+\input{c06/icdcn/icdcn}
+\section{Impact of local recovery}
+\label{sec:experiments:localRecovery}
+\input{c06/localRecovery/localRecovery}
+%\section{Performance on accelerators}
+%\label{sec:experiments:micVsSnb}
+%\input{c06/micVsSnb}
