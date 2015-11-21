@@ -67,9 +67,12 @@ Every operation in our algorithm uses \emph{seek} function as a subroutine. The 
 A search operation starts by invoking seek operation. It returns \true{} if the stored key matches the target key and \false{} otherwise. 
 
 \paragraph*{Insert}
+\input{Figures/icdcn/insert}
 An insert operation ((shown in \figref{icdcn-insert})) starts by invoking seek operation. It returns \false{} if the target key matches the stored key; otherwise, it moves to the execution phase. In the execution phase, it attempts to insert the key into the tree as a child node of the last node in the \accesspath{} using a \CAS{} instruction. If the instruction succeeds, then the operation returns \true{}; otherwise, it restarts by invoking the seek function again.
 
 \paragraph*{Delete} 
+\input{Figures/icdcn/simple}
+\input{Figures/icdcn/complex}
 A delete operation starts by invoking seek function. It returns \false{} if the stored key does not match the target key; otherwise, it moves to the execution phase. In the execution phase, it attempts to remove the key stored in the \terminalnode{} of the \accesspath. There are two cases depending on whether the \terminalnode{} is a binary node (has two children) or not (has at most one child). In the first case, the operation is referred to as \emph{complex delete operation}. In the second case, it is referred to as \emph{simple delete operation}. In the case of simple delete (shown in \figref{icdcn-simple}), the \terminalnode{} is removed by changing the pointer at the parent node of the \terminalnode. In the case of complex delete (shown in \figref{icdcn-complex}), the key to be deleted is replaced with the \emph{next largest} key in the tree, which will be stored in the \emph{leftmost node} of the \emph{right subtree} of the \terminalnode.
 
 \subsection{Details of the Algorithm}
@@ -118,24 +121,12 @@ is used for helping, if there is a conflict. For insert and delete operations, w
 
 \subsubsection{The Execution Phase of an Insert Operation}
 
-\begin{comment}
-
-%% Moved to the appendix
-
-\input{Figures/icdcn/flow-insert}
-\input{Figures/icdcn/flow-delete}
-
-\end{comment}
-
-In the execution phase, an insert operation creates a new node containing the target key. It then adds the new node to the tree at the injection point using a \CAS{} instruction. If the \CAS{} instruction succeeds, then (the new node becomes a part of the tree and) the operation terminates; otherwise, the operation determines if it failed because of a \emph{conflicting} delete operation in progress. If there is no conflicting delete operation in progress, then the operation restarts from the seek phase; otherwise it performs helping and then restarts from the seek phase.
-\input{Figures/icdcn/insert}
+\input{Figures/icdcn/flowInsert}
+In the execution phase, an insert operation creates a new node containing the target key. It then adds the new node to the tree at the injection point using a \CAS{} instruction. If the \CAS{} instruction succeeds, then (the new node becomes a part of the tree and) the operation terminates; otherwise, the operation determines if it failed because of a \emph{conflicting} delete operation in progress. If there is no conflicting delete operation in progress, then the operation restarts from the seek phase; otherwise it performs helping and then restarts from the seek phase. \figref{icdcn-flowInsert} shows a  flow chart describing the sequence of steps of an insert operation.
 
 \subsubsection{The Execution Phase of a Delete Operation}
 The execution of a delete operation starts in \emph{\injection{} mode}. Once the operation has been injected into the tree, it advances to either \emph{\discovery{} mode} or \emph{\cleanup{} mode} depending on the type of the delete operation.
 
-\input{Figures/icdcn/simple}
-
-\input{Figures/icdcn/complex}
 
 \paragraph*{Injection Mode}
 
@@ -168,9 +159,11 @@ In case the \CAS{} instruction fails while marking the left child edge, the oper
 %%
 \item \textbf{Promote Successor Key:} The operation replaces the \targetnode's original key with the successor key. At the same time, it also sets the mark bit in the key to indicate that the current key stored in the \targetnode{} is the replacement key and not the original key.
 %%
-\item \textbf{Remove Successor Node:}  The operation removes $S$ (the successor node) by changing the child pointer at$S.\myparent$ that is pointing to $S$ to point to the right child of $S$ using a \CAS{} instruction. If the \CAS{} instruction succeeds, then the operation advances to the \cleanup{} mode. Otherwise, it performs helping if needed. It 
-then finds $S$ again by performing another traversal of the tree starting from the right child of $T$. If the traversal fails to find $S$ (recall that the left edge of $S$ is marked for promotion and contains the address of $T$), then $S$ has already been removed from the tree by another operation as part of helping, and the delete operation advances to the \cleanup{} mode. On advancing to the \cleanup{} mode, the operation sets a flag in $T$  indicating that $S$ has been removed from the tree (and $T$ can now be replaced with a new node) so that other operations trying to help it know not to look for $S$.
+\item \textbf{Remove Successor Node:}  The operation removes $S$ (the successor node) by changing the child pointer at$S.\myparent$ that is pointing to $S$ to point to the right child of $S$ using a \CAS{} instruction. If the \CAS{} instruction succeeds, then the operation advances to the \cleanup{} mode. Otherwise, it performs helping if needed. It then finds $S$ again by performing another traversal of the tree starting from the right child of $T$. If the traversal fails to find $S$ (recall that the left edge of $S$ is marked for promotion and contains the address of $T$), then $S$ has already been removed from the tree by another operation as part of helping, and the delete operation advances to the \cleanup{} mode. On advancing to the \cleanup{} mode, the operation sets a flag in $T$  indicating that $S$ has been removed from the tree (and $T$ can now be replaced with a new node) so that other operations trying to help it know not to look for $S$.
 \end{enumerate}
+
+\figref{icdcn-flowDelete} shows a  flow chart describing the sequence of steps of a delete operation.
+\input{Figures/icdcn/flowDelete}
 
 \input{c04/pseudocode}
 

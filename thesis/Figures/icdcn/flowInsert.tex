@@ -1,0 +1,27 @@
+\begin{figure}[htp]
+\centering
+{
+	\begin{tikzpicture}
+	\node (p0) [] {Insert(K)};
+	\node (p1) [process, below of=p0, text width=4cm] {Do a binary search for key K in the tree};
+	\node (p2) [process, below of=p1, yshift=-1.5cm, text width=4.5cm] {Create a new node with key K for insertion};
+	\node (p3) [process, below of=p2, yshift=-1.5cm, text width=4.5cm] {Attempt CAS on appropriate edge to insert the new node};
+	\node (retF) [process, right of=p1, xshift=4cm, text width=1cm, minimum width=1cm] {return false};
+	\node (p4) [process, below of=p3, yshift=-1.5cm, text width=3cm] {check if the edge is marked};
+	\node (retT) [process, right of=p3, xshift=4cm, text width=1cm, minimum width=1cm] {return true};
+	\node (h1) [connector, below of=p4, yshift=-1.5cm] {Help};
+
+
+
+	\draw [arrow] (p1) -- node[anchor=west] {K not found} (p2);
+	\draw [arrow] (p1) -- node[anchor=south] {K found} (retF);
+	\draw [arrow] (p2) -- node {} (p3);
+	\draw [arrow] (p3) -- node[anchor=east] {CAS failed} (p4);
+	\draw [arrow] (p3) -- node[anchor=south, align=center, yshift=0.25cm] {CAS \\ successful} (retT);
+	\draw [arrow] (p4) -- node[anchor=west] {Yes} (h1);
+	\draw [arrow] (p4.west) -- ++(-1,0)  node[anchor=south,pos=0.5] {No} |- (p1.west);
+	\draw [arrow] (h1.west) -- ++(-2.5,0) |- node[anchor=south] {} (p1.west);
+	\end{tikzpicture}
+}
+\caption{\ICDCN{} - Sequence of steps in an insert operation \label{fig:icdcn-flowInsert}}
+\end{figure}

@@ -1,0 +1,65 @@
+\begin{figure}[htp]
+\centering
+{
+	\begin{tikzpicture}[scale=0.75, transform shape]
+		\node (p0) 		{Delete(K)};
+		\node (p1) 		[process, below of=p0, text width=6cm] {Do a binary search for key K in the tree};
+		\node (p2) 		[process, below of=p1, yshift=-2cm, text width=6cm] {Mark left child edge for delete using CAS};
+		\node (p3) 		[process, below of=p2, yshift=-2cm, text width=6cm] {Mark right child edge for delete using BTS. Check the children edges to determine simple or complex delete};
+		\node (retF) 	[process, right of=p1, xshift=5.0cm, text width=1cm, minimum width=1cm] {return false};
+		\node (p4) 		[process, below of=p3, yshift=-2cm, text width=6cm] {Attempt CAS to change the edge (parent, target node) to point to the non-null child};
+		\node (retT) 	[process, right of=p4, xshift=5.0cm, text width=1cm, minimum width=1cm] {return true};
+		%\node (C) 		[connector, right of=p3, xshift=5.5cm] {C};
+		\node (h1) 		[connector, right of=p2, xshift=5.0cm] {Help};
+		\node (h2) 		[connector, below of=p4, yshift=-2cm] {Help};
+
+
+
+		\draw [arrow] (p1) -- node[anchor=west] {K found} (p2);
+		\draw [arrow] (p1) -- node[anchor=south] {K not found} (retF);
+		\draw [arrow] (p2) -- node[anchor=west, align=center] {CAS successful} (p3);
+		\draw [arrow] (p2) -- node[anchor=south, align=center, yshift=0.25cm] {CAS \\ failed} (h1);
+		\draw[-latex] (h1) to [out=90,in=330,looseness=1] (p1.east);
+		\draw [arrow] (p3) -- node[anchor=east] {simple} (p4);
+		%\draw [arrow] (p3) -- node[anchor=south] {Complex} (C);
+		\draw [arrow] (p4) -- node[anchor=south, align=center, yshift=0.25cm] {CAS \\ successful} (retT);
+		\draw [arrow] (p4) -- node[anchor=east] {CAS failed} (h2);
+		%\draw [arrow] (h2.west) -- ++(-0,0) |- node[anchor=south] {} (p4.west);
+		\draw[-latex] (h2.east) to [out=0,in=0,looseness=1.5] (p4.east);
+	%\end{tikzpicture}
+
+	%\begin{tikzpicture}[scale=0.7, transform shape]
+	%\node (C) [connector,xshift=11cm] {C};
+	%\node (p1) [process, below of=C, yshift=-2cm, text width=6cm] {Find Successor: smallest key in the right subtree};
+	\node (p1c) [process, xshift=11cm,text width=6cm] {Find Successor: smallest key in the right subtree};
+	\draw [arrow] (p3.east) -- ++(4,0) |- node[anchor=south] {Complex} (p1c.west);
+	\node (p2) [process, below of=p1c, yshift=-2cm, text width=6cm] {Mark left child edge for promotion using CAS};
+	\node (p3) [process, below of=p2, yshift=-2cm, text width=6cm] {Mark right child edge for promotion using BTS. Promote successor's key by copying it to the target node using a simple write};
+	\node (h1) [connector, right of=p2, xshift=5cm] {Help};
+	\node (p4) [process, below of=p3, yshift=-2cm, text width=6cm] {Attempt CAS to change the edge (successor parent,successor) to point to the right child of successor};
+	\node (p5) [process, below of=p4, yshift=-2cm, text width=6cm] {Create a fresh copy of the target node with the new key and its children edges unmarked};
+	\node (h2) [connector, right of=p4, xshift=5cm] {Help};
+	\node (p6) [process, below of=p5, yshift=-2cm, text width=6cm] {Attempt CAS to change the edge (parent, target node) to point to the new node};
+	\node (retT) [process, below of=p6, yshift=-2cm, text width=1cm, minimum width=1cm] {return true};
+	\node (h3) [connector, right of=p6, xshift=5cm] {Help};
+
+	%\draw [arrow] (C) -- node[] {} (p1);
+	\draw [arrow] (p1c) -- node[] {} (p2);
+	\draw [arrow] (p2) -- node[anchor=east] {CAS successful} (p3);
+	\draw [arrow] (p2) -- node[anchor=south, yshift=0.5cm] {CAS failed} (h1);
+	\draw [arrow] (h1.north)  |-  node[] {} (p1c.east);
+	\draw [arrow] (p3) -- node[] {} (p4);
+	\draw [arrow] (p4) -- node[anchor=east] {CAS successful} (p5);
+	\draw [arrow] (p4) -- node[anchor=south] {CAS failed} (h2);
+	\draw[-latex] (h2) to [out=270,in=330,looseness=1] (p4.east);
+	\draw [arrow] (p5) -- node[] {} (p6);
+
+	\draw [arrow] (p6) -- node[anchor=south] {CAS failed} (h3);
+	\draw[-latex] (h3) to [out=270,in=330,looseness=1] (p6.east);
+	\draw [arrow] (p6) -- node[anchor=east] {CAS successful} (retT);
+
+	\end{tikzpicture}
+\caption{\ICDCN{} - Sequence of steps in a delete operation \label{fig:icdcn-flowDelete}}
+}
+\end{figure}
+
