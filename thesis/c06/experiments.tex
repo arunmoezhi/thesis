@@ -11,8 +11,8 @@ To compare the performance of different implementations, we considered the follo
 \begin{enumerate}[leftmargin=*, noitemsep]
 \item \textbf{Relative Distribution of Operations:} We considered three different workload  distributions: 
 						\begin{enumerate*}[label=(\alph*)]
-						\item \emph{read-dominated:} 90\% search, 5\% insert and 5\% delete, 
-						\item \emph{mixed:} 70\% search, 15\% insert and 15\% delete, and
+						\item \emph{read-dominated:} 90\% search, 9\% insert and 1\% delete, 
+						\item \emph{mixed:} 70\% search, 20\% insert and 10\% delete, and
 						\item \emph{write-dominated:} 0\% search, 50\% insert and 50\% delete.
 						\end{enumerate*}
 \item \textbf{Maximum Degree of Contention:} This depends on number of threads that can concurrently operate on the tree. On 32 core machine, we varied the number of threads 

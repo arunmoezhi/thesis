@@ -1,0 +1,290 @@
+\begin{limitscope}
+
+%% To limit the scope of the macros defined below
+
+%% macros for pseudocode
+
+\newcommand{\child}{child}
+\newcommand{\node}{node}
+\newcommand{\parent}{parent}
+
+\newcommand{\mainSeekRecord}{seekTargetKey}
+\newcommand{\successorSeekRecord}{seekSuccessorKey}
+
+
+\newcommand{\targetStack}{targetStack}
+\newcommand{\successorStack}{successorStack}
+
+
+\newcommand{\successorStackInUse}{successorStackInUse}
+\newcommand{\targetNode}{targetNode}
+
+
+
+
+\newcommand{\key}{key}
+
+\newcommand{\done}{done}
+\newcommand{\result}{result}
+\newcommand{\status}{status}
+\newcommand{\restart}{restart}
+
+
+
+
+
+\newcommand{\cKey}{key}
+\newcommand{\nKey}{key}
+\newcommand{\cNode}{current}
+\newcommand{\pNode}{parent}
+\newcommand{\nMarked}{marked}
+
+
+
+\newcommand{\which}{which}
+\newcommand{\address}{address}
+
+\newcommand{\anchor}{anchor}
+
+\newcommand{\stack}{stack}
+\newcommand{\sTop}{top}
+\newcommand{\sBottom}{bottom}
+\newcommand{\current}{current}
+
+\remove{
+\newcommand{\traversalRecord}{state}
+\newcommand{\TraversalRecord}{State}
+\newcommand{\opRecord}{opRecord}
+\newcommand{\OpRecord}{OpRecord}
+\newcommand{\seekRecord}{seekRecord}
+\newcommand{\SeekRecord}{SeekRecord}
+}
+
+\newcommand{\admissible}{admissible}
+\newcommand{\critical}{critical}
+\newcommand{\reference}{re\!f\!erence}
+
+\newcommand{\OptReturn}[1][]{\Return #1\;}
+
+\newcommand{\injectionPoint}{injectionPoint}
+
+
+
+\newcommand{\Search}{\textsc{Search}}
+\newcommand{\Insert}{\textsc{Insert}}
+\newcommand{\Delete}{\textsc{Delete}}
+\newcommand{\Seek}{\textsc{Seek}}
+
+\newcommand{\Inject}{\textsc{Inject}}
+
+
+%%
+%% \newcommand{\WFSeekForSearchBOSize}{\textsc{WFSeekForSearchBasedOnSize}}
+\newcommand{\WFSeekForSearchBOSize}{\textsc{WFSeekForSearchBOSize}}
+%% \newcommand{\WFSeekForSearchBOHeight}{\textsc{WFSeekForSearchBasedOnHeight}}
+\newcommand{\WFSeekForSearchBOHeight}{\textsc{WFSeekForSearchBOHeight}}
+%%
+%% \newcommand{\WFTraverseTreeBOCount}{\textsc{TraverseBasedOnCount}}
+\newcommand{\WFTraverseTreeBOCount}{\textsc{LimitedTraverse}}
+%% \newcommand{\WFTraverseTreeBOTimeStamp}{\textsc{TraverseBasedOnTimeStamp}}
+\newcommand{\WFTraverseTreeBOTimeStamp}{\textsc{TimeStampTraverse}}
+%%
+\remove{
+\newcommand{\SeekForSuccessor}{\textsc{SeekForSuccessor}}
+\newcommand{\NeedSuccessorKey}{\textsc{NeedSuccessorKey}}
+\newcommand{\GetChild}{\textsc{GetChild}}
+\newcommand{\Move}{\textsc{Move}}
+\newcommand{\GetAddress}{\textsc{GetAddress}}
+\newcommand{\IsNull}{\textsc{IsNull}}
+\newcommand{\PopulateSeekRecord}{\textsc{PopulateSeekRecord}}
+}
+
+%%
+
+
+\newcommand{\dSum}{\mathcal{D}}
+\newcommand{\iSum}{\mathcal{I}}
+
+\newcommand{\copyOfLabels}{copyO\!f\!Labels}
+\newcommand{\timeStamp}{timeStamp}
+\newcommand{\myLabel}{label}
+\newcommand{\myPID}{pid}
+
+\newcommand{\mline}[1]{\DontPrintSemicolon #1 \PrintSemicolon}
+
+
+\newcommand{\LEFT}{\textsf{LEFT}}
+\newcommand{\RIGHT}{\textsf{RIGHT}}
+
+
+\newcommand{\rarrow}{\!\rightarrow\!}
+\newcommand{\type}{type}
+\newcommand{\limit}{limit}
+
+
+\newcommand{\SEARCH}{\textsf{SEARCH}}
+\newcommand{\INSERT}{\textsf{INSERT}}
+\newcommand{\DELETE}{\textsf{DELETE}}
+
+\newcommand{\STOPFOUND}{\textsf{FOUND}}
+\newcommand{\STOPNOTFOUND}{\textsf{NOT\_FOUND}}
+\newcommand{\ADMISSIBLE}{\textsf{SAFE}}
+\newcommand{\INADMISSIBLE}{\textsf{NOT\_SAFE}}
+
+\newcommand{\TARGETSTACK}{\textsf{TARGET\_STACK}}
+\newcommand{\SUCCESSORSTACK}{\textsf{SUCCESSOR\_STACK}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\DefineKeyWords}{
+%%
+\SetKw{Boolean}{boolean}
+\SetKw{Integer}{integer}
+\SetKw{LAnd}{~and~}
+\SetKw{LOr}{~or~}
+\SetKw{LNot}{not}
+\SetKw{Struct}{struct}
+\SetKw{Null}{null}
+\SetKw{True}{true}
+\SetKw{False}{false}
+\SetKw{Break}{break}
+\SetKw{Continue}{continue}
+\SetKw{Enum}{enum}
+\SetKw{Word}{word}
+%%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Functions for wait-free search
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\begin{algorithm}[htp]
+\caption{Seek Function for Target Key based on Estimating Tree Size} 
+\label{algo:wf:search:size}
+%%
+\DefineKeyWords
+%%
+\Integer $\iCounters[\numberOfProcesses]$\;
+\Integer $\dCounters[\numberOfProcesses]$\;
+%%
+\BlankLine
+%%
+\tcp{Traverses the tree starting from the root node but visits a limited number of nodes}
+\DontPrintSemicolon
+\Boolean \WFTraverseTreeBOCount( $\opRecord$, $\seekRecord$, $\limit$ )\;
+%% \Boolean \WFTraverseTreeBOCount( $\opRecord$,  $\limit$ )\;
+\PrintSemicolon
+\Begin
+{
+%%
+\tcp{similar to \TraverseTree{} except that the while loop from \linesref{local-traverse|tree:while:begin}{local-traverse|tree:while:end} is executed at most $\limit$ times}
+%%
+}
+%%
+\BlankLine
+%%
+\tcp{A wait-free seek function for a search operation based on computing an upper-bound on tree size}
+\DontPrintSemicolon
+\Boolean \WFSeekForSearchBOSize( $\opRecord$, $\seekRecord$ )\;
+\PrintSemicolon
+\Begin
+{
+%%
+   %% $\limit$ := $\numberOfProcesses$\;
+	 $\result$ := \WFTraverseTreeBOCount(  $\opRecord$, $\seekRecord$, $\numberOfProcesses$ )\;
+	 \If{\LNot($\result$)} 
+	 {
+	    %% $\dSum$ := $\sum\limits_{i = 0}^{\numberOfProcesses-1}  \dCounters[i]$\;
+			%% $\iSum$ := $\sum\limits_{i = 0}^{\numberOfProcesses-1}  \iCounters[i]$\;
+			$\dSum$ := $\dCounters[0] + \dCounters[1] + \cdots + \dCounters[\numberOfProcesses-1]$\;
+		  $\iSum$ := $\iCounters[0] + \iCounters[1] + \cdots + \iCounters[\numberOfProcesses-1]$\;
+			$S$ := $\iSum - \dSum$\;
+			$\result$ :=  \WFTraverseTreeBOCount(  $\opRecord$, $\seekRecord$, $S$ )\;
+			
+	 }
+	 
+	 \If{\LNot($\result$)}
+	 {
+	    \tcp{examine the stack}
+			$\result$ := \ExamineStack( $\opRecord$, $\seekRecord$ )\;
+	 }
+	 
+	 \tcp{return the outcome}
+	 %% \tcp{return the outcome}
+	 \PopulateSeekRecord( $\seekRecord$, $\traversalRecord$ )\;
+	 \Return $\result$\;
+	
+%%
+}
+\end{algorithm}
+
+
+
+
+\begin{algorithm}[htp]
+\caption{Seek Function for Target Key based on Time-Stamps} 
+\label{algo:wf:search:height}
+%%
+\DefineKeyWords
+%%
+\Integer $\labels[\numberOfProcesses]$\;
+%%
+\BlankLine
+%%
+\tcp{Traverses the tree starting from the root node but stops if recently added key is found}
+%%
+\DontPrintSemicolon
+\Boolean \WFTraverseTreeBOTimeStamp( $\opRecord$, $\seekRecord$, $\labels$ )\;
+\PrintSemicolon
+\Begin
+{
+%%
+\tcp{similar to \TraverseTree{} except that the while loop from \linesref{local-traverse|tree:while:begin}{local-traverse|tree:while:end} is terminated as soon as a node with a ``recent'' time-stamp is encountered}
+\tcp{specifically, the following lines are inserted between \linesref[ \& ]{local-traverse|tree:while:begin}{local-traverse|tree:while:first}}
+%%
+$\ang{ \myPID, \myLabel }$ := $\node \rarrow \timeStamp$\;
+\lIf{$\myLabel$ $>$ $\labels[\myPID]$}{ \Break }
+}
+%%
+\BlankLine
+%%
+\tcp{A wait-free  seek function for a search operation based on estimating tree height}
+%%
+\DontPrintSemicolon
+\Boolean \WFSeekForSearchBOHeight( $\opRecord$, $\seekRecord$ )\;
+\PrintSemicolon
+\Begin
+{
+%%
+   %% $\limit$ := $\numberOfProcesses$\;
+	 $\result$ := \WFTraverseTreeBOCount(  $\opRecord$, $\seekRecord$, $\numberOfProcesses$ )\;
+	 \If{\LNot($\result$)} 
+	 {
+	    $\copyOfLabels$ := $\labels$\;
+			\mline{$\result$ := \WFTraverseTreeBOTimeStamp( \parbox[t]{1.125in}{$\opRecord$, $\seekRecord$, \\ $\copyOfLabels$ );} \;}
+			
+	 }
+	 
+	 \If{\LNot($\result$)}
+	 {
+	    \tcp{examine the stack }
+			$\result$ := \ExamineStack( $\opRecord$, $\seekRecord$ )\;
+	 }
+	 
+	 \tcp{return the outcome}
+	 %% \tcp{return the outcome}
+	 \PopulateSeekRecord( $\seekRecord$, $\traversalRecord$ )\;
+	 \Return $\result$\;
+	
+%%
+}
+\end{algorithm}
+
+
+
+\end{limitscope}

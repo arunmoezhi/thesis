@@ -33,7 +33,8 @@
 % UTD mandates a blank line between each pair of bibliography entries, so set
 % \bibsep as shown below.  Finally, if you are accustomed to using \cite as
 % your citation macro, point it to natbib's \citep macro as shown.
-\usepackage[authoryear]{natbib}
+%\usepackage[authoryear]{natbib}
+\usepackage[numbers,sort]{natbib}
 \bibliographystyle{chicago}
 \setlength{\bibsep}{12pt plus 1pt minus 1pt}
 \let\cite=\citep
@@ -50,10 +51,10 @@
 % to pdflatex.  The DVI format loses information because it cannot support
 % modern PDF document features.  Using pdflatex to generate PDFs directly
 % therefore results in PDFs of significantly higher quality.)
-\usepackage{ifpdf}
-\ifpdf
-  \usepackage{hyperref}
-\fi
+%\usepackage{ifpdf}
+%\ifpdf
+%  \usepackage{hyperref}
+%\fi
 
 \usepackage[ruled,vlined,linesnumbered,noresetcount]{algorithm2e}
 \SetAlFnt{\footnotesize}
@@ -83,14 +84,16 @@
 %
 \providecommand{\hyperref}[2][]{#2}
 
-\newenvironment{exampleclasscode}
- {\parindent=1cm\begin{verse}}
- {\end{verse}}
+%\newenvironment{exampleclasscode}
+% {\parindent=1cm\begin{verse}}
+% {\end{verse}}
 %
 \newtheorem{lemma}{Lemma}
 \newtheorem{theorem}{Theorem}
 
 \newcommand{\CAS}{\textsf{CAS}}
+\newcommand{\LL}{\textsf{LL}}
+\newcommand{\SC}{\textsf{SC}}
 \newcommand{\true}{\textsf{true}}
 \newcommand{\false}{\textsf{false}}
 \newcommand{\castleMaximumgap}{59\%}
@@ -199,6 +202,8 @@ To my parents and sister
 \label{chapter:systemModel}
 \input{c02/systemModel}
 
+\part{Design}
+
 \chapter{Lock based concurrent binary search tree}
 \label{chapter:castle}
 \input{c03/castle}
@@ -207,9 +212,15 @@ To my parents and sister
 \label{chapter:icdcn}
 \input{c04/icdcn}
 
+\part{Optimizations}
+
 \chapter{Local recovery for concurrent binary search trees}
 \label{chapter:localRecovery}
 \input{c05/localRecovery}
+
+\chapter{Wait free search}
+\label{chapter:waitFreeSearch}
+\input{c08/waitFreeSearch}
 
 \chapter{Experimental evaluation}
 \label{chapter:experiments}
@@ -219,7 +230,9 @@ To my parents and sister
 \label{chapter:conclusion}
 \input{c07/conclusion}
 
+\begin{thesisbib}
 \bibliography{Bibliography/citations}
+\end{thesisbib}
 
 \begin{vita}
 \input{cv}

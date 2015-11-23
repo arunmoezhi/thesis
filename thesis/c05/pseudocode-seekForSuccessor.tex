@@ -1,0 +1,280 @@
+\begin{limitscope}
+
+%% To limit the scope of the macros defined below
+
+%% macros for pseudocode
+
+\newcommand{\child}{child}
+\newcommand{\node}{node}
+\newcommand{\parent}{parent}
+
+\newcommand{\mainSeekRecord}{seekTargetKey}
+\newcommand{\successorSeekRecord}{seekSuccessorKey}
+
+
+\newcommand{\targetStack}{targetStack}
+\newcommand{\successorStack}{successorStack}
+
+
+\newcommand{\successorStackInUse}{successorStackInUse}
+\newcommand{\targetNode}{targetNode}
+
+
+
+
+\newcommand{\key}{key}
+
+\newcommand{\done}{done}
+\newcommand{\result}{result}
+\newcommand{\status}{status}
+\newcommand{\restart}{restart}
+
+
+
+
+
+\newcommand{\cKey}{key}
+\newcommand{\nKey}{key}
+\newcommand{\cNode}{current}
+\newcommand{\pNode}{parent}
+\newcommand{\nMarked}{marked}
+
+
+
+\newcommand{\which}{which}
+\newcommand{\address}{address}
+
+\newcommand{\anchor}{anchor}
+
+\newcommand{\stack}{stack}
+\newcommand{\sTop}{top}
+\newcommand{\sBottom}{bottom}
+\newcommand{\current}{current}
+
+\remove{
+\newcommand{\traversalRecord}{state}
+\newcommand{\TraversalRecord}{State}
+\newcommand{\opRecord}{opRecord}
+\newcommand{\OpRecord}{OpRecord}
+\newcommand{\seekRecord}{seekRecord}
+\newcommand{\SeekRecord}{SeekRecord}
+}
+
+\newcommand{\admissible}{admissible}
+\newcommand{\critical}{critical}
+\newcommand{\reference}{re\!f\!erence}
+
+%% \newcommand{\OptReturn}[1][]{\Return #1\;}
+\newcommand{\OptReturn}[1][]{}
+
+\newcommand{\injectionPoint}{injectionPoint}
+
+
+
+\newcommand{\Search}{\textsc{Search}}
+\newcommand{\Insert}{\textsc{Insert}}
+\newcommand{\Delete}{\textsc{Delete}}
+\newcommand{\Seek}{\textsc{Seek}}
+
+\newcommand{\Inject}{\textsc{Inject}}
+
+
+%%
+\newcommand{\WFSeekForSearchBOSize}{\textsc{WFSeekForSearchBasedOnSize}}
+\newcommand{\WFSeekForSearchBOHeight}{\textsc{WFSeekForSearchBasedOnHeight}}
+%%
+\newcommand{\WFTraverseTreeBOCount}{\textsc{TraverseBasedOnCount}}
+\newcommand{\WFTraverseTreeBOTimeStamp}{\textsc{TraverseBasedOnTimeStamp}}
+%%
+\remove{
+\newcommand{\SeekForSuccessor}{\textsc{SeekForSuccessor}}
+\newcommand{\NeedSuccessorKey}{\textsc{NeedSuccessorKey}}
+\newcommand{\GetChild}{\textsc{GetChild}}
+\newcommand{\Move}{\textsc{Move}}
+\newcommand{\GetAddress}{\textsc{GetAddress}}
+\newcommand{\IsNull}{\textsc{IsNull}}
+\newcommand{\PopulateSeekRecord}{\textsc{PopulateSeekRecord}}
+}
+
+
+
+\newcommand{\mline}[1]{\DontPrintSemicolon #1 \PrintSemicolon}
+
+
+\newcommand{\LEFT}{\textsf{LEFT}}
+\newcommand{\RIGHT}{\textsf{RIGHT}}
+
+
+\newcommand{\rarrow}{\!\rightarrow\!}
+\newcommand{\type}{type}
+\newcommand{\limit}{limit}
+
+
+\newcommand{\SEARCH}{\textsf{SEARCH}}
+\newcommand{\INSERT}{\textsf{INSERT}}
+\newcommand{\DELETE}{\textsf{DELETE}}
+
+\newcommand{\STOPFOUND}{\textsf{FOUND}}
+\newcommand{\STOPNOTFOUND}{\textsf{NOT\_FOUND}}
+\newcommand{\ADMISSIBLE}{\textsf{SAFE}}
+\newcommand{\INADMISSIBLE}{\textsf{NOT\_SAFE}}
+
+\newcommand{\TARGETSTACK}{\textsf{TARGET\_STACK}}
+\newcommand{\SUCCESSORSTACK}{\textsf{SUCCESSOR\_STACK}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\DefineKeyWords}{
+%%
+\SetKw{Boolean}{boolean}
+\SetKw{Integer}{integer}
+\SetKw{LAnd}{~and~}
+\SetKw{LOr}{~or~}
+\SetKw{LNot}{not}
+\SetKw{Struct}{struct}
+\SetKw{Null}{null}
+\SetKw{True}{true}
+\SetKw{False}{false}
+\SetKw{Break}{break}
+\SetKw{Continue}{continue}
+\SetKw{Enum}{enum}
+\SetKw{Word}{word}
+%%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Seek for successor key
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{algorithm}[tbh]
+\caption{Seek Function for Successor Key} 
+\label{algo:seek:successor}
+%%
+\DefineKeyWords
+%%
+\tcp{Looks for the next largest key with respect to a given key}
+\DontPrintSemicolon
+\Boolean \SeekForSuccessor( $\opRecord$, $\seekRecord$ )\;
+\PrintSemicolon
+\label{lin:local-seek|successor:begin}
+\Begin
+{
+%%
+   
+   \tcp{the stack used in locating the successor key is initialized before this function is invoked}	
+	 $\traversalRecord$ := $\opRecord \rarrow \successorStack$\;
+	 \While{\True}
+	 {
+	
+	    \label{lin:local-seek|successor:while:begin}
+		  \tcp{backtrack until either an unmarked node or the stack becomes empty}
+			
+	    
+			\While{(\Size( $\traversalRecord$ ) $>$ 1)}      
+			{
+			    \label{lin:local-seek|successor:while:backtrack:begin}
+			    $\cNode$ := \GetTop( $\traversalRecord$ )\;
+					\lIf{\LNot(\IsMarked( $\cNode$ ))}
+					{
+					   \Break
+					} 
+					\lElse
+					{
+					   \RemoveFromTop( $\traversalRecord$ )
+					}
+					\label{lin:local-seek|successor:while:backtrack:end}
+			}
+	
+	    \BlankLine
+			
+			\tcp{backtrack further if a clean parent is needed but the parent is not clean}
+			\If{(\Size( $\traversalRecord$ ) $\geq$ 2)}
+			{
+			   \label{lin:local-seek|successor:while:clean:begin}
+			   \If{\NeedCleanParentNode( $\opRecord$, $\cNode$ )}
+		     {
+				    
+			      \tcp{the parent node should be a clean node}
+				    $\pNode$ := \GetSecondToTop( $\traversalRecord$ )\;
+				    \If{\LNot(\IsClean( $\pNode$ ))}
+				    {
+				       \RemoveFromTop( $\traversalRecord$ )\;
+					     \Continue\;
+							 \label{lin:local-seek|successor:while:clean:end}
+				    }
+			   }
+				
+			}
+			
+			\BlankLine
+			
+	    \tcp{check if the successor key is still needed}
+	    $\reference$ := \NeedSuccessorKey( $\opRecord$ )\;
+			\label{lin:local-seek|successor:while:need|successor}
+			\If(\tcp*[f]{successor key no longer required}){\IsNull( $\reference$ )}{ 
+			   \Return \false\;
+			}
+					
+			$\cNode$ := \GetTop( $\traversalRecord$ )\;
+			\uIf{(\Size( $\traversalRecord$ ) = 1)}
+			{
+			   \label{lin:local-seek|successor:while:traversal:if:begin}
+			   %% $\address$ := \GetAddress( $\reference$ )\;
+				 \tcp{visit the node pointed to by the reference returned by \NeedSuccessorKey{} function}
+			   $\which$ := \RIGHT\;
+				 \label{lin:local-seek|successor:while:traversal:if:end}
+			}
+			\Else(\tcp*[f]{follow the left child node of the top node, if it exists})
+			{
+			   \label{lin:local-seek|successor:while:traversal:else:begin}
+		 	   $\reference$ := \GetChild( $\cNode$, \LEFT{} )\;
+			   %% \lIf{\IsNull( $\reference$ )}{ \Break }
+				 %% $\address$ := \GetAddress( $\reference$ )\;
+			   $\which$ := \LEFT\;
+				 \label{lin:local-seek|successor:while:traversal:else:end}
+			}
+			\BlankLine
+			\Repeat(\tcp*[f]{stop if reference is null}){\True}
+	    {
+			   \label{lin:local-seek|successor:while:traversal:begin}
+				 \lIf{\IsNull( $\reference$ )}{ \Break }
+				
+				 \tcp{obtain the address of the node}
+				 $\address$ := \GetAddress( $\reference$ )\;	
+				
+				 \tcp{traverse the edge}
+				 $\restart$ := \Move( $\cNode$, $\address$, $\which$ )\;
+				 \label{lin:local-seek|successor:while:traversal:move}
+			   \If(\tcp*[f]{the algorithm wants to restart the traversal}){$\restart$}
+			   {
+				    \Break\;
+						\label{lin:local-seek|successor:while:traversal:restart}
+			   }  
+				 
+			   \tcp{push the node visited into the stack}
+				 \AddToTop( $\traversalRecord$, $\address$, $\which$ )\;
+				 \label{lin:local-seek|successor:while:traversal:stack}
+				 \label{lin:local-seek|successor:while:traversal:advance:begin}
+			   $\cNode$ := $\address$\;
+				 \tcp{determine the next node to be visited}
+			   $\reference$ := \GetChild( $\cNode$, \LEFT{} )\;
+			   $\which$ := \LEFT{}\;
+				 \label{lin:local-seek|successor:while:traversal:advance:end}
+				 \label{lin:local-seek|successor:while:traversal:end}
+			}
+			\label{lin:local-seek|successor:while:end}
+	 }
+	
+	 \tcp{return the outcome}
+	 \PopulateSeekRecord( $\seekRecord$, $\opRecord$ )\;
+	 \Return \True;
+	 \label{lin:local-seek|successor:end}
+%%
+}
+%%
+\end{algorithm}
+\end{limitscope}

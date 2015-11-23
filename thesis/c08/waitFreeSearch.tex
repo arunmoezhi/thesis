@@ -1,0 +1,101 @@
+\begin{limitscope}
+%%%%% localRecovery/wait free search macros - begin
+\newcommand{\remove}[1]{}
+\NewDocumentCommand\accesspath{ g g }{\IfNoValueTF{#1}{access-path\xspace}{\IfNoValueTF{#2}{A(#1)\xspace}{A(#1,#2)\xspace}}}
+\newcommand{\myterminal}{terminal}
+\newcommand{\myanchor}{anchor}
+\newcommand{\Myanchor}{Anchor}
+\newcommand{\mytarget}{target}
+\newcommand{\myadmissible}{admissible}
+\newcommand{\mycritical}{critical}
+\newcommand{\mysadmissible}{strongly admissible}
+\newcommand{\mysafe}{safe}
+\newcommand{\myconsistent}{consistent}
+\newcommand{\myinconsistent}{inconsistent}
+\newcommand{\storedpath}{\Pi}
+\newcommand{\prefixpath}[1]{\Pi(#1)}
+\newcommand{\injection}{injection}
+\newcommand{\myleft}{le\!f\!t}
+\newcommand{\myright}{right}
+\newcommand{\myparent}{parent}
+\newcommand{\InitializeTraversalRecord}{\textsc{InitializeTraversalState}}
+\newcommand{\TestForTermination}{\textsc{CanTerminate}}
+\newcommand{\FindStartPoint}{\textsc{FindASafeNode}}
+\newcommand{\FindAdmissible}{\textsc{ValidatePath}}
+\newcommand{\RemoveFromTop}{\textsc{RemoveFromTop}}
+\newcommand{\AddToTop}{\textsc{AddToTop}}
+\newcommand{\GetTop}{\textsc{GetTop}}
+\newcommand{\GetSecondToTop}{\textsc{GetSecondToTop}}
+\newcommand{\RemoveUntilCritical}{\textsc{RemoveUntil}}
+\newcommand{\RememberCritical}{\textsc{RememberCritical}}
+\newcommand{\GetFullEntry}{\textsc{GetFullEntry}}
+\newcommand{\IsMarked}{\textsc{IsMarked}}
+\newcommand{\IsClean}{\textsc{IsClean}}
+\newcommand{\NeedCleanParentNode}{\textsc{NeedCleanParentNode}}
+\newcommand{\AddToBottom}{\textsc{AddToBottom}}
+\newcommand{\MoveFromTargetToSuccessor}{\textsc{MoveFromTargetToSuccessor}}
+\newcommand{\IsEmpty}{\textsc{IsEmpty}}
+\newcommand{\Size}{\textsc{Size}}
+\newcommand{\GetKey}{\textsc{GetKey}}
+\newcommand{\SeekForSuccessor}{\textsc{SeekForSuccessor}}
+\newcommand{\NeedSuccessorKey}{\textsc{NeedSuccessorKey}}
+\newcommand{\GetChild}{\textsc{GetChild}}
+\newcommand{\Move}{\textsc{Move}}
+\newcommand{\GetAddress}{\textsc{GetAddress}}
+\newcommand{\IsNull}{\textsc{IsNull}}
+\newcommand{\PopulateSeekRecord}{\textsc{PopulateSeekRecord}}
+\newcommand{\SeekForModify}{\textsc{SeekForModify}}
+\newcommand{\SeekForSearch}{\textsc{SeekForSearch}}
+\newcommand{\TraverseTree}{\textsc{Traverse}}
+\newcommand{\ExamineStack}{\textsc{ExamineStack}}
+\newcommand{\numberOfProcesses}{p}
+\newcommand{\STELLAR}{\textsc{STELLAR}}
+\newcommand{\sNodeOne}{\mathbb{R}}
+\newcommand{\sNodeTwo}{\mathbb{S}}
+\newcommand{\sKeyOne}{-\infty}
+\newcommand{\sKeyTwo}{\infty}
+\newcommand{\traversalRecord}{state}
+\newcommand{\TraversalRecord}{\textsf{State}}
+\newcommand{\opRecord}{opRecord}
+\newcommand{\OpRecord}{\textsf{OpRecord}}
+\newcommand{\seekRecord}{seekRecord}
+\newcommand{\SeekRecord}{\textsf{SeekRecord}}
+\newcommand{\maximumgap}{49\%}
+\newcommand{\maximumdrop}{10\%}
+\newcommand{\dCounters}{DC}
+\newcommand{\iCounters}{IC}
+\newcommand{\labels}{labels}
+\newcommand{\dcounters}{DC}
+\newcommand{\icounters}{IC}
+\newcommand{\myfigurescaletwo}{0.5}
+%%%%% localRecovery/wait free search macros - end
+\section{No Modification to Tree Node}
+Due to the limited manner in which the tree can evolve in the concurrent algorithms described in~\cite{HowJon:2012:SPAA,DraVec+:2014:PPoPP,ArbAtt:2014:PODC,RamMit:2015:ICDCN,RamMit:2015:PPoPP}, it is possible to design a light-weight wait-free algorithm for a search operation for all of the algorithms. The main property we use is that as long as a key is \emph{continuously} present in the tree, its distance from the root of the tree is \emph{monotonically non-increasing}. As a result, if a key is not found after visiting a ``certain'' number of nodes in the tree, then the traversal can stop and it is sufficient to examine the path traversed to check whether or not the key has moved up. In case the key is not continuously present in the tree, while a search operation is in progress, it is acceptable to return either of the 
+outcomes---present or not present---to the application. In the first case, the search operation can be linearized after the insert operation that added the key to the tree. In the second case, it can be linearized after the delete operation that removed the key from the tree. 
+
+The main question is: ``How do we \emph{efficiently} determine the number of nodes to visit in the tree before stopping the downward traversal \emph{without missing} the key that is continuously present in the tree?'' To that end, we maintain two arrays with one entry for each process in the array, denoted by $\iCounters$ and $\dCounters$. Roughly speaking, entries $\iCounters[i]$ and $\dCounters[i]$ denote the number of insert and delete operations, respectively, process $P_i$ has performed so far. A process increments its insert counter before adding a key to the tree and its delete counter after removing a key from the tree. As a result, the insert (delete) counter at a process is an upper (lower) bound on the number of keys that the process has added to (removed from) the tree. Before starting downward traversal for a search operation, a process first reads the delete counter values of all processes and then reads the insert counter values of all processes. It then computes an estimate for the number of nodes to visit as the sum of all the insert counter values minus the sum of all the delete counter values. We show that the estimate computed by a process is \emph{safe} in the sense that a search operation will not miss a key continuously present in the tree while the operation is in progress.
+
+To show that our algorithm works, we introduce some notation. Consider a time $t$ \emph{after} an operation has read all the delete counter values but \emph{before} its starts reading any of the insert counter values. Let $I_{t,i}$ ($D_{t,i}$) denote the \emph{actual} number of keys added to (removed from) the tree by process $P_i$ at or before time $t$. Also, let $\icounters[i]$ ($\dcounters[i]$) denote the value read for $\iCounters[i]$ ($\dCounters[i]$) by the operation. Note that, the way counters are maintained, $\icounters[i] \geq I_{t,i}$ and $\dcounters[i] \leq D_{t,i}$. Also, let $S_t$ and $\Delta_t$ denote the \emph{actual} size of the tree and the \emph{actual} distance of the target key from the root of the tree, respectively, at time $t$. Clearly, we have:
+%%
+\[
+S_t = \sum_{0 \leq i < \numberOfProcesses} I_{t,i} - \sum_{0 \leq i < \numberOfProcesses} D_{t,i} \text{\quad and \quad} \Delta_t \leq S_t
+\]
+%%
+Thus we have:
+\[
+\sum_{0 \leq i < \numberOfProcesses} \icounters[i] - \sum_{0 \leq i < \numberOfProcesses} \dcounters[i]  \; \geq \; \sum_{0 \leq i < \numberOfProcesses} I_{t,i} - \sum_{0 \leq i < \numberOfProcesses} D_{t,i} \; = \; S_t 
+\]
+%%
+In other words, the estimate computed by our algorithm is an upper bound on the actual distance of the key from the root of tree when the operation starts traversing the tree (which is monotonically non-increasing).
+
+A pseudo-code of the algorithm is given in \pseudoref{wf:search:size}. In the pseudo-code, $\numberOfProcesses$ denotes the number of processes. To amortize the overhead of reading $O(\numberOfProcesses)$ counters, an operation first visits $\numberOfProcesses$ nodes in the tree. If it does not find the key, then it reads the counter values and proceeds as described above. Thus $O(\numberOfProcesses)$ overhead is incurred only for ``large'' trees.
+
+Some advantages of our approach are as follows. First, it works even if a key space is unbounded. Second, it does not require a search operation to perform any write instruction on shared memory. Third, it does not require a modify operation to perform any additional atomic instruction or helping (besides that performed by the original algorithm). 
+
+\input{c08/pseudocode-waitfree}
+
+\section{With Modification to Tree Node}
+A disadvantage of the previous approach is that the time complexity of a search operation depends on the tree size. We now describe another approach to achieve wait-freedom for which the time complexity of a search operation depends on the tree height. This approach, however, requires modifying tree node to store a time-stamp of when the node was created. It consists of the identifier of the process that created the node and the process-specific sequence number (which is incremented before the node is added to the tree). This time-stamp is copied if a node is \emph{replaced} with a new node (in a complex delete operation) as in~\cite{RamMit:2015:ICDCN}. Before a search operation starts traversing the tree, it reads the current sequence number values of all processes. Let $\labels[i]$ denote the value read for process $P_i$. The operation then stops the downward traversal of the tree once it encounters a node with time-stamp $\ang{i,v}$ such that $v > \labels[i]$. Clearly, this node and its descendents were added to the tree after the operation read the sequence number value of process $P_i$.
+%%
+A pseudo-code of the algorithm is given in \pseudoref{wf:search:height}.
+\end{limitscope}
