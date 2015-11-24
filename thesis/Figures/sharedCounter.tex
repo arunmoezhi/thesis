@@ -1,0 +1,74 @@
+\begin{figure}[htp]
+\begin{minipage}{0.45\textwidth}
+\SetAlgorithmName{fetchAndIncrement}{}{}
+\SetAlFnt{\selectfont \ttfamily}
+\renewcommand{\thealgocf}{}
+\SetAlgoInsideSkip{} 
+\SetAlCapSkip{1.25ex}
+\SetAlgoCaptionLayout{centering}
+\setlength{\algomargin}{1.5em}
+\SetInd{0.5em}{0.625em}
+\RestyleAlgo{boxed}
+\LinesNumberedHidden
+\begin{algorithm}[H]
+\label{algo:counter-sequential}
+\phantom{acquire(lock)\;}
+r1 = x\;
+inc(r1)\;
+x = r1\;
+\phantom{release(lock)\;}
+\caption{sequential}
+\end{algorithm}
+\end{minipage}
+%
+\begin{minipage}{0.45\textwidth}
+\SetAlgorithmName{fetchAndIncrement}{}{}
+\SetAlFnt{\selectfont \ttfamily}
+\renewcommand{\thealgocf}{}
+\SetAlgoInsideSkip{} 
+\SetAlCapSkip{1.25ex}
+\SetAlgoCaptionLayout{centering}
+\setlength{\algomargin}{1.5em}
+\SetInd{0.5em}{0.625em}
+\RestyleAlgo{boxed}
+\LinesNumberedHidden
+\begin{algorithm}[H]
+\label{algo:counter-lock}
+\caption{Using locks}
+acquire(lock)\;
+r1 = x\;
+inc(r1)\;
+x = r1\;
+release(lock)\;
+\end{algorithm}
+\end{minipage}
+
+
+\begin{center}
+\begin{minipage}[t]{0.65\textwidth}
+\SetAlgorithmName{fetchAndIncrement}{}{}
+\SetAlFnt{\selectfont \ttfamily}
+\renewcommand{\thealgocf}{}
+\SetAlgoInsideSkip{} 
+\SetAlCapSkip{1.25ex}
+\SetAlgoCaptionLayout{centering}
+\setlength{\algomargin}{1.5em}
+\SetInd{0.5em}{0.625em}
+\RestyleAlgo{boxed}
+\LinesNumberedHidden
+\begin{algorithm}[H]
+\label{algo:counter-CAS}
+\caption{using atomic instructions}
+\Repeat{(x.compareAndSwap(rOld,rNew))}
+{
+rOld = x\;
+rNew = rOld+1\;
+}
+\end{algorithm}
+\end{minipage}
+\end{center}
+
+\caption{Various implementations of a Shared Counter}
+\label{fig:sharedCounter}
+
+\end{figure}
