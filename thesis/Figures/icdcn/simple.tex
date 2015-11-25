@@ -9,8 +9,8 @@
 		\node (a)		[subtree] 																at (\XA+2,\YA-1)      			{\Large $\alpha$};
 		\node (b)		[subtree] 																at (\XA-3,\YA-2.5)    			{\Large $\beta$};
 		\node (gnd)	[ground] 																	at (\XA+0.5,\YA-2.5)				{}; 
-		\node (xl) 	[rectangle,align=center,minimum size=1cm] at (\XA-2,\YA) 							{\large \targetnode's \\ \large parent};
-		\node (yl) 	[] 																				at (\XA-3.25,\YA-1.5) 			{\large \targetnode};
+		\node (xl) 	[rectangle,align=center,minimum size=1cm] at (\XA-2,\YA) 							{\targetnode's \\ parent};
+		\node (yl) 	[] 																				at (\XA-3.25,\YA-1.5) 			{\targetnode};
 		\draw[->] (x) -- node[mylabel] {$\boldsymbol{i}$} (y);
 		\draw[->] (y) -- node[mylabel] {$\boldsymbol{d}$} (b.north);
 		\draw[->] (y) -- node[mylabel] {$\boldsymbol{d}$} (gnd);
@@ -22,7 +22,7 @@
 		%(y) 				edge[->]																	node[below]  								{\Large $\boldsymbol{d}$} (gnd);
 
 		\path[every node/.style={font=\sffamily\small}]
-		(\XA+1.5,\YA) edge[->,semithick, double] 							node [above, outer sep=3pt] {\large \texttt delete 50} (\XA+4,\YA);
+		(\XA+1.5,\YA) edge[->,semithick, double] 							node [above, outer sep=3pt] {\texttt delete 50} (\XA+4,\YA);
 		\node (ix)	[treenode] 																at (\XA+6,\YA) 							{$V$ \\ 100};
 		\node (ib)	[subtree] 																at (\XA+4.5,\YA-1)					{\Large $\beta$};
 		\node (ia)	[subtree] 																at (\XA+7.5,\YA-1) 					{\Large $\alpha$};
@@ -33,9 +33,9 @@
 		(ix) 				edge[->] 																	node 												{} (ia.north);
 
 		%% legend
-		\node (l1) 																						at (\XA+4.5,\YA-3){\Large $\boldsymbol{i}$  - \Large intent flag set};
-		\node (l2) 																						at (\XA+4.5,\YA-3.5){\Large $\boldsymbol{d}$  - \Large delete flag set};
-		\node [thin, draw=black, align=center, minimum width=5cm, minimum height=1.25cm] at (\XA+5,\YA-3.15) {};	
+		\node (l1) 																						at (\XA+4.5,\YA-3.5){$\boldsymbol{i}$  - intent flag set};
+		\node (l2) 																						at (\XA+4.5,\YA-4){$\boldsymbol{d}$  - delete flag set};
+		\node [thin, draw=black, align=center, minimum width=5cm, minimum height=1.25cm] at (\XA+4.5,\YA-3.7) {};	
 	\end{tikzpicture}
 }
 \caption[\ICDCN{} - An illustration of a simple delete operation.]{An illustration of a simple delete operation.}

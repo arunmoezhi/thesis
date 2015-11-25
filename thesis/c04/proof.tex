@@ -1,4 +1,4 @@
-\subsection{Correctness Proof}
+\section{Correctness Proof}
 It can be shown that our algorithm satisfies linearizability and lock-freedom properties~\cite{HerSha:2012:Book}. Broadly speaking, linearizability requires that an operation should appear to take effect instantaneously at some point during its execution.  Lock-freedom requires that some process should be able to complete its operation in a finite number of its own steps.
 It is convenient to treat insert and delete operations that do not change the tree as search operations. 
 %%

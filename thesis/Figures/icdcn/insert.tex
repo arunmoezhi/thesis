@@ -7,21 +7,21 @@
 		\node (x)		[treenode,fill=black!20] 									at (\XA,\YA)       							{$U$ \\ 50};
 		\node (S1)	[subtree] 																at ([shift=({-1.5,-0.75})]x)  	{\Large $\alpha$};
 		\node (gnd)	[ground] 																	at ([shift=({1.5,-0.75})]x)			{}; 
-		\node (l1) [rectangle,align=center,minimum size=1cm] 	at (\XA-1.5,\YA) 								{\large terminal \\ \large node};
-		\node (l2) [rectangle,align=center,minimum size=1cm] 	at (\XA+2,\YA-2.0) 					{\large injection \\ \large point};
+		\node (l1) [rectangle,align=center,minimum size=1cm] 	at (\XA-1.5,\YA) 								{terminal \\ node};
+		\node (l2) [rectangle,align=center,minimum size=1cm] 	at (\XA+2,\YA-2.0) 					{injection \\ point};
 		\path[every node/.style={font=\sffamily\small}]
 		(\XA,\YA+1) edge[->] 																	node 														{} (x)
 		(x) 				edge[->]																	node 														{} (S1.north)
 		(x) 				edge[->,thick]														node 														{} (gnd);
 
 		\path[every node/.style={font=\sffamily\small}]
-		(\XA+2.0,\YA) edge[->,semithick, double] node [above, outer sep=3pt] {\large \texttt insert 55} (\XA+4.5,\YA);
+		(\XA+2.0,\YA+0.5) edge[->,semithick, double] node [above, outer sep=3pt] {\texttt insert 55} (\XA+4.5,\YA+0.5);
 		\renewcommand\XA{6.5}
 		\renewcommand\YA{0}
 		\node (x1)		[treenode,fill=black!20] 								at (\XA,\YA)       							{$U$ \\ 50};
 		\node (S2)	[subtree] 																at ([shift=({-1.5,-.75})]x1)  	{\Large $\alpha$};
 		\node (y)		[treenode,fill=black!20] 									at ([shift=({2,-1.25})]x1)   		{$V$ \\ 55};
-		\node (l2) [rectangle,align=center,minimum size=1cm] 	at (\XA+3.5,\YA-1.25) 					{\large new \\ \large node};
+		\node (l2) [rectangle,align=center,minimum size=1cm] 	at (\XA+3.5,\YA-1.25) 					{ new \\ node};
     \node (gnd1)	[ground] 																at ([shift=({1.5,-0.75})]y)			{}; 
 		\node (gnd2)	[ground] 																at ([shift=({-1.5,-0.75})]y)		{}; 
 		

@@ -13,9 +13,9 @@
 		\node (g)		[subtree] 									at (-4,-4)   		{\Large $\gamma$};
 		\node (gnd)	[ground] 										at (-8.5,-6)		{}; 
 		\node (o)		[subtree] 									at (-5.5,-5.5)  {\Large $\omega$};
-		\node (x1) 	[rectangle,align=center,minimum size=1cm] at (-7.25,0) 	{\large target \\ \large node};
-		\node (y1l) [rectangle,align=center,minimum size=1cm] at (-7.5,-3) 		{\large successor node's \\ \large parent};
-		\node (y2l) [rectangle,align=center,minimum size=1cm] at(-8.5,-4.5) 	{\large successor \\ \large node};
+		\node (x1) 	[rectangle,align=center,minimum size=1cm] at (-7.25,0) 	{target \\ node};
+		\node (y1l) [rectangle,align=center,minimum size=1cm] at (-7.8,-3) 		{successor node's \\  parent};
+		\node (y2l) [rectangle,align=center,minimum size=1cm] at(-8.5,-4.5) 	{successor \\ node};
 
 		\path[every node/.style={font=\sffamily\large}]
 		(-6, 1) edge[->] 								node 					{} (x)
@@ -29,7 +29,7 @@
 		(y2) 		edge[->,dotted,thick]		node 					{} (o.north);
 
 		\path[every node/.style={font=\sffamily\small}]
-		(-3.25, 0) edge[->,semithick, double] node [above, outer sep=3pt] {\large \texttt delete 50} (-0.75, 0);
+		(-3.25, 0.5) edge[->,semithick, double] node [above, outer sep=3pt] {\large \texttt delete 50} (-0.75, 0.5);
 
 		\node (ix)	[treenode] 									at (1,0)       	{$U$ \\ 55};
 		\node (ia)	[subtree] 									at (-0.5,-1)  		{\Large $\alpha$};
@@ -49,9 +49,9 @@
 		(iy1) 	edge[->] 								node 					{} (ignd.north);
 
 		%% legend
-		\draw[->] (0,-5.9) -- (1,-5.9) node[right] {\large ~free edge};
-		\draw[->,dotted,thick] (0,-6.4) -- (1,-6.4) node[right] {\large ~locked edge};
-		\node [thin, draw=black, align=center, minimum width=5cm, minimum height=1.25cm] at (2,-6.15) {};	
+		\draw[->] (0,-6.1) -- (1,-6.1) node[right] {\large ~free edge};
+		\draw[->,dotted,thick] (0,-6.6) -- (1,-6.6) node[right] {\large ~locked edge};
+		\node [thin, draw=black, align=center, minimum width=5cm, minimum height=1.25cm] at (2,-6.35) {};	
 		%\draw[->] (-3.5, -5.8) -- (-2.5, -5.8) node[right] {\large ~clean edge};
 		%\draw[->,dotted,thick] (0.5, -5.8) -- (1.5, -5.8) node[right] {\large ~locked edge};
 		%\draw[->,dashed,thick] (-3.5, -6.3) -- (-2.5, -6.3) node[right] {\large ~promote flag set};

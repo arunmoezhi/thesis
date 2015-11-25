@@ -69,6 +69,13 @@
 \newcommand{\icounters}{IC}
 \newcommand{\myfigurescaletwo}{0.5}
 %%%%% localRecovery/wait free search macros - end
+In this chapter we present two light-weight techniques to make search operations for concurrent binary search trees based on internal representation, \emph{wait-free} with low additional overhead. Both of our techniques have the desirable feature that a search operation does not need to perform any write instructions on the share memory thereby minimizing the cache coherence traffic.
+
+\input{Figures/waitFreeSearch}
+The search operations in~\cite{HowJon:2012:SPAA,DraVec+:2014:PPoPP,ArbAtt:2014:PODC,RamMit:2015:ICDCN,RamMit:2015:PPoPP} are \emph{not wait-free} even for a bounded key space. For example, in \figref{waitFreeSearch} thread $A$ executes \textsf{contains(15)} and thread $B$ executes a series of operations preventing the \textsf{contains} operation of thread $A$ to terminate. Note that the tree in (a) and (e) are same and this sequence of operations can occur ad infinitum. Hence the search operation is not wait-free.
+
+In our first approach, we keep track of the count of modify operations. Here we do not make any new modifications to the tree node. In our second approach, we append a timestamp to the tree node but it has better complexity than the previous one.
+
 \section{No Modification to Tree Node}
 Due to the limited manner in which the tree can evolve in the concurrent algorithms described in~\cite{HowJon:2012:SPAA,DraVec+:2014:PPoPP,ArbAtt:2014:PODC,RamMit:2015:ICDCN,RamMit:2015:PPoPP}, it is possible to design a light-weight wait-free algorithm for a search operation for all of the algorithms. The main property we use is that as long as a key is \emph{continuously} present in the tree, its distance from the root of the tree is \emph{monotonically non-increasing}. As a result, if a key is not found after visiting a ``certain'' number of nodes in the tree, then the traversal can stop and it is sufficient to examine the path traversed to check whether or not the key has moved up. In case the key is not continuously present in the tree, while a search operation is in progress, it is acceptable to return either of the 
 outcomes---present or not present---to the application. In the first case, the search operation can be linearized after the insert operation that added the key to the tree. In the second case, it can be linearized after the delete operation that removed the key from the tree. 

@@ -1,4 +1,4 @@
-\subsection{Details of the Algorithm}
+\section{Details of the Algorithm}
 As in most algorithms, to make it easier to handle special cases, we use sentinel keys and sentinel nodes.  The structure of an empty tree with only sentinel keys (denoted by $\sKeyOne$ and $\sKeyTwo$ with $\sKeyOne{} < \sKeyTwo{}$) and sentinel nodes (denoted by $\sNodeOne$ and $\sNodeTwo$) is shown in \figref{castle-sentinel}.
 \input{Figures/castle/sentinel}
 
@@ -7,7 +7,7 @@ Finally, to avoid the ABA problem, as in Howley and Jones~\cite{HowJon:2012:SPAA
 
 We next describe the details of the seek operation, which is executed by all operations (search as well as modify) after which we describe the details of the execution phase of insert and delete operations.
 
-\subsubsection{The Seek Phase}
+\subsection{The Seek Phase}
 A seek function keeps track of the node in the \accesspath{} at which it took the last ``right turn'' (\emph{i.e.}, it last followed a right edge). Let this ``right turn'' node be referred to as \emph{\anchornode} when the traversal reaches the \terminalnode{}. Note that the \terminalnode{} is the node whose key matched the target key or whose next child edge is set to a null address. For an illustration, please see \figref{castle-seek}. In the latter case (stored key does not match the target key), it is possible that the key may have moved up in the tree. To ascertain that the seek function did not miss the key because it may have moved up during the traversal, we use the following set of conditions that are \emph{sufficient} (but not necessary) to guarantee that the seek function did not miss the key. First, the \anchornode{} is still part of the tree. (For an illustration, see \figref{castle-issueInSeek}) Second, the key stored in the \anchornode{} has not changed since it first encountered the \anchornode{} during the (current) traversal. To check for the above two conditions, we determine whether the \anchornode{} is undergoing deletion by examining it right child edge. We discuss the two cases one-by-one.
 \input{Figures/castle/seek}
 \input{Figures/castle/issueInSeek}
@@ -27,10 +27,10 @@ In this case, we compare the information gathered in the current traversal about
 
 For insert and delete operations, we refer to the \terminalnode{} as the \emph{\targetnode}. 
 
-\subsubsection{The Execution Phase of an Insert Operation}
+\subsection{The Execution Phase of an Insert Operation}
 In the execution phase, an insert operation creates a new node containing the target key. It then adds the new node to the tree at the injection point using a \CAS{} instruction. For an illustration, see \figref{castle-insert}. If the \CAS{} instruction succeeds, then (the new node becomes a part of the tree and) the operation terminates; otherwise, the operation restarts from the seek phase. Note that the insert operations are lock-free.
 \input{Figures/castle/insert}
-\subsubsection{The Execution Phase of a Delete Operation}
+\subsection{The Execution Phase of a Delete Operation}
 The execution of a delete operation starts by checking if the \targetnode{} is a binary node or not. If it is a binary node, then the delete operation is classified as complex; otherwise it is classified as simple. 
 
 For a tree node $X$, let $X.\myparent$ denote its parent node, and $X.\myleft$ and $X.\myright$ denote its left and right child node, respectively. Also, hereafter in this section, let $T$ denote the \targetnode{} of the delete operation under consideration.
