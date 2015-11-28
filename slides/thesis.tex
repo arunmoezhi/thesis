@@ -24,6 +24,7 @@
     arrow/.style={thick, ->, >=stealth}
 }
 \usepackage{circuitikz}
+\setbeamertemplate{caption}{\insertcaption}
 
 \renewcommand\topfraction{0.95}
 \renewcommand\bottomfraction{0.95}
@@ -81,6 +82,9 @@ Supervisor - Neeraj Mittal\\
 
 \section{Lock Free Binary Search Tree}
 \input{lockFreeBST}
+
+\section{Local recovery}
+\input{localRecovery}
 
 \section{Experimental Evaluation}
 \input{experiments}

@@ -1,1 +1,0 @@
-the data for castle is from stellar (icdcs 2015). Replace it with actual castle numbers
