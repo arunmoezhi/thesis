@@ -1,0 +1,69 @@
+\begin{frame}[c]{Local recovery[PPoPP'16 Poster]}
+Overview
+\begin{itemize}
+\item a general technique for local recovery for concurrent BSTs
+\item reduces tree traversal cost during failures by restarting closer to an operation’s window
+\end{itemize}
+Motivation
+\begin{itemize}
+\item in most concurrent BSTs, execution phase of an operation have constant time complexity
+\item seek phase is where an operation may end up spending most of its time (esp for large trees)
+\item this technique reduces the seek time
+\end{itemize}
+\end{frame}
+
+\begin{frame}[c]{Example}
+\input{figures/movementA}
+\end{frame}
+
+\begin{frame}[c]{Example}
+\input{figures/movementB}
+\end{frame}
+
+\begin{frame}[c]{Example}
+\input{figures/movementC}
+\end{frame}
+
+\begin{frame}[c]{Example}
+\input{figures/movementD}
+\end{frame}
+
+\begin{frame}[c]{Traversal Stack}
+\begin{itemize}
+\item a stack
+\item reduces tree traversal cost during failures by restarting closer to an operation’s window
+\end{itemize}
+\end{frame}
+
+\begin{frame}[c]{Traversal Stack}
+\input{figures/stackA0}
+\end{frame}
+\begin{frame}[c]{Traversal Stack}
+\input{figures/stackA1}
+\end{frame}
+
+
+\begin{frame}[c]{Search}
+search operations do not restart
+\input{figures/localRecoverySearch}
+\end{frame}
+
+\begin{frame}[c]{Search}
+\input{figures/stackA1}
+\end{frame}
+\begin{frame}[c]{Search}
+\input{figures/stackD0}
+\end{frame}
+\begin{frame}[c]{Search}
+\input{figures/stackD1}
+\end{frame}
+
+\begin{frame}[c]{Insert}
+An insert operation needs to restart only if one of the anchor nodes in the path has become inconsistent
+\input{figures/localRecoveryInsert}
+\end{frame}
+
+\begin{frame}[c]{Delete}
+A delete operation do not restart except when there is a failure in the execution phase
+\input{figures/localRecoveryDelete}
+\end{frame}

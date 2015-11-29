@@ -14,16 +14,19 @@
 \SetInd{0.5em}{0.625em}
 \usepackage{tikz}
 \usepackage{pgfplots}
-\usetikzlibrary{shapes.geometric,arrows,fit,matrix,positioning,pgfplots.groupplots}
+\usetikzlibrary{shapes.geometric,arrows,fit,matrix,positioning,pgfplots.groupplots,shapes.multipart}
 \tikzset
 {
     treenode/.style = {circle, draw=black, align=center, minimum size=1cm},
     subtree/.style  = {isosceles triangle, draw=black, align=center, minimum height=0.25cm, minimum width=0.25cm, shape border rotate=90, anchor=north},
     process/.style={rectangle, minimum width=2cm, minimum height=1cm, align=center, text width=2cm, draw},
     connector/.style={circle, minimum size=1cm, align=center, text width=0.5cm, draw},
-    arrow/.style={thick, ->, >=stealth}
+    arrow/.style={thick, ->, >=stealth},
+    stack/.style={rectangle split, rectangle split parts=#1,draw, anchor=center},
+    decision/.style ={diamond, draw=black, minimum width=1cm, minimum height=1cm, text badly centered, node distance=3cm, inner sep=0pt}
 }
 \usepackage{circuitikz}
+\usepackage[nocolor]{drawstack}
 \setbeamertemplate{caption}{\insertcaption}
 
 \renewcommand\topfraction{0.95}
@@ -61,7 +64,6 @@ Supervisor - Neeraj Mittal\\
 \begin{frame}{Overview}
 	\tableofcontents
 \end{frame}
-
 \section{Introduction}
 \input{introduction}
 
@@ -82,7 +84,6 @@ Supervisor - Neeraj Mittal\\
 
 \section{Lock Free Binary Search Tree}
 \input{lockFreeBST}
-
 \section{Local recovery}
 \input{localRecovery}
 
@@ -91,5 +92,4 @@ Supervisor - Neeraj Mittal\\
 
 \section{Future Work}
 \input{futureWork}
-
 \end{document}
