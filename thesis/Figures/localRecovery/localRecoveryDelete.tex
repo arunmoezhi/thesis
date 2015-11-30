@@ -1,0 +1,26 @@
+\begin{figure}[htp]
+\centering
+{
+	\begin{tikzpicture}
+	\node (p0) [] {delete(K)};
+	\node (p1) [process, below of=p0, text width=4cm] {Do a binary search for key K in the tree};
+	\node (p2) [process, below of=p1, yshift=-1.5cm, text width=4.5cm] {Examine anchor node $A$ of top entry in the stack};
+	\node (p3) [decision, below of=p2, yshift=-1.5cm, text width=2cm] {is anchor node marked?};
+	\node (p4) [process, right of=p3, xshift=4cm, text width=4.5cm] {pop all entries upto anchor node $A$};
+	\node (ex) [process, right of=p1, xshift=6cm, text width=4.5cm, minimum width=1cm] {go to execution phase};
+	\node (retF) [process, left of=p2, xshift=-4cm, text width=1cm, minimum width=1cm] {return false};
+
+	\draw [arrow] (p1) -- node[anchor=west] {K not found} (p2);
+	\draw [arrow] (p1) -- node[anchor=south] {K found} (ex);
+	\draw [arrow] (p2.east) -| node[anchor=north,pos=0.5] {K = A.key}    (ex.south);
+	\draw [arrow] (p2.west) -- node[anchor=north,pos=0.5] {K $<$ A.key}  (retF.east);
+	\draw [arrow] (p2) -- node[anchor=east] {K $>$ A.key} (p3);
+	\draw [arrow] (p3.west)  -| node[anchor=north]{No}  (retF.south);
+	\draw [arrow] (p3.east) -- node[anchor=north]{Yes} (p4.west);
+	\draw [arrow] (p4.north) -- (p2.south);
+
+	\end{tikzpicture}
+}
+\caption{Sequence of steps in a delete operation}
+\label{fig:localRecoveryDelete}
+\end{figure}

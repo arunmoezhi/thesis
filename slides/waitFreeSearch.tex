@@ -1,0 +1,81 @@
+\begin{frame}[c]{Wait Free Search}
+\textit{wait-free - every thread is able to complete its operations in a finite number of steps over an infinite period of time}
+\begin{itemize}
+\item two light-weight techniques to make search operations for concurrent internal BSTs, \emph{wait-free}
+\item low additional overhead
+\item no write instructions on share memory
+\item minimizes cache traffic
+\end{itemize}
+\end{frame}
+
+\begin{frame}[c]{Wait Free Search}
+\input{figures/waitFreeSearch}
+\end{frame}
+
+\begin{frame}[c]{No Modification to Tree Node}
+\begin{itemize}
+\item as long as a key is \emph{continuously} present in the tree, its distance from root is \emph{monotonically non-increasing}
+\item if a key is not found after visiting a ``certain'' number of nodes in the tree, then traversal stops
+\item sufficient to examine the path traversed to check whether or not the key has moved up
+\item In case the key is not continuously present in the tree, it is acceptable to return either:
+	\begin{itemize}
+	\item present -  linearized after the insert operation that added the key to the tree
+	\item not present - linearized after the delete operation that removed the key from the tree
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[c]{No Modification to Tree Node}
+\begin{center}
+\textbf{when to stop?}
+\end{center}
+\pause
+Each process maintains two counters:
+\begin{itemize}
+\item insert counter - number of true inserts
+\item delete counter - number of true deletes
+\end{itemize}
+$IC[i]$ and $DC[i]$ denote the number of insert and delete operations, respectively, process $P_i$ has performed so far
+\end{frame}
+
+\begin{frame}[c]{No Modification to Tree Node}
+\begin{itemize}
+\item insert counter incremented before adding a key
+\item delete counter incremented before removing a key
+\item insert (delete) counter at a process is an upper (lower) bound on the number of keys that the process has added to (removed from) the tree
+\end{itemize}
+\end{frame}
+
+\begin{frame}[c]{No Modification to Tree Node}
+\SetAlgorithmName{pseudocode}{}{}
+\renewcommand{\thealgocf}{}
+\begin{algorithm}[H]
+\caption{\tiny waitFreeSearch}
+read and aggregate delete counter values of all processes $DC = \sum\limits_{i=1}^p DC[i]$\;
+read and aggregate insert counter values of all processes $IC = \sum\limits_{i=1}^p IC[i]$\;
+$IC-DC \geq actual tree size$ as IC $\leq$ actual inserts and DC $\geq$ actual deletes\;
+\end{algorithm}
+$IC-DC$ gives an upper bound on number of keys to traverse before stopping the search operation
+\end{frame}
+
+\begin{frame}[c]{With Modification to Tree Node}
+\begin{itemize}
+\item  previous approach - time complexity depends on tree size
+\item this approach - time complexity depends on the tree height
+\item but needs modifications to tree node structure
+\item each node has a timestamp on when it was created 
+\item timestamp - $\langle$process id,process sequence number$\rangle$
+\item process sequence number is incremented before a node is added to the tree
+\end{itemize}
+\end{frame}
+
+\begin{frame}[c]{With Modification to Tree Node}
+\SetAlgorithmName{pseudocode}{}{}
+\renewcommand{\thealgocf}{}
+\begin{algorithm}[H]
+\caption{\tiny waitFreeSearch}
+read current sequence number of all processes\;
+let $label[i]$ denote the sequence number of procecess $p_i$\;
+stop the downward traversal of the tree once a node with timestamp $\langle$i,v$\rangle$ such that $v > labels[i]$ is encountered\;
+\end{algorithm}
+\end{frame}

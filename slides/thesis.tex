@@ -23,11 +23,17 @@
     connector/.style={circle, minimum size=1cm, align=center, text width=0.5cm, draw},
     arrow/.style={thick, ->, >=stealth},
     stack/.style={rectangle split, rectangle split parts=#1,draw, anchor=center},
-    decision/.style ={diamond, draw=black, minimum width=1cm, minimum height=1cm, text badly centered, node distance=3cm, inner sep=0pt}
+    decision/.style ={diamond, draw=black, minimum width=1cm, minimum height=1cm, text badly centered, node distance=3cm, inner sep=0pt},
+    invisible/.style={opacity=0},
+    visible on/.style={alt=#1{}{invisible}},
+   alt/.code args={<#1>#2#3}{%
+        \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}
+      }
 }
 \usepackage{circuitikz}
 \usepackage[nocolor]{drawstack}
 \setbeamertemplate{caption}{\insertcaption}
+\usepackage{amsmath,amssymb,amsthm}
 
 \renewcommand\topfraction{0.95}
 \renewcommand\bottomfraction{0.95}
@@ -64,6 +70,7 @@ Supervisor - Neeraj Mittal\\
 \begin{frame}{Overview}
 	\tableofcontents
 \end{frame}
+
 \section{Introduction}
 \input{introduction}
 
@@ -84,8 +91,12 @@ Supervisor - Neeraj Mittal\\
 
 \section{Lock Free Binary Search Tree}
 \input{lockFreeBST}
+
 \section{Local recovery}
 \input{localRecovery}
+
+\section{Wait free search}
+\input{waitFreeSearch}
 
 \section{Experimental Evaluation}
 \input{experiments}
