@@ -1,0 +1,78 @@
+% Style to select only points from #1 to #2 (inclusive)
+\pgfplotsset
+{
+	select coords between index/.style 2 args=
+	{
+    x filter/.code=
+		{
+        \ifnum\coordindex<#1\def\pgfmathresult{}\fi
+        \ifnum\coordindex>#2\def\pgfmathresult{}\fi
+    }
+	}
+}
+\begin{figure}[htp]
+\centering
+\begin{tikzpicture}
+	\begin{groupplot}[group style={group size= 3 by 3},height=5.5cm,width=5.5cm,max space between ticks=20,minor tick num=1,tick label style={font=\footnotesize}]
+		\nextgroupplot[title=20K keys,ylabel={Read-Dominated},xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={6}{11}] table[x=threads,y=Mops-citrus,col sep=space]{Data/snb32/threadSweep.csv};  \label{plots:CITRUS:ct}
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={6}{11}] table[x=threads,y=Mops-howley,col sep=space]{Data/snb32/threadSweep.csv};  \label{plots:HJ-BST:ct}
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={6}{11}] table[x=threads,y=Mops-ppop,col sep=space]{Data/snb32/threadSweep.csv};  \label{plots:NM-BST:ct}
+				\addplot[green, semithick,mark=o] 			[select coords between index={6}{11}] table[x=threads,y=Mops-castle,col sep=space]{Data/snb32/threadSweep.csv};  \label{plots:RM-LOCK:ct}
+				\coordinate (top) at (rel axis cs:0,1);% coordinate at top of the first plot
+		\nextgroupplot[title=200K keys,xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={18}{23}] table[x=threads,y=Mops-citrus,col sep=space]{Data/snb32/threadSweep.csv};  
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={18}{23}] table[x=threads,y=Mops-howley,col sep=space]{Data/snb32/threadSweep.csv};  
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={18}{23}] table[x=threads,y=Mops-ppop,col sep=space]{Data/snb32/threadSweep.csv};  
+				\addplot[green, semithick,mark=o] 			[select coords between index={18}{23}] table[x=threads,y=Mops-castle,col sep=space]{Data/snb32/threadSweep.csv}; 
+		\nextgroupplot[title=2M keys,xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={30}{35}] table[x=threads,y=Mops-citrus,col sep=space]{Data/snb32/threadSweep.csv};
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={30}{35}] table[x=threads,y=Mops-howley,col sep=space]{Data/snb32/threadSweep.csv};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={30}{35}] table[x=threads,y=Mops-ppop,col sep=space]{Data/snb32/threadSweep.csv};
+				\addplot[green, semithick,mark=o] 			[select coords between index={30}{35}] table[x=threads,y=Mops-castle,col sep=space]{Data/snb32/threadSweep.csv};
+		\nextgroupplot[ylabel={Mixed},xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={42}{47}] table[x=threads,y=Mops-citrus,col sep=space]{Data/snb32/threadSweep.csv}; 
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={42}{47}] table[x=threads,y=Mops-howley,col sep=space]{Data/snb32/threadSweep.csv};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={42}{47}] table[x=threads,y=Mops-ppop,col sep=space]{Data/snb32/threadSweep.csv};
+				\addplot[green, semithick,mark=o] 			[select coords between index={42}{47}] table[x=threads,y=Mops-castle,col sep=space]{Data/snb32/threadSweep.csv};
+		\nextgroupplot[xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={54}{59}] table[x=threads,y=Mops-citrus,col sep=space]{Data/snb32/threadSweep.csv}; 
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={54}{59}] table[x=threads,y=Mops-howley,col sep=space]{Data/snb32/threadSweep.csv};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={54}{59}] table[x=threads,y=Mops-ppop,col sep=space]{Data/snb32/threadSweep.csv};
+				\addplot[green, semithick,mark=o] 			[select coords between index={54}{59}] table[x=threads,y=Mops-castle,col sep=space]{Data/snb32/threadSweep.csv};
+		\nextgroupplot[xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={66}{71}] table[x=threads,y=Mops-citrus,col sep=space]{Data/snb32/threadSweep.csv}; 
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={66}{71}] table[x=threads,y=Mops-howley,col sep=space]{Data/snb32/threadSweep.csv};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={66}{71}] table[x=threads,y=Mops-ppop,col sep=space]{Data/snb32/threadSweep.csv};
+				\addplot[green, semithick,mark=o] 			[select coords between index={66}{71}] table[x=threads,y=Mops-castle,col sep=space]{Data/snb32/threadSweep.csv};
+		\nextgroupplot[xlabel={Number of Threads},ylabel={Write-Dominated},xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={78}{83}] table[x=threads,y=Mops-citrus,col sep=space]{Data/snb32/threadSweep.csv}; 
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={78}{83}] table[x=threads,y=Mops-howley,col sep=space]{Data/snb32/threadSweep.csv};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={78}{83}] table[x=threads,y=Mops-ppop,col sep=space]{Data/snb32/threadSweep.csv};
+				\addplot[green, semithick,mark=o] 			[select coords between index={78}{83}] table[x=threads,y=Mops-castle,col sep=space]{Data/snb32/threadSweep.csv};	
+		\nextgroupplot[xlabel={Number of Threads},xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={90}{95}] table[x=threads,y=Mops-citrus,col sep=space]{Data/snb32/threadSweep.csv}; 
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={90}{95}] table[x=threads,y=Mops-howley,col sep=space]{Data/snb32/threadSweep.csv};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={90}{95}] table[x=threads,y=Mops-ppop,col sep=space]{Data/snb32/threadSweep.csv};
+				\addplot[green, semithick,mark=o] 			[select coords between index={90}{95}] table[x=threads,y=Mops-castle,col sep=space]{Data/snb32/threadSweep.csv};	
+		\nextgroupplot[xlabel={Number of Threads},xtick=data]
+				\addplot[brown, semithick,mark=square] 	[select coords between index={102}{107}] table[x=threads,y=Mops-citrus,col sep=space]{Data/snb32/threadSweep.csv}; 
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={102}{107}] table[x=threads,y=Mops-howley,col sep=space]{Data/snb32/threadSweep.csv};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={102}{107}] table[x=threads,y=Mops-ppop,col sep=space]{Data/snb32/threadSweep.csv};
+				\addplot[green, semithick,mark=o] 			[select coords between index={102}{107}] table[x=threads,y=Mops-castle,col sep=space]{Data/snb32/threadSweep.csv};						
+				\coordinate (bot) at (rel axis cs:1,0);% coordinate at bottom of the last plot
+\end{groupplot}
+	\path (top-|current bounding box.west)-- node[anchor=south,rotate=90] {\small System throughput (million operations/second)} (bot-|current bounding box.west);
+	%\node[right,rotate=90] at (-1.4,-7.2){\small ~Throughput (million ops/sec)};
+	\path (top|-current bounding box.north)-- coordinate(legendpos) (bot|-current bounding box.north);
+	\matrix[matrix of nodes, anchor=south, draw, inner sep=0.2em, draw] at ([xshift=-5ex,yshift=1ex]legendpos)
+  {
+    \ref{plots:HJ-BST:ct}& \HJBST{} & [5pt]
+    \ref{plots:NM-BST:ct}& \NMBST{} & [5pt]
+    \ref{plots:CITRUS:ct}& \CITRUS{} & [5pt]
+		\ref{plots:RM-LOCK:ct}& \CASTLE{} \\
+	};
+\end{tikzpicture}
+\caption[\CASTLE{} - Comparison of throughput of different algorithms - thread sweep]{Comparison of system throughput of different algorithms. Each row represents a workload type and each column represents a key space size. Higher the throughput, better the performance of the algorithm.}
+\label{fig:castle-threadSweep}
+\end{figure}

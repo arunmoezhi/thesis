@@ -13,7 +13,7 @@
 \begin{figure}[htp]
 \centering
 \begin{tikzpicture}
-	\begin{groupplot}[group style={group size= 4 by 3},height=5cm,width=4.5cm,max space between ticks=20,minor tick num=1,tick label style={font=\footnotesize},ymin=0.8,ymax=1.6]
+	\begin{groupplot}[group style={group size= 4 by 3},height=4.25cm,width=4.25cm,max space between ticks=20,minor tick num=1,tick label style={font=\footnotesize},ymin=0.8,ymax=1.6]
 		\nextgroupplot[title=2K keys,ylabel={Read-Dominated},xtick={1,61,122,183,244}]
 				\addplot[smooth,brown,thick,mark=square] 	[select coords between index={0}{9}] table{Data/localRecovery/snb32/threadSweep/zipf/4Set/relative/10citrus.dat};  \label{plots:citrus:5}
 				\addplot[smooth,red,thick,mark=triangle] 	[select coords between index={0}{9}] table{Data/localRecovery/snb32/threadSweep/zipf/4Set/relative/10howley.dat};  \label{plots:howley:5}

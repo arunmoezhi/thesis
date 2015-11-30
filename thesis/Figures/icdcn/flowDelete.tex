@@ -6,9 +6,9 @@
 		\node (p1) 		[process, below of=p0, text width=6cm] {Do a binary search for key K in the tree};
 		\node (p2) 		[process, below of=p1, yshift=-2cm, text width=6cm] {Mark left child edge for delete using CAS};
 		\node (p3) 		[process, below of=p2, yshift=-2cm, text width=6cm] {Mark right child edge for delete using BTS. Check the children edges to determine simple or complex delete};
-		\node (retF) 	[process, right of=p1, xshift=5.0cm, text width=1cm, minimum width=1cm] {return false};
+		\node (retF) 	[process, right of=p1, xshift=5.0cm, text width=1.25cm, minimum width=1cm] {return false};
 		\node (p4) 		[process, below of=p3, yshift=-2cm, text width=6cm] {Attempt CAS to change the edge (parent, target node) to point to the non-null child};
-		\node (retT) 	[process, right of=p4, xshift=5.0cm, text width=1cm, minimum width=1cm] {return true};
+		\node (retT) 	[process, right of=p4, xshift=5.0cm, text width=1.25cm, minimum width=1cm] {return true};
 		%\node (C) 		[connector, right of=p3, xshift=5.5cm] {C};
 		\node (h1) 		[connector, right of=p2, xshift=5.0cm] {help};
 		\node (h2) 		[connector, below of=p4, yshift=-2cm] {help};
@@ -40,7 +40,7 @@
 	\node (p5) [process, below of=p4, yshift=-2cm, text width=6cm] {Create a fresh copy of the target node with the new key and its children edges unmarked};
 	\node (h2) [connector, right of=p4, xshift=5cm] {help};
 	\node (p6) [process, below of=p5, yshift=-2cm, text width=6cm] {Attempt CAS to change the edge (parent, target node) to point to the new node};
-	\node (retT) [process, below of=p6, yshift=-2cm, text width=1cm, minimum width=1cm] {return true};
+	\node (retT) [process, below of=p6, yshift=-2cm, text width=1.25cm, minimum width=1cm] {return true};
 	\node (h3) [connector, right of=p6, xshift=5cm] {help};
 
 	%\draw [arrow] (C) -- node[] {} (p1);

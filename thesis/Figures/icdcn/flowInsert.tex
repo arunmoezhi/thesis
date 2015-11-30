@@ -6,9 +6,9 @@
 	\node (p1) [process, below of=p0, text width=4cm] {Do a binary search for key K in the tree};
 	\node (p2) [process, below of=p1, yshift=-1.5cm, text width=4.5cm] {Create a new node with key K for insertion};
 	\node (p3) [process, below of=p2, yshift=-1.5cm, text width=4.5cm] {Attempt CAS on appropriate edge to insert the new node};
-	\node (retF) [process, right of=p1, xshift=4cm, text width=1cm, minimum width=1cm] {return false};
+	\node (retF) [process, right of=p1, xshift=4cm, text width=1.25cm, minimum width=1cm] {return false};
 	\node (p4) [process, below of=p3, yshift=-1.5cm, text width=3cm] {check if the edge is marked};
-	\node (retT) [process, right of=p3, xshift=4cm, text width=1cm, minimum width=1cm] {return true};
+	\node (retT) [process, right of=p3, xshift=4cm, text width=1.25cm, minimum width=1cm] {return true};
 	\node (h1) [connector, below of=p4, yshift=-1.5cm] {help};
 
 
