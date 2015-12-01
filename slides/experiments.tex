@@ -24,10 +24,10 @@ To compare the performance of various concurrent BSTs we considered the followin
 {
 \begin{itemize}
 \item Throughput computed as millions of operations per second (MOPS)
-\item each trial was run for 10 seconds
-\item Average over 3 trials
+\item each trial was run for 2 minutes
+\item Average over 5 trials
 \item \textit{pre-populated} the tree to 50\% of its maximum size to capture steady state behaviour
-\item beginning of each run consisted of a ``warm-up'' phase whose numbers were excluded in the computed statistics to avoid initial caching effects
+\item beginning of each run consisted of a 1 second ``warm-up'' phase whose numbers were excluded in the computed statistics to avoid initial caching effects
 \item The machine we used is a Dell PowerEdge R820 server with 4 Intel E5-4650 @ 2.70GHz 8-core processors (32 cores in total) and 1TB of DDR3 memory with HT disabled. 256KB L2 and 20MB shared L3
 \end{itemize}
 }
@@ -41,12 +41,30 @@ To compare the performance of various concurrent BSTs we considered the followin
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Lock Based BST}
-\input{figures/LockBasedBST}
+\begin{frame}{Lock Based BST - key sweep - absolute}
+%\input{figures/LockBasedBST}
+\input{graphs-castle-stampede-keySweep-absolute}
 \end{frame}
 
-\begin{frame}{Lock Free BST}
-\input{figures/LockFreeBST}
+\begin{frame}{Lock Based BST - key sweep - relative}
+\input{graphs-castle-stampede-keySweep-relative}
+\end{frame}
+
+\begin{frame}{Lock Based BST - thread sweep - absolute}
+\input{graphs-castle-stampede-threadSweep}
+\end{frame}
+
+\begin{frame}{Lock Free BST - key sweep - absolute}
+%\input{figures/LockFreeBST}
+\input{graphs-icdcn-stampede-keySweep-absolute}
+\end{frame}
+
+\begin{frame}{Lock Free BST - key sweep - relative}
+\input{graphs-icdcn-stampede-keySweep-relative}
+\end{frame}
+
+\begin{frame}{Lock Free BST - thread sweep - absolute}
+\input{graphs-icdcn-stampede-threadSweep}
 \end{frame}
 
 \begin{frame}{Results Summary}

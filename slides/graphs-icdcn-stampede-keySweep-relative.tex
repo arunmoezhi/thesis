@@ -1,0 +1,77 @@
+% Style to select only points from #1 to #2 (inclusive)
+\pgfplotsset
+{
+	select coords between index/.style 2 args=
+	{
+    x filter/.code=
+		{
+        \ifnum\coordindex<#1\def\pgfmathresult{}\fi
+        \ifnum\coordindex>#2\def\pgfmathresult{}\fi
+    }
+	}
+}
+\begin{figure}[htp]
+\centering
+\begin{tikzpicture}[scale=0.9, transform shape]
+	\begin{groupplot}[group style={group size= 3 by 3},height=3cm,width=4cm,xmode=log,log basis x={2},max space between ticks=20,minor tick num=1,tick label style={font=\tiny},xlabel style={font=\tiny},ylabel style={font=\tiny}, title style={font=\tiny}]
+		\nextgroupplot[title=Small,ylabel={Read-Dominated},xtick=data]
+				%\addplot[brown, semithick,mark=square] 	[select coords between index={0}{3}] table[x=keyspace,y=MopsRelative-citrus,col sep=space]{Data/snb32/keySweep.csv};  \label{plots:CITRUS:ikr}
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={0}{3}] table[x=keyspace,y=MopsRelative-howley,col sep=space]{Data/snb32/keySweep.csv};  \label{plots:HJ-BST:ikr}
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={0}{3}] table[x=keyspace,y=MopsRelative-ppop,col sep=space]{Data/snb32/keySweep.csv};  	\label{plots:NM-BST:ikr}
+				\addplot[green, semithick,mark=o] 			[select coords between index={0}{3}] table[x=keyspace,y=MopsRelative-icdcn,col sep=space]{Data/snb32/keySweep.csv};  \label{plots:icdcn:ikr}
+				\coordinate (top) at (rel axis cs:0,1);% coordinate at top of the first plot
+		\nextgroupplot[title=Medium,xtick=data]
+				%\addplot[brown, semithick,mark=square] 	[select coords between index={4}{7}] table[x=keyspace,y=MopsRelative-citrus,col sep=space]{Data/snb32/keySweep.csv}; 
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={4}{7}] table[x=keyspace,y=MopsRelative-howley,col sep=space]{Data/snb32/keySweep.csv}; 
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={4}{7}] table[x=keyspace,y=MopsRelative-ppop,col sep=space]{Data/snb32/keySweep.csv};   
+				\addplot[green, semithick,mark=o] 			[select coords between index={4}{7}] table[x=keyspace,y=MopsRelative-icdcn,col sep=space]{Data/snb32/keySweep.csv};
+		\nextgroupplot[title=Large,xtick=data]
+				%\addplot[brown, semithick,mark=square] 	[select coords between index={8}{11}] table[x=keyspace,y=MopsRelative-citrus,col sep=space]{Data/snb32/keySweep.csv};
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={8}{11}] table[x=keyspace,y=MopsRelative-howley,col sep=space]{Data/snb32/keySweep.csv};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={8}{11}] table[x=keyspace,y=MopsRelative-ppop,col sep=space]{Data/snb32/keySweep.csv};  
+				\addplot[green, semithick,mark=o] 			[select coords between index={8}{11}] table[x=keyspace,y=MopsRelative-icdcn,col sep=space]{Data/snb32/keySweep.csv};
+		\nextgroupplot[ylabel={Mixed},xtick=data]
+				%\addplot[brown, semithick,mark=square] 	[select coords between index={12}{15}] table[x=keyspace,y=MopsRelative-citrus,col sep=space]{Data/snb32/keySweep.csv};
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={12}{15}] table[x=keyspace,y=MopsRelative-howley,col sep=space]{Data/snb32/keySweep.csv};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={12}{15}] table[x=keyspace,y=MopsRelative-ppop,col sep=space]{Data/snb32/keySweep.csv};  
+				\addplot[green, semithick,mark=o] 			[select coords between index={12}{15}] table[x=keyspace,y=MopsRelative-icdcn,col sep=space]{Data/snb32/keySweep.csv};
+		\nextgroupplot[xtick=data]
+				%\addplot[brown, semithick,mark=square] 	[select coords between index={16}{19}] table[x=keyspace,y=MopsRelative-citrus,col sep=space]{Data/snb32/keySweep.csv};
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={16}{19}] table[x=keyspace,y=MopsRelative-howley,col sep=space]{Data/snb32/keySweep.csv};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={16}{19}] table[x=keyspace,y=MopsRelative-ppop,col sep=space]{Data/snb32/keySweep.csv};  
+				\addplot[green, semithick,mark=o] 			[select coords between index={16}{19}] table[x=keyspace,y=MopsRelative-icdcn,col sep=space]{Data/snb32/keySweep.csv};
+		\nextgroupplot[xtick=data]
+				%\addplot[brown, semithick,mark=square] 	[select coords between index={20}{23}] table[x=keyspace,y=MopsRelative-citrus,col sep=space]{Data/snb32/keySweep.csv};
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={20}{23}] table[x=keyspace,y=MopsRelative-howley,col sep=space]{Data/snb32/keySweep.csv};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={20}{23}] table[x=keyspace,y=MopsRelative-ppop,col sep=space]{Data/snb32/keySweep.csv};  
+				\addplot[green, semithick,mark=o] 			[select coords between index={20}{23}] table[x=keyspace,y=MopsRelative-icdcn,col sep=space]{Data/snb32/keySweep.csv};
+		\nextgroupplot[xlabel={Key Space Size},ylabel={Write-Dominated},xtick=data]
+				%\addplot[brown, semithick,mark=square] 	[select coords between index={24}{27}] table[x=keyspace,y=MopsRelative-citrus,col sep=space]{Data/snb32/keySweep.csv}; 
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={24}{27}] table[x=keyspace,y=MopsRelative-howley,col sep=space]{Data/snb32/keySweep.csv};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={24}{27}] table[x=keyspace,y=MopsRelative-ppop,col sep=space]{Data/snb32/keySweep.csv};  
+				\addplot[green, semithick,mark=o] 			[select coords between index={24}{27}] table[x=keyspace,y=MopsRelative-icdcn,col sep=space]{Data/snb32/keySweep.csv};	
+		\nextgroupplot[xlabel={Key Space Size},xtick=data]
+				%\addplot[brown, semithick,mark=square] 	[select coords between index={28}{31}] table[x=keyspace,y=MopsRelative-citrus,col sep=space]{Data/snb32/keySweep.csv};
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={28}{31}] table[x=keyspace,y=MopsRelative-howley,col sep=space]{Data/snb32/keySweep.csv};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={28}{31}] table[x=keyspace,y=MopsRelative-ppop,col sep=space]{Data/snb32/keySweep.csv};  
+				\addplot[green, semithick,mark=o] 			[select coords between index={28}{31}] table[x=keyspace,y=MopsRelative-icdcn,col sep=space]{Data/snb32/keySweep.csv};
+		\nextgroupplot[xlabel={Key Space Size},xtick=data]
+				%\addplot[brown, semithick,mark=square] 	[select coords between index={32}{35}] table[x=keyspace,y=MopsRelative-citrus,col sep=space]{Data/snb32/keySweep.csv}; 
+				\addplot[red,semithick,mark=triangle] 	[select coords between index={32}{35}] table[x=keyspace,y=MopsRelative-howley,col sep=space]{Data/snb32/keySweep.csv};
+				\addplot[blue,semithick,mark=asterisk] 	[select coords between index={32}{35}] table[x=keyspace,y=MopsRelative-ppop,col sep=space]{Data/snb32/keySweep.csv};  
+				\addplot[green, semithick,mark=o] 			[select coords between index={32}{35}] table[x=keyspace,y=MopsRelative-icdcn,col sep=space]{Data/snb32/keySweep.csv};						
+				\coordinate (bot) at (rel axis cs:1,0);% coordinate at bottom of the last plot
+	\end{groupplot}
+	\path (top-|current bounding box.west)-- node[anchor=south,rotate=90] {\tiny Relative system throughput} (bot-|current bounding box.west);
+	\path (top|-current bounding box.north)-- coordinate(legendpos) (bot|-current bounding box.north);
+	\matrix[matrix of nodes, anchor=south, draw, inner sep=0.2em, draw] at ([yshift=1ex]legendpos)
+  {
+    \ref{plots:HJ-BST:ikr}& \tiny \HJBST{} & [5pt]
+    \ref{plots:NM-BST:ikr}& \tiny \NMBST{} & [5pt]
+    %\ref{plots:CITRUS:ikr}& \tiny \CITRUS{} & [5pt]
+		\ref{plots:icdcn:ikr}& \tiny \ICDCN{} \\
+	};
+\end{tikzpicture}
+%\caption[\ICDCN{} - Comparison of throughput of different algorithms - key sweep]{Comparison of system throughput of different algorithms \emph{relative to that of \HJBST{}} at 32 threads. Each row represents a workload type. Each column represents a range of key space range. Higher the ratio, better the performance of the algorithm.}
+\label{fig:icdcn-keySweep-relative}
+\end{figure}
