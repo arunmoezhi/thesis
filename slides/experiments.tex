@@ -68,11 +68,29 @@ To compare the performance of various concurrent BSTs we considered the followin
 \end{frame}
 
 \begin{frame}{Results Summary}
-Comparison of different lock-free algorithms in the absence of contention
+Comparison of different concurrent BSTs in the absence of contention
 \input{figures/comparison}
 \pause
 \begin{itemize}
 \item speedup is calculated over the second best algorithm
 \end{itemize}
 \input{figures/summary}
+\end{frame}
+
+\begin{frame}{Local recovery}
+\begin{itemize}
+\item helpful only for high contention cases
+\item uniform distribution usually causes less contention
+\item zipf distribution (a power-law distribution) causes high contention
+\item experiments run on a 61 core coprocessor
+\item 4 hardware threads per core - 244 total threads
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Local recovery - Throughput - relative}
+\input{graphs-localRecovery-mic-threadSweep-zipf}
+\end{frame}
+
+\begin{frame}{Local recovery - Seek Time - relative}
+\input{graphs-localRecovery-mic-threadSweep-zipf-seekTime}
 \end{frame}

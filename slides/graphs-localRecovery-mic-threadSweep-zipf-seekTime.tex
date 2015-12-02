@@ -1,0 +1,93 @@
+% Style to select only points from #1 to #2 (inclusive)
+\pgfplotsset
+{
+	select coords between index/.style 2 args=
+	{
+    x filter/.code=
+		{
+        \ifnum\coordindex<#1\def\pgfmathresult{}\fi
+        \ifnum\coordindex>#2\def\pgfmathresult{}\fi
+    }
+	}
+}
+\begin{figure}[htp]
+\centering
+\begin{tikzpicture}[scale=0.9, transform shape]
+	\begin{groupplot}[group style={group size= 4 by 3},height=3cm,width=3cm,max space between ticks=20,minor tick num=1,ymin=0.7,ymax=2.3,tick label style={font=\fontsize{3}{4}\selectfont},xlabel style={font=\tiny},ylabel style={font=\tiny}, title style={font=\tiny}]
+		\nextgroupplot[title=2K keys,ylabel={Read-Dominated},xtick={1,61,122,183,244}]
+				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={0}{9}] table{Data/mic/seekTime-10citrus.dat};  \label{plots:citrus:lzt}
+				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={0}{9}] table{Data/mic/seekTime-10howley.dat};  \label{plots:howley:lzt}
+				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={0}{9}] table{Data/mic/seekTime-10castle.dat};  \label{plots:castle:lzt}
+				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
+				\coordinate (top) at (rel axis cs:0,1);% coordinate at top of the first plot
+		\nextgroupplot[title=20K keys,xtick={1,61,122,183,244}]
+				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={10}{19}] table{Data/mic/seekTime-10citrus.dat};  
+				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={10}{19}] table{Data/mic/seekTime-10howley.dat};  
+				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={10}{19}] table{Data/mic/seekTime-10castle.dat};
+				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
+		\nextgroupplot[title=200K keys,xtick={1,61,122,183,244}]
+				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={20}{29}] table{Data/mic/seekTime-10citrus.dat};
+				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={20}{29}] table{Data/mic/seekTime-10howley.dat};
+				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={20}{29}] table{Data/mic/seekTime-10castle.dat};
+				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
+		\nextgroupplot[title=2M keys,xtick={1,61,122,183,244}]
+				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={30}{39}] table{Data/mic/seekTime-10citrus.dat};
+				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={30}{39}] table{Data/mic/seekTime-10howley.dat};
+				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={30}{39}] table{Data/mic/seekTime-10castle.dat};	
+				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
+		\nextgroupplot[ylabel={Mixed},xtick={1,61,122,183,244}]
+				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={40}{49}] table{Data/mic/seekTime-10citrus.dat}; 
+				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={40}{49}] table{Data/mic/seekTime-10howley.dat};
+				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={40}{49}] table{Data/mic/seekTime-10castle.dat};		
+				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
+		\nextgroupplot[xtick={1,61,122,183,244}]
+				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={50}{59}] table{Data/mic/seekTime-10citrus.dat}; 
+				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={50}{59}] table{Data/mic/seekTime-10howley.dat};
+				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={50}{59}] table{Data/mic/seekTime-10castle.dat};
+				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
+		\nextgroupplot[xtick={1,61,122,183,244}]
+				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={60}{69}] table{Data/mic/seekTime-10citrus.dat}; 
+				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={60}{69}] table{Data/mic/seekTime-10howley.dat};
+				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={60}{69}] table{Data/mic/seekTime-10castle.dat};
+				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
+		\nextgroupplot[xtick={1,61,122,183,244}]
+				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={70}{79}] table{Data/mic/seekTime-10citrus.dat}; 
+				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={70}{79}] table{Data/mic/seekTime-10howley.dat};
+				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={70}{79}] table{Data/mic/seekTime-10castle.dat};
+				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
+		\nextgroupplot[xlabel={Number of Threads},ylabel={Write-Dominated},xtick={1,61,122,183,244}]
+				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={80}{89}] table{Data/mic/seekTime-10citrus.dat}; 
+				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={80}{89}] table{Data/mic/seekTime-10howley.dat};
+				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={80}{89}] table{Data/mic/seekTime-10castle.dat};
+				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
+		\nextgroupplot[xlabel={Number of Threads},xtick={1,61,122,183,244}]
+				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={90}{99}] table{Data/mic/seekTime-10citrus.dat}; 
+				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={90}{99}] table{Data/mic/seekTime-10howley.dat};
+				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={90}{99}] table{Data/mic/seekTime-10castle.dat};	
+				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
+		\nextgroupplot[xlabel={Number of Threads},xtick={1,61,122,183,244}]
+				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={100}{109}] table{Data/mic/seekTime-10citrus.dat}; 
+				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={100}{109}] table{Data/mic/seekTime-10howley.dat};
+				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={100}{109}] table{Data/mic/seekTime-10castle.dat};
+				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
+		\nextgroupplot[xlabel={Number of Threads},xtick={1,61,122,183,244}]
+				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={110}{119}] table{Data/mic/seekTime-10citrus.dat}; 
+				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={110}{119}] table{Data/mic/seekTime-10howley.dat};
+				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={110}{119}] table{Data/mic/seekTime-10castle.dat};
+				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
+				\coordinate (bot) at (rel axis cs:1,0);% coordinate at bottom of the last plot
+\end{groupplot}
+	\path (top-|current bounding box.west)-- node[anchor=south,rotate=90] {\tiny Relative seek time} (bot-|current bounding box.west);
+	%\node[right,rotate=90] at (-1.4,-7.2){\small ~Seek Time (million ops/sec)};
+	\path (top|-current bounding box.north)-- coordinate(legendpos) (bot|-current bounding box.north);
+	\matrix[matrix of nodes, anchor=south, draw, inner sep=0.2em, draw] at ([xshift=-5ex,yshift=1ex]legendpos)
+  {
+		\ref{plots:castle:lzt}& \tiny \CASTLE{} & [5pt]
+		\ref{plots:citrus:lzt}& \tiny \CITRUS{} & [5pt]
+		\ref{plots:howley:lzt}& \tiny \HJBST{} \\
+		};
+	
+\end{tikzpicture}
+%\caption[Effect of local recovery on seek time]{Effect of local recovery on seek time when varying the number of threads from 1 to 244 for zipf distribution. Each row represents a workload type and each column represents a key space size. Higher the relative seek time, better the performance of the algorithm with local recovery.}
+\label{fig:localRecovery-seekTime-stampede-threadSweep-zipf-4Set-Relative}
+\end{figure}

@@ -13,7 +13,7 @@
 \begin{figure}[htp]
 \centering
 \begin{tikzpicture}
-	\begin{groupplot}[group style={group size= 4 by 3},height=4.25cm,width=4.25cm,max space between ticks=20,minor tick num=1,tick label style={font=\footnotesize},ymin=0.7,ymax=2.3]
+	\begin{groupplot}[group style={group size= 4 by 3},height=4.25cm,width=4.25cm,max space between ticks=20,minor tick num=1,tick label style={font=\tiny},ymin=0.7,ymax=2.3]
 		\nextgroupplot[title=2K keys,ylabel={Read-Dominated},xtick={1,61,122,183,244}]
 				\addplot[smooth,brown,thick,mark=square] 	[select coords between index={0}{9}] table{Data/localRecovery/snb32/threadSweep/zipf/4Set/relative/seekTime-10citrus.dat};  \label{plots:citrus:6}
 				\addplot[smooth,red,thick,mark=triangle] 	[select coords between index={0}{9}] table{Data/localRecovery/snb32/threadSweep/zipf/4Set/relative/seekTime-10howley.dat};  \label{plots:howley:6}
@@ -79,13 +79,13 @@
 \end{groupplot}
 	\path (top-|current bounding box.west)-- node[anchor=south,rotate=90] {\small Relative seek time} (bot-|current bounding box.west);
 	%\node[right,rotate=90] at (-1.4,-7.2){\small ~Seek Time (million ops/sec)};
-	%\path (top|-current bounding box.north)-- coordinate(legendpos) (bot|-current bounding box.north);
-	%\matrix[matrix of nodes, anchor=south, draw, inner sep=0.2em, draw] at ([xshift=-5ex,yshift=1ex]legendpos)
-  %{
-	%	\ref{plots:castle:6}& \CASTLE{} & [5pt]
-	%	\ref{plots:citrus:6}& \CITRUS{} & [5pt]
-	%	\ref{plots:howley:6}& \HJBST{} \\
-	%	};
+	\path (top|-current bounding box.north)-- coordinate(legendpos) (bot|-current bounding box.north);
+	\matrix[matrix of nodes, anchor=south, draw, inner sep=0.2em, draw] at ([xshift=-5ex,yshift=1ex]legendpos)
+  {
+		\ref{plots:castle:6}& \CASTLE{} & [5pt]
+		\ref{plots:citrus:6}& \CITRUS{} & [5pt]
+		\ref{plots:howley:6}& \HJBST{} \\
+		};
 	
 \end{tikzpicture}
 \caption[Effect of local recovery on seek time]{Effect of local recovery on seek time when varying the number of threads from 1 to 244 for zipf distribution. Each row represents a workload type and each column represents a key space size. Higher the relative seek time, better the performance of the algorithm with local recovery.}
