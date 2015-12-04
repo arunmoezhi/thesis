@@ -16,17 +16,17 @@
 		\draw[->] (x) -- (a.north);
 		\pause
 		%% legend
-		%\node (l1) 																						at (\XA+4.5,\YA-3){\Large $\boldsymbol{i}$  - \Large intent flag set};
-		%\node (l2) 																						at (\XA+4.5,\YA-3.5){\Large $\boldsymbol{d}$  - \Large delete flag set};
-		%\node [thin, draw=black, align=center, minimum width=5cm, minimum height=1.25cm] at (\XA+5,\YA-3.15) {};	
-		%\draw[->] (x) -- node[mylabel] {$\boldsymbol{i}$} (y);
-		\draw[->] (x) -- node[mylabel] {$\boldsymbol{f}$} (y);
+		\node (l1) 																						at (\XA+4.5,\YA-3){\Large $\boldsymbol{i}$  - \Large intent flag set};
+		\node (l2) 																						at (\XA+4.5,\YA-3.5){\Large $\boldsymbol{d}$  - \Large delete flag set};
+		\node [thin, draw=black, align=center, minimum width=5cm, minimum height=1.25cm] at (\XA+5,\YA-3.15) {};	
+		\draw[->] (x) -- node[mylabel] {$\boldsymbol{i}$} (y);
+		%\draw[->] (x) -- node[mylabel] {$\boldsymbol{f}$} (y);
 		\pause
-		%\draw[->] (y) -- node[mylabel] {$\boldsymbol{d}$} (b.north);
-		\draw[->] (y) -- node[mylabel] {$\boldsymbol{f}$} (b.north);
+		\draw[->] (y) -- node[mylabel] {$\boldsymbol{d}$} (b.north);
+		%\draw[->] (y) -- node[mylabel] {$\boldsymbol{f}$} (b.north);
 		\pause
-		%\draw[->] (y) -- node[mylabel] {$\boldsymbol{d}$} (gnd);
-		\draw[->] (y) -- node[mylabel] {$\boldsymbol{f}$} (gnd);
+		\draw[->] (y) -- node[mylabel] {$\boldsymbol{d}$} (gnd);
+		%\draw[->] (y) -- node[mylabel] {$\boldsymbol{f}$} (gnd);
     \pause
 		\path[every node/.style={font=\sffamily\small}]
 		(\XA+1.5,\YA) edge[->,semithick, double] 							node [above, outer sep=3pt] {\large \texttt delete 50} (\XA+4,\YA);

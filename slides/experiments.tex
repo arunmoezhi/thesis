@@ -46,9 +46,11 @@ To compare the performance of various concurrent BSTs we considered the followin
 \input{graphs-castle-stampede-keySweep-absolute}
 \end{frame}
 
+\ifdefined\LONG
 \begin{frame}{Lock Based BST - key sweep - relative}
 \input{graphs-castle-stampede-keySweep-relative}
 \end{frame}
+\fi
 
 \begin{frame}{Lock Based BST - thread sweep - absolute}
 \input{graphs-castle-stampede-threadSweep}
@@ -59,9 +61,11 @@ To compare the performance of various concurrent BSTs we considered the followin
 \input{graphs-icdcn-stampede-keySweep-absolute}
 \end{frame}
 
+\ifdefined\LONG
 \begin{frame}{Lock Free BST - key sweep - relative}
 \input{graphs-icdcn-stampede-keySweep-relative}
 \end{frame}
+\fi
 
 \begin{frame}{Lock Free BST - thread sweep - absolute}
 \input{graphs-icdcn-stampede-threadSweep}
@@ -69,8 +73,10 @@ To compare the performance of various concurrent BSTs we considered the followin
 
 \begin{frame}{Results Summary}
 Comparison of different concurrent BSTs in the absence of contention
+\ifdefined\LONG
 \input{figures/comparison}
 \pause
+\fi
 \begin{itemize}
 \item speedup is calculated over the second best algorithm
 \end{itemize}

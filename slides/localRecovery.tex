@@ -49,7 +49,7 @@ search operations do not restart
 \end{frame}
 
 \begin{frame}[c]{Search}
-\input{figures/stackA1}
+\input{figures/stackA2}
 \end{frame}
 \begin{frame}[c]{Search}
 \input{figures/stackD0}
@@ -58,12 +58,12 @@ search operations do not restart
 \input{figures/stackD1}
 \end{frame}
 
-\begin{frame}[c]{Insert}
-An insert operation needs to restart only if one of the anchor nodes in the path has become inconsistent
-\input{figures/localRecoveryInsert}
-\end{frame}
-
 \begin{frame}[c]{Delete}
 A delete operation do not restart except when there is a failure in the execution phase
 \input{figures/localRecoveryDelete}
+\end{frame}
+
+\begin{frame}[c]{Insert}
+An insert operation needs to restart only if one of the anchor nodes in the path has become inconsistent
+\input{figures/localRecoveryInsert}
 \end{frame}
