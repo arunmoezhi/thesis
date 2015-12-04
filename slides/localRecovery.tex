@@ -2,7 +2,7 @@
 Overview
 \begin{itemize}
 \item a general technique for local recovery for concurrent BSTs
-\item reduces tree traversal cost during failures by restarting closer to an operation’s window
+\item reduces tree traversal cost during failures by restarting closer to an operation's window
 \end{itemize}
 Motivation
 \begin{itemize}
@@ -31,7 +31,7 @@ Motivation
 \begin{frame}[c]{Traversal Stack}
 \begin{itemize}
 \item a stack to keep track of anchor nodes of all nodes in the traversal path
-\item reduces tree traversal cost during failures by restarting closer to an operation’s window
+\item reduces tree traversal cost during failures by restarting closer to an operation's window
 \end{itemize}
 \end{frame}
 
@@ -41,6 +41,21 @@ Motivation
 \begin{frame}[c]{Traversal Stack}
 \input{figures/stackA1}
 \end{frame}
+\begin{frame}[c]{Traversal Stack}
+\input{figures/stackA1a}
+\end{frame}
+\begin{frame}[c]{Traversal Stack}
+\input{figures/stackA1b}
+\end{frame}
+\begin{frame}[c]{Traversal Stack}
+\input{figures/stackA1c}
+\end{frame}
+\begin{frame}[c]{Traversal Stack}
+\input{figures/stackA1d}
+\end{frame}
+\begin{frame}[c]{Traversal Stack}
+\input{figures/stackA1e}
+\end{frame}
 
 
 \begin{frame}[c]{Search}
@@ -48,14 +63,24 @@ search operations do not restart
 \input{figures/localRecoverySearch}
 \end{frame}
 
-\begin{frame}[c]{Search}
+\begin{frame}[c]{Search - consistent anchors}
 \input{figures/stackA2}
 \end{frame}
-\begin{frame}[c]{Search}
+\begin{frame}[c]{Search - consistent anchors}
 \input{figures/stackD0}
 \end{frame}
-\begin{frame}[c]{Search}
+\begin{frame}[c]{Search - consistent anchors}
 \input{figures/stackD1}
+\end{frame}
+
+\begin{frame}[c]{Search - inconsistent anchor}
+\input{figures/stackI0}
+\end{frame}
+\begin{frame}[c]{Search - inconsistent anchor}
+\input{figures/stackI1}
+\end{frame}
+\begin{frame}[c]{Search - inconsistent anchor}
+\input{figures/stackI2}
 \end{frame}
 
 \begin{frame}[c]{Delete}

@@ -13,12 +13,12 @@
 	\draw [arrow] (p1) -- node[anchor=west] {K not found} (p2);
 	\draw [arrow] (p1) -- node[anchor=south] {K found} (ex);
 	\draw [arrow] (p2.east) -| node[anchor=north,pos=0.5] {K = A.key}    (ex.south);
-	\draw [arrow] (p2.west) -- node[anchor=north,pos=0.5] {K $<$ A.key}  (retF.east);
+	\draw [arrow] (p2.west) -- node (temp) [anchor=north,pos=0.5] {K $<$ A.key}  (retF.east);
 	\draw [arrow] (p2) -- node[anchor=east] {K $>$ A.key} (p3);
 	\draw [arrow] (p3.west)  -| node[anchor=north]{No}  (retF.south);
 	\draw [arrow] (p3.east) -- node[anchor=north]{Yes} (p4.west);
 	\draw [arrow] (p4.north) -- (p2.south);
-
+	\node (temp1) [above of=temp,xshift=0.5cm,yshift=0.4cm] {(A.oldKey $<$ K $<$ A.newKey)};
 	\end{tikzpicture}
 }
 \caption{Sequence of steps in a delete operation}

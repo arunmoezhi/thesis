@@ -26,7 +26,7 @@
 	 \node (sp) [subtree]                     at ([shift=({ -\SUBTREEDX, -\SUBTREEDY})]x) {\Large $\pi$};
 	 \node (sl) [subtree]                     at ([shift=({  \SUBTREEDX, -\SUBTREEDY})]y) {\Large $\lambda$};	
 	
-	 \node (op) [label={left:{\large $op(50)$}}] at ([shift=({-0.5, 0})]t) {};
+	 \node (op) [label={right:{\large $search(45)$}}] at ([shift=({0.5, 0})]y) {};
 	
 	 \path[every node/.style={font=\sffamily\small}]
 	    %(0, 1)  edge[->,very thick]  node {} (r)
@@ -67,6 +67,16 @@
 \begin{tikzpicture}[scale=0.5, transform shape]
   \stacktop{} \cellptr{top of stack}
 	\separator
+	\cell{\Large \texttt{Y,X}}        \cellcomL{7} \coordinate () at (currentcell.east);
+  \separator
+	\cell{\Large \texttt{X,U}}        \cellcomL{6} \coordinate () at (currentcell.east);
+  \separator
+	\cell{\Large \texttt{W,U}}        \cellcomL{5} \coordinate () at (currentcell.east);
+  \separator
+	\cell{\Large \texttt{V,U}}        \cellcomL{4} \coordinate () at (currentcell.east);
+  \separator
+	\cell{\Large \texttt{U,R}}        \cellcomL{3} \coordinate () at (currentcell.east);
+  \separator
 	\cell{\Large \texttt{T,R}}        \cellcomL{2} \coordinate () at (currentcell.east);
   \separator
 	\cell{\Large \texttt{S,R}}        \cellcomL{1} \coordinate () at (currentcell.east);
@@ -74,5 +84,5 @@
 	\cell{\Large \texttt{R,null}}     \cellcomL{0} \coordinate () at (currentcell.east);
   \separator
 \end{tikzpicture}
-%\caption{Operation $op(50)$ starting at R and suspended at Y along with the stack}
+\caption{Operation $search(45)$ starting at R and suspended at Y along with the stack}
 \end{figure}

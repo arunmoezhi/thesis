@@ -26,7 +26,7 @@
 	 \node (sp) [subtree]                     at ([shift=({ -\SUBTREEDX, -\SUBTREEDY})]x) {\Large $\pi$};
 	 \node (sl) [subtree]                     at ([shift=({  \SUBTREEDX, -\SUBTREEDY})]y) {\Large $\lambda$};	
 	
-	 \node (op) [label={left:{\large $op(50)$}}] at ([shift=({-0.5, 0})]t) {};
+	 \node (op) [label={left:{\large $op(50)$}}] at ([shift=({-0.5, 0})]u) {};
 	
 	 \path[every node/.style={font=\sffamily\small}]
 	    %(0, 1)  edge[->,very thick]  node {} (r)
@@ -67,6 +67,8 @@
 \begin{tikzpicture}[scale=0.5, transform shape]
   \stacktop{} \cellptr{top of stack}
 	\separator
+	\cell{\Large \texttt{U,R}}        \cellcomL{3} \coordinate () at (currentcell.east);
+  \separator
 	\cell{\Large \texttt{T,R}}        \cellcomL{2} \coordinate () at (currentcell.east);
   \separator
 	\cell{\Large \texttt{S,R}}        \cellcomL{1} \coordinate () at (currentcell.east);

@@ -79,14 +79,17 @@ A scenario in which the last right turn node is removed
 \item<2> \footnotesize Delete(6) removes $X$ from the tree in (b). The key stored in $X$ is still 6
 \item<3> \footnotesize Delete(5) results in 13 moving up the tree from $Z$ to $W$ in (c). When search(13) wakes up, it will miss 13 as the key in the last right turn node has not changed
 \end{itemize}
+\end{frame}
 
-
+\begin{frame}{Lock Based BST - More challenges in search}
+A scenario in which the last right turn node is removed
+\input{figures/issueInSeek-noPause}
 \begin{itemize}
-\item<4> \footnotesize In the first traversal search(13) saw the node $X$
-\item<4> \footnotesize In the second traversal there are two cases
+\item<1> \footnotesize In the first traversal search(13) saw the node $X$
+\item<2> \footnotesize In the second traversal there are two cases
 \begin{itemize}
-\item<4> \tiny case1, search(13) did not find $X$ - save the traversal and restart
-\item<4> \tiny case2, search(13) did find $X$ - use the results of previous traversal
+\item<2> \tiny case1, search(13) did not find $X$ - save the traversal and restart
+\item<2> \tiny case2, search(13) did find $X$ - use the results of previous traversal
 \end{itemize}
 \end{itemize}
 
