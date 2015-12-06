@@ -1,5 +1,5 @@
 \begin{figure}[htp]
-\begin{tikzpicture}[scale=0.5, transform shape]
+\begin{tikzpicture}[scale=0.4, transform shape]
    
 	 \newcommand\NODEDX{1.25}
 	 \newcommand\NODEDY{1.25}
@@ -54,8 +54,8 @@
 			(y)     edge[->]  node {} (sl.north);		
 \end{tikzpicture}
 \qquad
-\begin{tikzpicture}[scale=0.5, transform shape]
-  \stacktop{} \cellptr{top of stack}
+\begin{tikzpicture}[scale=0.3, transform shape]
+  \stacktop{} \cellptr{top}
 	\separator
 	\cell{\Large \texttt{W,U}}        \cellcomL{5} \coordinate () at (currentcell.east);
   \separator
@@ -70,5 +70,25 @@
 	\cell{\Large \texttt{R,null}}     \cellcomL{0} \coordinate () at (currentcell.east);
   \separator
 \end{tikzpicture}
+\quad
+\begin{tikzpicture}[scale=0.3, transform shape]
+	\node (p0) [] {search(K)};
+	\node (p1) [process, below of=p0, text width=4cm] {Do a binary search for key K in the tree};
+	\node (p2) [process, below of=p1, yshift=-1.5cm, text width=4.5cm,fill=black!20] {Examine anchor node $A$ of top entry in the stack};
+	\node (p3) [decision, below of=p2, yshift=-1.5cm, text width=2cm] {is anchor node marked?};
+	\node (p4) [process, right of=p3, xshift=4cm, text width=4.5cm] {pop all entries upto anchor node $A$};
+	\node (retT) [process, right of=p1, xshift=4cm, text width=1cm, minimum width=1cm] {return true};
+	\node (retF) [process, left of=p2, xshift=-5cm, text width=1cm, minimum width=1cm,fill=black!20] {return false};
+
+	\draw [arrow] (p1) -- node[anchor=west] {K not found} (p2);
+	\draw [arrow] (p1) -- node[anchor=south] {K found} (retT);
+	\draw [arrow] (p2.east) -| node[anchor=north,pos=0.5] {K = A.key}    (retT.south);
+	\draw [arrow] (p2.west) -- node (temp) [anchor=north,pos=0.5] {K $<$ A.key}  (retF.east);
+	\draw [arrow] (p2) -- node[anchor=east] {K $>$ A.key} (p3);
+	\draw [arrow] (p3.west) -| (retF.south) node[below, pos=0.5]{No}  (retF.south);
+	\draw [arrow] (p3.east) -- node[anchor=north]{Yes} (p4.west);
+	\draw [arrow] (p4.north) -- (p2.south);
+	\node (temp1) [above of=temp,xshift=0.5cm,yshift=0.4cm] {(A.oldKey $<$ K $<$ A.newKey)};
+	\end{tikzpicture}
 \caption{Pop upto marked anchor node $X$. Top of stack is now $W$. Examine anchor node $U$. A.oldKey(20) $<$ K(45) $<$ A.newKey(50). Inconsistent anchor}
 \end{figure}

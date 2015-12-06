@@ -19,6 +19,37 @@
 	\draw [arrow] (p3.east) -- node[anchor=north]{Yes} (p4.west);
 	\draw [arrow] (p4.north) -- (p2.south);
 	\node (temp1) [above of=temp,xshift=0.5cm,yshift=0.4cm] {(A.oldKey $<$ K $<$ A.newKey)};
+	\pause
+	\visible<2>
+	{
+		\node (p1) [process, below of=p0, text width=4cm,fill=black!20] {Do a binary search for key K in the tree};
+	}
+	\pause
+	\visible<3>
+	{
+		\node (retT) [process, right of=p1, xshift=4cm, text width=1cm, minimum width=1cm,fill=black!20] {return true};
+	}
+	\pause
+	\visible<4,8>
+	{
+	\node (p2) [process, below of=p1, yshift=-1.5cm, text width=4.5cm,fill=black!20] {Examine anchor node $A$ of top entry in the stack};
+	}
+	\pause
+	\visible<5>
+	{
+	\node (p3) [decision, below of=p2, yshift=-1.5cm, text width=2cm,fill=black!20] {is anchor node marked?};
+	}
+		\pause
+	\visible<6>
+	{
+	\node (retF) [process, left of=p2, xshift=-5cm, text width=1cm, minimum width=1cm,fill=black!20] {return false};
+	}
+	\pause
+	\visible<7>
+	{
+	\node (p4) [process, right of=p3, xshift=4cm, text width=4.5cm,fill=black!20] {pop all entries upto anchor node $A$};
+	}
+	\pause
 	\end{tikzpicture}
 }
 \caption{Sequence of steps in a search operation}
