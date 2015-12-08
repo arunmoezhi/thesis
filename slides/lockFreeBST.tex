@@ -13,25 +13,23 @@ Contributions
 \item search and inserts are same as in lock Based BST
 \item to maintain lock-free property, if an insert or delete operation fails, it helps a pending delete operation(if needed)
 \end{itemize} 
-%\ifdefined\LONG
-pseudocode for delete
-\begin{algorithm}[H]
-locate the node to delete\;
-flag the children edges for deletion\;
-\uIf{simple delete}
-{
-make the parent point to the non-null child atomically\;
-}
-\Else(// complex delete)
-{
-find the successor\;
-flag the children edges of successor for promotion\;
-promote key\;
-remove successor by a simple delete\;
-replace node with a fresh copy\;
-}
-\end{algorithm}
-%\fi
+%pseudocode for delete
+%\begin{algorithm}[H]
+%locate the node to delete\;
+%flag the children edges for deletion\;
+%\uIf{simple delete}
+%{
+%make the parent point to the non-null child atomically\;
+%}
+%\Else(// complex delete)
+%{
+%find the successor\;
+%flag the children edges of successor for promotion\;
+%promote key\;
+%remove successor by a simple delete\;
+%replace node with a fresh copy\;
+%}
+%\end{algorithm}
 \end{frame}
 
 \begin{frame}[c]{Lock Free BST - Simple Delete}

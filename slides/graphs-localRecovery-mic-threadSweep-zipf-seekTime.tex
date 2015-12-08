@@ -13,18 +13,19 @@
 \begin{figure}[htp]
 \centering
 \begin{tikzpicture}[scale=0.9, transform shape]
-	\begin{groupplot}[group style={group size= 4 by 3},height=3cm,width=3cm,max space between ticks=20,minor tick num=1,ymin=0.7,ymax=2.3,tick label style={font=\fontsize{3}{4}\selectfont},xlabel style={font=\tiny},ylabel style={font=\tiny}, title style={font=\tiny}]
-		\nextgroupplot[title=2K keys,ylabel={Read-Dominated},xtick={1,61,122,183,244}]
-				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={0}{9}] table{Data/mic/seekTime-10citrus.dat};  \label{plots:citrus:lzt}
-				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={0}{9}] table{Data/mic/seekTime-10howley.dat};  \label{plots:howley:lzt}
-				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={0}{9}] table{Data/mic/seekTime-10castle.dat};  \label{plots:castle:lzt}
+	\begin{groupplot}[group style={group size= 3 by 3},height=3cm,width=4cm,max space between ticks=20,minor tick num=1,ymin=0.7,ymax=2.3,tick label style={font=\fontsize{3}{4}\selectfont},xlabel style={font=\tiny},ylabel style={font=\tiny}, title style={font=\tiny}]
+		%\nextgroupplot[title=2K keys,ylabel={Read-Dominated},xtick={1,61,122,183,244}]
+		%		\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={0}{9}] table{Data/mic/seekTime-10citrus.dat};  \label{plots:citrus:lzt}
+		%		\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={0}{9}] table{Data/mic/seekTime-10howley.dat};  \label{plots:howley:lzt}
+		%		\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={0}{9}] table{Data/mic/seekTime-10castle.dat};  \label{plots:castle:lzt}
+		%		\addplot [black, no markers] coordinates {(-1,1) (250,1)};
+		%		\coordinate (top) at (rel axis cs:0,1);% coordinate at top of the first plot
+		\nextgroupplot[title=20K keys,ylabel={Read-Dominated},xtick={1,61,122,183,244}]
+				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={10}{19}] table{Data/mic/seekTime-10citrus.dat};  \label{plots:citrus:lzt} 
+				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={10}{19}] table{Data/mic/seekTime-10howley.dat};  \label{plots:howley:lzt} 
+				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={10}{19}] table{Data/mic/seekTime-10castle.dat};  \label{plots:castle:lzt}
 				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
 				\coordinate (top) at (rel axis cs:0,1);% coordinate at top of the first plot
-		\nextgroupplot[title=20K keys,xtick={1,61,122,183,244}]
-				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={10}{19}] table{Data/mic/seekTime-10citrus.dat};  
-				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={10}{19}] table{Data/mic/seekTime-10howley.dat};  
-				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={10}{19}] table{Data/mic/seekTime-10castle.dat};
-				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
 		\nextgroupplot[title=200K keys,xtick={1,61,122,183,244}]
 				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={20}{29}] table{Data/mic/seekTime-10citrus.dat};
 				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={20}{29}] table{Data/mic/seekTime-10howley.dat};
@@ -35,12 +36,12 @@
 				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={30}{39}] table{Data/mic/seekTime-10howley.dat};
 				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={30}{39}] table{Data/mic/seekTime-10castle.dat};	
 				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
+		%\nextgroupplot[ylabel={Mixed},xtick={1,61,122,183,244}]
+		%		\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={40}{49}] table{Data/mic/seekTime-10citrus.dat}; 
+		%		\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={40}{49}] table{Data/mic/seekTime-10howley.dat};
+		%		\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={40}{49}] table{Data/mic/seekTime-10castle.dat};		
+		%		\addplot [black, no markers] coordinates {(-1,1) (250,1)};
 		\nextgroupplot[ylabel={Mixed},xtick={1,61,122,183,244}]
-				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={40}{49}] table{Data/mic/seekTime-10citrus.dat}; 
-				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={40}{49}] table{Data/mic/seekTime-10howley.dat};
-				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={40}{49}] table{Data/mic/seekTime-10castle.dat};		
-				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
-		\nextgroupplot[xtick={1,61,122,183,244}]
 				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={50}{59}] table{Data/mic/seekTime-10citrus.dat}; 
 				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={50}{59}] table{Data/mic/seekTime-10howley.dat};
 				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={50}{59}] table{Data/mic/seekTime-10castle.dat};
@@ -55,12 +56,12 @@
 				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={70}{79}] table{Data/mic/seekTime-10howley.dat};
 				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={70}{79}] table{Data/mic/seekTime-10castle.dat};
 				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
+		%\nextgroupplot[xlabel={Number of Threads},ylabel={Write-Dominated},xtick={1,61,122,183,244}]
+		%		\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={80}{89}] table{Data/mic/seekTime-10citrus.dat}; 
+		%		\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={80}{89}] table{Data/mic/seekTime-10howley.dat};
+		%		\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={80}{89}] table{Data/mic/seekTime-10castle.dat};
+		%		\addplot [black, no markers] coordinates {(-1,1) (250,1)};
 		\nextgroupplot[xlabel={Number of Threads},ylabel={Write-Dominated},xtick={1,61,122,183,244}]
-				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={80}{89}] table{Data/mic/seekTime-10citrus.dat}; 
-				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={80}{89}] table{Data/mic/seekTime-10howley.dat};
-				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={80}{89}] table{Data/mic/seekTime-10castle.dat};
-				\addplot [black, no markers] coordinates {(-1,1) (250,1)};
-		\nextgroupplot[xlabel={Number of Threads},xtick={1,61,122,183,244}]
 				\addplot[smooth,brown,thick,mark=square,mark size=1] 	[select coords between index={90}{99}] table{Data/mic/seekTime-10citrus.dat}; 
 				\addplot[smooth,red,thick,mark=triangle,mark size=1] 	[select coords between index={90}{99}] table{Data/mic/seekTime-10howley.dat};
 				\addplot[smooth,green, thick,mark=o,mark size=1] 			[select coords between index={90}{99}] table{Data/mic/seekTime-10castle.dat};	

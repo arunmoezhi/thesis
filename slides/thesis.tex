@@ -39,9 +39,9 @@
 \newcommand{\castleMaximumgap}{46\%}
 \newcommand{\icdcnMaximumgap}{27\%}
 \newcommand{\localRecoveryMaximumgap}{49\%}
-\newcommand{\ICDCN}{\textsc{ELFtree}}
-\newcommand{\CASTLE}{\textsc{CASTLE}}
-\newcommand{\CITRUS}{\textsc{CITRUS}}
+\newcommand{\ICDCN}{\textsc{OUR-LF-IBST}}
+\newcommand{\CASTLE}{\textsc{OUR-LB-IBST}}
+\newcommand{\CITRUS}{\textsc{RCU-LB-IBST}}
 \newcommand{\HJBST}{\textsc{LF-IBST}}
 \newcommand{\NMBST}{\textsc{LF-EBST}}
 
@@ -65,6 +65,26 @@
     \hspace{1em}%
     \insertframenumber/\inserttotalframenumber
 }
+
+%%% settings for table of contents %%%%%%%%%%%%%%%%%%
+\usepackage{etoolbox}
+
+\makeatletter
+\def\beamer@tocaction@only#1{\only<.(1)>{\usebeamertemplate**{#1}}}
+\define@key{beamertoc}{subsectionsonly}[]{\beamer@toc@subsectionstyle{show/only}\beamer@toc@subsubsectionstyle{show/shaded/hide}}
+
+\newif\ifbeamer@pausebeforesubsections
+\define@key{beamertoc}{pausebeforesubsections}[true]{\beamer@pausebeforesubsectionstrue}
+
+\patchcmd{\beamer@tableofcontents}{\beamer@pausesectionsfalse}%
+  {\beamer@pausesectionsfalse\beamer@pausebeforesubsectionsfalse}{}{}
+
+\patchcmd{\beamer@subsectionintoc}{\ifbeamer@pausesubsections\pause\fi}%
+  {\ifbeamer@pausesubsections\pause\else%
+   \ifbeamer@pausebeforesubsections\ifnumequal{#2}{1}{\pause}{}\fi\fi}{}{}
+\makeatother
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \title{\centering {Concurrent Binary Search Trees \\ Design and Optimizations}}
 \author[Arun]{\includegraphics[height=0.8cm]{figures/utd_logo.jpg}\\
 Arunmoezhi Ramachandran \\
@@ -80,39 +100,46 @@ Supervisor - Neeraj Mittal\\
 
 		
 \begin{frame}{Overview}
-	\tableofcontents
+	\tableofcontents[subsectionsonly,pausebeforesubsections,pausesections]
 \end{frame}
 
-\section{Introduction}
+\section{Background}
+
+\subsection{Introduction}
 \input{introduction}
 
-\section{Design Approaches}
+\subsection{Design Approaches}
 \input{designApproaches}
 
-\section{Linearizability}
+\subsection{Linearizability}
 \input{linearizability}
 
-\section{Binary Search Tree}
+\subsection{Binary Search Tree}
 \input{binarySearchTree}
 
-\section{Related Works}
+\subsection{Related Works}
 \input{relatedWorks}
 
-\section{Lock Based Binary Search Tree}
+\section{Design}
+
+\subsection{Lock Based Binary Search Tree}
 \input{lockBasedBST}
 
-\section{Lock Free Binary Search Tree}
+\subsection{Lock Free Binary Search Tree}
 \input{lockFreeBST}
 
-\section{Local recovery}
+\section{Optimizations}
+
+\subsection{Local recovery}
 \input{localRecovery}
 
-\section{Wait free search}
+\subsection{Wait free search}
 \input{waitFreeSearch}
 
-\section{Experimental Evaluation}
+\section{Evaluation}
 \input{experiments}
 
 \section{Future Work}
 \input{futureWork}
+
 \end{document}

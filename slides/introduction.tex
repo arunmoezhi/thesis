@@ -1,3 +1,4 @@
+\ifdefined\LONG
 \begin{frame}{Introduction}
 \begin{itemize}
 \item \small CPUs aren't getting faster (memory wall, ILP wall and power wall)
@@ -52,3 +53,31 @@ Concurrent Computing
 \end{column}
 \end{columns}
 \end{frame}
+
+\else
+\begin{frame}{Introduction}
+\begin{itemize}
+\item \small CPUs aren't getting faster (memory wall, ILP wall and power wall)
+\item \small Shift towards multicore and manycore
+\end{itemize}
+\begin{center}
+\Large {\color{red} Problem}\\
+How to keep all the cores \textbf{busy}?
+\end{center}
+\pause
+\begin{center}
+Concurrent computing
+\end{center}
+\end{frame}
+
+\begin{frame}{Concurrent computing}
+\begin{itemize}
+\item Example - A web crawler, mouse/keyboard
+\item \textbf{deal} lot of things simultaneously
+\item can be done on a single CPU
+\item \textbf{non-deterministic} control flow
+\item is about \textbf{hiding latency}
+\item \textbf{very hard} to debug
+\end{itemize}
+\end{frame}
+\fi

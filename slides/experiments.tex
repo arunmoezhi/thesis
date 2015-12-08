@@ -35,41 +35,34 @@ To compare the performance of various concurrent BSTs we considered the followin
 
 \begin{frame}{Other Concurrent BSTs}
 \begin{itemize}
-\item a lock-free internal BST by Howley and Jones[SPAA'12], denoted by HJ-BST
-\item a lock-free external BST by Natarajan and Mittal[PPoPP'14], denoted by NM-BST
-\item RCU-based internal BST by Arbel and Attiya[PODC'14], denoted by CITRUS 
+\item a lock-free internal BST by Howley and Jones[SPAA'12], denoted by \HJBST{}
+\item a lock-free external BST by Natarajan and Mittal[PPoPP'14], denoted by \NMBST{}
+\item RCU-based internal BST by Arbel and Attiya[PODC'14], denoted by \CITRUS{} 
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Lock Based BST - key sweep - absolute}
+\begin{frame}{Lock Based BST - thread sweep}
+\input{graphs-castle-stampede-threadSweep}
+\end{frame}
+\begin{frame}{Lock Free BST - thread sweep}
+\input{graphs-icdcn-stampede-threadSweep}
+\end{frame}
+
+\begin{frame}{Lock Based BST - key sweep}
 %\input{figures/LockBasedBST}
 \input{graphs-castle-stampede-keySweep-absolute}
 \end{frame}
-
-\ifdefined\LONG
-\begin{frame}{Lock Based BST - key sweep - relative}
-\input{graphs-castle-stampede-keySweep-relative}
-\end{frame}
-\fi
-
-\begin{frame}{Lock Based BST - thread sweep - absolute}
-\input{graphs-castle-stampede-threadSweep}
-\end{frame}
-
-\begin{frame}{Lock Free BST - key sweep - absolute}
+\begin{frame}{Lock Free BST - key sweep}
 %\input{figures/LockFreeBST}
 \input{graphs-icdcn-stampede-keySweep-absolute}
 \end{frame}
 
-\ifdefined\LONG
-\begin{frame}{Lock Free BST - key sweep - relative}
-\input{graphs-icdcn-stampede-keySweep-relative}
-\end{frame}
-\fi
-
-\begin{frame}{Lock Free BST - thread sweep - absolute}
-\input{graphs-icdcn-stampede-threadSweep}
-\end{frame}
+%\begin{frame}{Lock Based BST - key sweep - relative}
+%\input{graphs-castle-stampede-keySweep-relative}
+%\end{frame}
+%\begin{frame}{Lock Free BST - key sweep - relative}
+%\input{graphs-icdcn-stampede-keySweep-relative}
+%\end{frame}
 
 \begin{frame}{Results Summary}
 Comparison of different concurrent BSTs in the absence of contention

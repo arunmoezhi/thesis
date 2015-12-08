@@ -64,7 +64,7 @@ rNew = rOld+1\;
 \item<3-> use locks to resolve contention
 \item<3-> coarse grained or fine grained locking
 \item<3->  {\color{black!50!green} easier to design}
-\item<3->  {\color{red}weaker progress guarantees} (thread owns a lock) 
+\item<3->  {\color{red}weaker progress guarantees} (locking) 
 \item<3->  {\color{red}are prone to deadlock, priority inversion}
 \end{itemize}
 \phantom{hello world}
@@ -72,7 +72,7 @@ rNew = rOld+1\;
 \begin{itemize}
 \item<4->  use atomic (Read-Modify-Write) instructions to resolve contention. E.g. Compare-And-Swap(CAS) instruction
 \item<4-> lock-free or wait-free
-\item<4-> {\color{black!50!green}stronger progress guarantees} (operation owns a lock - helping)
+\item<4-> {\color{black!50!green}stronger progress guarantees} (helping)
 \item<4-> {\color{black!50!green}deadlock or priority inversion not possible}
 \item<4-> {\color{red}harder to design}
 \end{itemize}

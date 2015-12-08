@@ -53,7 +53,7 @@ $IC[i]$ and $DC[i]$ denote the number of insert and delete operations, respectiv
 \caption{\tiny waitFreeSearch}
 read and aggregate delete counter values of all processes $DC = \sum\limits_{i=1}^p DC[i]$\;
 read and aggregate insert counter values of all processes $IC = \sum\limits_{i=1}^p IC[i]$\;
-$IC-DC \geq actual tree size$ as IC $\leq$ actual inserts and DC $\geq$ actual deletes\;
+$IC-DC \geq actual tree size$ as IC $\geq$ actual inserts and DC $\geq$ actual deletes\;
 \end{algorithm}
 $IC-DC$ gives an upper bound on number of keys to traverse before stopping the search operation
 \end{frame}
