@@ -31,7 +31,7 @@ An object has:
 \item Proving the correctness requires that some total ordering of any history respects the sequential specification of the object
 \end{itemize}
 \end{frame}
-\fi
+
 \begin{frame}{Linearizability}
 Linearizability requires two properties:
 \begin{itemize}
@@ -46,6 +46,31 @@ Linearizability requires two properties:
 \item \emph{linearization point} - a distinct point between a method invokation and response where the method appears to have taken effect instantaneously
 \item Order the method calls based on their linearization points
 \item Resulting order should be in the sequential specification of the object.
+\end{itemize}
+\end{frame}
+\fi
+
+\begin{frame}{Linearizability}
+\begin{center}
+a correctness condition for concurrent objects
+\end{center}
+\pause
+\begin{itemize}
+\item methods - take time
+\item methods - intervals with a start point (invocation) and an end point (response)
+\item history - sequence of method invocations and responses
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Linearizability}
+\begin{center}
+Linearizability gives a total ordering of a history
+\end{center}
+\pause
+\begin{itemize}
+\item ordering of method calls w.r.t calls on the same thread should remain unchanged
+\item overlapping method calls can be ordered based on the history
+\item non-overlapping method calls across threads should preserve real-time ordering
 \end{itemize}
 \end{frame}
 

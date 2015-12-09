@@ -62,7 +62,7 @@
 				\addplot[green, semithick,mark=o,mark size=1] 			[select coords between index={32}{35}] table[x=keyspace,y=Mops-icdcn,col sep=space]{Data/snb32/keySweep.csv};						
 				\coordinate (bot) at (rel axis cs:1,0);% coordinate at bottom of the last plot
 	\end{groupplot}
-	\path (top-|current bounding box.west)-- node[anchor=south,rotate=90] {\tiny Relative system throughput} (bot-|current bounding box.west);
+	\path (top-|current bounding box.west)-- node[anchor=south,rotate=90] {\tiny System throughput (million operations/second)} (bot-|current bounding box.west);
 	\path (top|-current bounding box.north)-- coordinate(legendpos) (bot|-current bounding box.north);
 	\matrix[matrix of nodes, anchor=south, draw, inner sep=0.2em, draw] at ([yshift=1ex]legendpos)
   {

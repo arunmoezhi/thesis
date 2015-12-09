@@ -1,4 +1,4 @@
-\begin{tikzpicture}[scale=0.55, transform shape,mylabel/.style={thin, draw=black, align=center, minimum width=0.3cm, minimum height=0.3cm,fill=white}]
+\begin{tikzpicture}[scale=0.50, transform shape,mylabel/.style={thin, draw=black, align=center, minimum width=0.3cm, minimum height=0.3cm,fill=white}]
 		\newcommand\XA{0}
 		\newcommand\YA{0}
 		\node (x)		[treenode, fill=black!20] 	at (-6,0)       							{$U$ \\ 50};
@@ -24,10 +24,10 @@
 		\draw[->] (y2) -- (o.north);
     \pause
 		%% legend
-		\node (l1) 															at (-1.5, -5.8)								{\Large $\boldsymbol{i}$  - \Large intent flag set};
-		\node (l2) 															at (2.5, -5.8)								{\Large $\boldsymbol{d}$  - \Large delete flag set};
-		\node (l3) 															at (-1.25, -6.3)							{\Large $\boldsymbol{p}$  - \Large promote flag set};
-		\node [thin, draw=black, align=center, minimum width=8.1cm, minimum height=1.25cm] at (0.5, -6.1) {};
+		\node (l1) 															at (-1.5, -7.5)								{\Large $\boldsymbol{i}$  - \Large intent flag set};
+		\node (l2) 															at (2.5, -7.5)								{\Large $\boldsymbol{d}$  - \Large delete flag set};
+		\node (l3) 															at (-1.25, -8.0)							{\Large $\boldsymbol{p}$  - \Large promote flag set};
+		\node [thin, draw=black, align=center, minimum width=8.1cm, minimum height=1.25cm] at (0.5, -7.7) {};
 		\draw[->] (-6, 1.5) -- node[mylabel] {$\boldsymbol{i}$} (x);
 		%\draw[->] (-6, 1.5) -- node[mylabel] {$\boldsymbol{f}$} (x);
     \pause
@@ -66,4 +66,23 @@
 		%\draw[->] (ix) -- node[mylabel] {$\boldsymbol{f}$} (ia.north);
 		\draw[->] (ix) -- node[mylabel] {$\boldsymbol{d}$} (iy0);
 		%\draw[->] (ix) -- node[mylabel] {$\boldsymbol{f}$} (iy0);
+		\pause
+		\path[every node/.style={font=\sffamily\small}]
+		(3, 0) edge[->,semithick, double] node [above, outer sep=3pt] 		{\large \texttt delete 50} (5.5, 0);
+		\newcommand\XD{6}
+		\node (ix)	[treenode] 									at (\XD+1,0)       								{$U\prime$ \\ 55};
+		\node (ia)	[subtree] 									at (\XD+-0.5,-1)  								{\Large $\alpha$};
+		\node (iy0)	[treenode] 									at (\XD+3,-1.5) 									{$V$ \\ 100};
+		\node (iy1)	[treenode]									at (\XD+1.5,-3)										{$W$ \\ 60}; 
+		\node (ib)	[subtree] 									at (\XD+4,-2.5)    								{\Large $\beta$};
+		\node (io)	[subtree]										at (\XD+0,-4)											{\Large $\omega$}; 
+		\node (ignd)[subtree] 									at (\XD+3,-4)   									{\Large $\gamma$};
+    
+    \draw[->] (\XD+1, 1.5) --  (ix);
+    \draw[->] (ix) --  (iy0);
+    \draw[->] (ix) --  (ia.north);
+    \draw[->] (iy0) --  (iy1);
+    \draw[->] (iy0) --  (ib.north);
+    \draw[->] (iy1) --  (io.north);
+    \draw[->] (iy1) --  (ignd.north);
 	\end{tikzpicture}

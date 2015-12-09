@@ -34,9 +34,10 @@
 		\node (ix)	[treenode] 									at (1,0)       								{$U$ \\ 55};
 		\node (ia)	[subtree] 									at (-0.5,-1)  								{\Large $\alpha$};
 		\node (iy0)	[treenode] 									at (3,-1.5) 									{$V$ \\ 100};
-		\node (iy1)	[treenode, fill=red]									at (1.5,-3)					{$W$ \\ 60}; 
+		\node (iy1)	[treenode, fill=red]				at (1.5,-3)										{$W$ \\ 60}; 
+		\node (iy2)	[treenode, fill=black!20, dotted] at (0,-4.5)							{$X$ \\ 55}; 
 		\node (ib)	[subtree] 									at (4,-2.5)    								{\Large $\beta$};
-		\node (io)	[ground]										at (0,-4)											{}; 
+		\node (io)	[ground]										at (1.25,-4.5)								{}; 
 		\node (ignd)[subtree] 									at (3,-4)   									{\Large $\gamma$};
     
     \draw[->] (1, 1.5) --  (ix);
@@ -45,11 +46,12 @@
     \draw[->] (iy0) --  (iy1);
     \draw[->] (iy0) --  (ib.north);
     \draw[->] (iy1) --  (io);
+		\draw[->,dotted] (iy1) --  (iy2.north);
     \draw[->] (iy1) --  (ignd.north);
 		\pause
-		\node (iy1)	[treenode, fill=green]									at (1.5,-3)					{$W$ \\ 60};
-		\node (y12) [rectangle,align=center,minimum size=1cm] at (0,-3) 		{\large Thread $A$ \\wakes up};
+		\node (iy1)	[treenode, fill=green]									at (1.5,-3)				{$W$ \\ 60};
+		\node (y12) [rectangle,align=center,minimum size=1cm] at (0,-3) 			{\large Thread $A$ \\wakes up};
 		\pause
-		\node (io)	[ground,color=red]										at (0,-4)											{}; 
-		\node (y13) [rectangle,align=center,minimum size=1cm] at (0,-5) 		{\large key not found};
+		\node (io)	[ground,color=red]										at (1.25,-4.5)			{}; 
+		\node (y13) [rectangle,align=center,minimum size=1cm] at (0,-5.5) 		{\large key not found};
 	\end{tikzpicture}

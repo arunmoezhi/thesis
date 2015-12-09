@@ -1,5 +1,5 @@
 \begin{figure}[htp]
-\begin{tikzpicture}[scale=0.4, transform shape] 
+\begin{tikzpicture}[scale=0.33, transform shape]
 	 \newcommand\NODEDX{1.25}
 	 \newcommand\NODEDY{1.25}
 	 \newcommand\SUBTREEDX{1.5}
@@ -49,8 +49,8 @@
 			(x)     edge[->]  node {} (sp.north)
 			(y)     edge[->]  node {} (sl.north);		
 \end{tikzpicture}
-\qquad
-\begin{tikzpicture}[scale=0.3, transform shape]
+\quad
+\begin{tikzpicture}[scale=0.28, transform shape]
   \stacktop{} \cellptr{top}
 	\separator
 	\cell{\Large \texttt{Y,X}}        \cellcomL{7} \coordinate () at (currentcell.east);
@@ -71,7 +71,7 @@
   \separator
 \end{tikzpicture}
 \quad
-\begin{tikzpicture}[scale=0.3, transform shape]
+\begin{tikzpicture}[scale=0.4, transform shape]
 	\node (p0) [] {search(K)};
 	\node (p1) [process, below of=p0, text width=4cm] {Do a binary search for key K in the tree};
 	\node (p2) [process, below of=p1, yshift=-1.5cm, text width=4.5cm] {Examine anchor node $A$ of top entry in the stack};
