@@ -72,6 +72,49 @@
     arrow/.style={thick, ->, >=stealth},
     decision/.style ={diamond, draw=black, minimum width=1cm, minimum height=1cm, text badly centered, node distance=3cm, inner sep=0pt}
 }
+
+\usepgfplotslibrary{external}
+\tikzexternalize
+\tikzsetexternalprefix{external_figs/}
+\tikzset{external/up to date check=md5}% < added
+
+%%% %http://texwelt.de/wissen/fragen/9476/labels-an-pgfplots/9527 (by Ijon Tichy)
+\usepackage{scrlfile}
+\usepackage{etoolbox}
+\makeatletter
+\newif\if@lateexternal
+\newcommand*{\nextwithlateexternal}{\@lateexternaltrue}
+\renewcommand*{\@lateexternalfalse}{\global\let\if@lateexternal\iffalse}
+% Den Systemaufruf von external so ändern, dass er optional doppelt
+% stattfindet: Zunächst wie gehabt unmittelbar und zusätzlich nachdem
+% die aux-Datei geschlossen (und sogar neu gelesen) wurde.
+\patchcmd\tikzexternal@externalizefig@systemcall@@
+  {\immediate\write18{\pgf@tempa}}%
+  {\immediate\write18{\pgf@tempa}%
+    \if@lateexternal
+      \begingroup
+        \protected@edef\reserved@a{%
+          \noexpand\endgroup
+          \noexpand\AfterReadingMainAux{%
+            \noexpand\immediate\noexpand\write18{%
+              \expandafter\detokenize\expandafter{\pgf@tempa}}%
+          }%
+        }%
+      \reserved@a
+    \fi
+  }%
+  {}%
+  {\patchFailedError}
+% Nun dafür sorgen, dass der Aufruf \nextwithlateexternal nur auf
+% den nächsten potentiellen Systemaufruf von external wirkt statt
+% auf den nächsten tatsächlichen oder gar alle:
+\apptocmd\tikzexternal@externalizefig@systemcall@@
+  {\@lateexternalfalse}
+  {}
+  {\patchFailedError}
+\makeatother
+%%%
+
 \usepackage{circuitikz}
 \usepackage{subcaption}
 \usepackage{xparse}

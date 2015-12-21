@@ -1,4 +1,5 @@
 *.aux
+*.auxlock
 *.lof
 *.log
 *.lot
@@ -7,3 +8,7 @@
 *.toc
 *.bbl
 *.blg
+*.dep
+*.dpth
+*.md5
+thesis/external_figs
