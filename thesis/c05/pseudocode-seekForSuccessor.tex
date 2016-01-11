@@ -165,7 +165,7 @@
 {
 %%
    
-   \tcp{the stack used in locating the successor key is initialized before this function is invoked}	
+   \tcp{the stack used in locating the successor key is initialized}
 	 $\traversalRecord$ := $\opRecord \rarrow \successorStack$\;
 	 \While{\True}
 	 {
@@ -210,7 +210,7 @@
 				
 			}
 			
-			\BlankLine
+			%\BlankLine
 			
 	    \tcp{check if the successor key is still needed}
 	    $\reference$ := \NeedSuccessorKey( $\opRecord$ )\;
@@ -237,7 +237,7 @@
 			   $\which$ := \LEFT\;
 				 \label{lin:local-seek|successor:while:traversal:else:end}
 			}
-			\BlankLine
+			%\BlankLine
 			\Repeat(\tcp*[f]{stop if reference is null}){\True}
 	    {
 			   \label{lin:local-seek|successor:while:traversal:begin}

@@ -64,7 +64,7 @@ A search operation starts by invoking seek operation. It returns \true{} if the 
 
 \paragraph*{Insert}
 \input{Figures/icdcn/insert}
-An insert operation ((shown in \figref{icdcn-insert})) starts by invoking seek operation. It returns \false{} if the target key matches the stored key; otherwise, it moves to the execution phase. In the execution phase, it attempts to insert the key into the tree as a child node of the last node in the \accesspath{} using a \CAS{} instruction. If the instruction succeeds, then the operation returns \true{}; otherwise, it restarts by invoking the seek function again.
+An insert operation (shown in \figref{icdcn-insert}) starts by invoking seek operation. It returns \false{} if the target key matches the stored key; otherwise, it moves to the execution phase. In the execution phase, it attempts to insert the key into the tree as a child node of the last node in the \accesspath{} using a \CAS{} instruction. If the instruction succeeds, then the operation returns \true{}; otherwise, it restarts by invoking the seek function again.
 
 \paragraph*{Delete} 
 \input{Figures/icdcn/simple}
