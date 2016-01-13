@@ -6,8 +6,8 @@ In this section we evaluate \ICDCN{} against three other implementations of a co
 \item the RCU-based internal BST by Arbel and Attiya~\cite{ArbAtt:2014:PODC}, denoted by \CITRUS{}.
 \end{enumerate}
 
-\input{c06/icdcn/graphs-icdcn-stampede-keySweep-absolute}
-\input{c06/icdcn/graphs-icdcn-stampede-threadSweep}
+\input{experiments/icdcn/graphs-icdcn-stampede-keySweep-absolute}
+\input{experiments/icdcn/graphs-icdcn-stampede-threadSweep}
 
 The results of our experiments are shown in \figref{icdcn-keySweep-absolute} and \figref{icdcn-threadSweep}. In \figref{icdcn-keySweep-absolute}, each row represents a specific workload (read-dominated, mixed or write-dominated) and each column represents a specific key space size; \textit{small} (8Ki to 64Ki), \textit{medium} (128Ki to 1Mi) and \textit{large} (2Mi to 16Mi). \figref{icdcn-threadSweep} shows the scaling with respect to the number of threads for key space size of 2\textsuperscript{19} (512Ki). We do not show the numbers for \CITRUS{} in the graphs as it had the worst performance among all implementations (slower by a factor of four in some cases). This is not surprising as \CITRUS{} is optimized for read operations (\emph{e.g.}, 98\% reads \& 2\% updates)~\cite{ArbAtt:2014:PODC}.
 

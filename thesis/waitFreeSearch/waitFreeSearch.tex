@@ -99,7 +99,7 @@ A pseudo-code of the algorithm is given in \pseudoref{wf:search:size}. In the ps
 
 Some advantages of our approach are as follows. First, it works even if a key space is unbounded. Second, it does not require a search operation to perform any write instruction on shared memory. Third, it does not require a modify operation to perform any additional atomic instruction or helping (besides that performed by the original algorithm). 
 
-\input{c08/pseudocode-waitfree}
+\input{waitFreeSearch/pseudocode-waitfree}
 
 \section{With Modification to Tree Node}
 A disadvantage of the previous approach is that the time complexity of a search operation depends on the tree size. We now describe another approach to achieve wait-freedom for which the time complexity of a search operation depends on the tree height. This approach, however, requires modifying tree node to store a time-stamp of when the node was created. It consists of the identifier of the process that created the node and the process-specific sequence number (which is incremented before the node is added to the tree). This time-stamp is copied if a node is \emph{replaced} with a new node (in a complex delete operation) as in~\cite{RamMit:2015:ICDCN}. Before a search operation starts traversing the tree, it reads the current sequence number values of all processes. Let $\labels[i]$ denote the value read for process $P_i$. The operation then stops the downward traversal of the tree once it encounters a node with time-stamp $\ang{i,v}$ such that $v > \labels[i]$. Clearly, this node and its descendants were added to the tree after the operation read the sequence number value of process $P_i$.

@@ -8,8 +8,8 @@ BST, namely those based on:
 \end{enumerate}
 %%
 Note that \CITRUS{} is a blocking implementation. The above three implementations were obtained from their respective authors. All implementations were written in C/C++. In our experiments, none of the implementations used garbage collection to reclaim memory. The experimental evaluation in~\cite{HowJon:2012:SPAA, NatMit:2014:PPoPP} showed that, in all cases,  either \HJBST{} or \NMBST{} outperformed the concurrent BST implementation based on Ellen \emph{et al.}'s lock-free algorithm in~\cite{EllFat+:2010:PODC}. So we did not consider it in our experiments. 
-\input{c06/castle/graphs-castle-stampede-threadSweep}
-\input{c06/castle/graphs-castle-stampede-keySweep-absolute}
+\input{experiments/castle/graphs-castle-stampede-threadSweep}
+\input{experiments/castle/graphs-castle-stampede-keySweep-absolute}
 
 The results of our experiments are shown in  \figref{castle-threadSweep} and \figref{castle-keySweep-absolute}. In \figref{castle-threadSweep}, the absolute value of the system throughput is plotted against the number of threads (varying from 1 to 32 in powers of 2). Here each row represents a specific workload (read-dominated, mixed or write-dominated) and each column represents a specific key space size (20K, 200K and 2M). In \figref{castle-keySweep-absolute}, the value of the system throughput is plotted against the key space size. Here each column represents a range of key space sizes (small, medium and large) and each row represents a specific workload. As the peak performance for all the four algorithms (for all cases) occurred at 32 threads, we set the number of threads to 32 while varying the key space size from $2^{13}$ to $2^{24}$.
 
@@ -23,5 +23,5 @@ We believe that some of the reasons for the better performance of  \CASTLE{} ove
 
 In our experiments, we observed that, for key space  sizes larger than 10K, the likelihood of an operation restarting was extremely low (less than 0.1\%) even for a write-dominated workload. This implies that, in at least 99.9\% of the cases, an operation was able to complete without encountering any conflicts. Thus, for key space sizes larger than 10K, we expect \CASTLE{} to outperform the implementation based on the lock-free algorithm described in~\cite{EllFat+:2014:PODC}, which is basically derived from the one in~\cite{EllFat+:2010:PODC}.
 
-%\input{c06/castle/experiments-graphs-opus-keySweep}
-%\input{c06/castle/experiments-graphs-opus-keySweep-allWorkloads}
+%\input{experiments/castle/experiments-graphs-opus-keySweep}
+%\input{experiments/castle/experiments-graphs-opus-keySweep-allWorkloads}

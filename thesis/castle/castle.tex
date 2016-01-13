@@ -31,15 +31,15 @@
 %\label{sec:castle-algorithm}
 We first provide an overview of our algorithm. We then describe the algorithm in more detail and also give its pseudo-code. For ease of exposition, we describe our algorithm assuming no memory reclamation, which can be performed using the well-known technique of hazard pointers~\cite{Mic:2004:TPDS}.
 
-\input{c03/overview}
+\input{castle/overview}
 
-\input{c03/description}
+\input{castle/description}
 
 \section{Formal Description}
 
 We refer to our algorithm as \CASTLE{} (\underline{C}oncurrent \underline{A}lgorithm for Binary \underline{S}earch \underline{T}ree by \underline{L}ocking \underline{E}dges). 
 
-\input{c03/pseudocode}
+\input{castle/pseudocode}
 
 A pseudo-code of our algorithm is given in \algosref{castle-data|structures}{helper}.
 Different data structures used in our algorithm are shown in \algoref{castle-data|structures}. Besides tree node, we use three additional records:
@@ -62,6 +62,6 @@ three helper functions used by a delete operation, namely:
 \end{enumerate*}
 
 In the pseudo-code, to improve clarity, we sometimes use subscripts $l$, $m$ and $n$ to denote lock, mark and null flags, respectively.  
-\input{c03/proof}
+\input{castle/proof}
 
 \end{limitscope}

@@ -14,8 +14,8 @@ To better understand the effect of local recovery, we also measure \emph{seek ti
 
 For uniform distribution, the performance gain is marginal and, in many cases, is actually slightly worse due to the overhead of stack maintenance (graphs are provided in the appendix). This is not surprising because, for small trees, even though contention is higher, seek time is small to begin with and any benefit of local recovery is nullified by additional overhead of stack maintenance. For larger trees, even though seek time is larger, contention is low as key accesses are spread evenly. 
 
-\input{c06/localRecovery/experiments-graphs-stampede-threadSweep-zipf-4Set-Relative-10threads}
-\input{c06/localRecovery/experiments-graphs-stampede-threadSweep-zipf-4Set-Relative-seekTime-10threads}
+\input{experiments/localRecovery/experiments-graphs-stampede-threadSweep-zipf-4Set-Relative-10threads}
+\input{experiments/localRecovery/experiments-graphs-stampede-threadSweep-zipf-4Set-Relative-seekTime-10threads}
 
 \Figref{localRecovery-throughput-stampede-threadSweep-zipf-4Set-Relative} shows the behaviour for Zipfian distribution with $\alpha$=1. In general, Zipfian distribution causes more contention than uniform distribution. So even for small trees for which seek times are smaller, we still see performance gains for mixed and write-dominated workloads. \Figref{localRecovery-seekTime-stampede-threadSweep-zipf-4Set-Relative} shows how seek time improves (reduces) due to local recovery. 
 

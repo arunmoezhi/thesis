@@ -161,7 +161,7 @@ In case the \CAS{} instruction fails while marking the left child edge, the oper
 \figref{icdcn-flowDelete} shows a  flow chart describing the sequence of steps of a delete operation.
 \input{Figures/icdcn/flowDelete}
 
-\input{c04/pseudocode}
+\input{icdcn/pseudocode}
 
 \paragraph*{Cleanup Mode}
 %%
@@ -205,5 +205,5 @@ A pseudo-code of our algorithm is given in \algosref{icdcn-data|structures}{icdc
 
 The pseudo-code of the seek function is described in \algoref{icdcn-seek}, which is used by all the operations. The pseudo-codes of the search, insert and delete operations are given in \algoref{icdcn-search}, \algoref{icdcn-insert} and \algoref{icdcn-delete}, respectively. A delete operation executes  function \Inject{} in \injection{} mode, functions \FindAndMarkSuccessor{} and \RemoveSuccessor{} in \discovery{} mode and function \Cleanup{} in \cleanup{} mode. Their pseudo-codes are given in \algoref{icdcn-inject}, \algoref{icdcn-findandmark}, \algoref{icdcn-remove} and \algoref{icdcn-cleanup}, respectively. The pseudo-codes for helper routines (used by multiple functions) are given in \algoref{icdcn-findSmallest}, \algoref{icdcn-markChildEdge} and \algoref{icdcn-helper|2}. Finally, the pseudo-codes of functions used to help other (conflicting) delete operations are given in \algoref{icdcn-helping}.
 
-\input{c04/proof}
+\input{icdcn/proof}
 \end{limitscope}
