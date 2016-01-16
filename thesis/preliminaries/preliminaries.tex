@@ -1,0 +1,125 @@
+Processors were originally developed with only one core. So the data structures designed to run on then were sequential in nature.
+But as the processing speed of a single processor saturated, there was a shift towards multi-core processors.
+These shared-memory multiprocessors concurrently execute multiple threads.
+These threads communicate and synchronize through data structures in shared memory.
+The efficiency of these data structures are crucial to the performance.
+So developing concurrent versions of the sequential data structure became important.
+As threads in a multiprocessor can interleave in exponential number of ways, the challenge is to ensure that a concurrent data structure preserves its sequential specification for all possible interleavings.
+
+\section{Designing Concurrent Data Structures}
+The following example illustrates the design of a simple concurrent data structure.
+Let $x$ be a \emph{shared counter} which can be incremented using a function fetchAndIncrement().
+\Figref{sharedCounter} shows various implementations of this counter.
+In the sequential version, the \emph{counter} $x$ is first loaded into a register, then the register value is incremented and finally it is stored back into $x$.
+Each of these three steps are atomic. But put together they are no longer atomic.
+For instance consider this scenario. Let the initial value of $x$ be 0.
+Two threads $\alpha$ and $\beta$ read its value and copied it into their local registers.
+Then, both of them increment their local registers. Now when they try to write their register value back into the shared counter, there is a race condition.
+Without loss of generality let us assume that thread $\alpha$ made the first write. Now $x$ becomes 1.
+Then when $\beta$ issues a write, the value of $x$ is overwritten. But the new value of $x$ is still 1.
+Ideally, it has to be 2 as two threads have incremented the shared counter.
+This is a classic \emph{lost-update} or \emph{write-after-write} problem.
+
+\input{Figures/sharedCounter}
+
+A simple way to avoid such race conditions is to wrap them with locks.
+Consider the same scenario again. Without loss of generality, let thread $\alpha$ obtain the lock first.
+Thread $\beta$ cannot do any operation on the shared counter until thread $\alpha$ releases the lock.
+When $\alpha$ releases the lock, the value of $x$ is 1.
+Now when $\beta$ obtains the lock it reads the value of $x$ to be 1.
+It increments the value of $x$ and releases the lock.
+The final value of $x$ is 2 which is as expected.
+
+Another way to solve the race conditions is to use \emph{Read-Modify-Write} (RMW) instructions like \emph{test-and-set}, \emph{fetch-and-add} and \emph{compare-and-swap}.
+They essentially read a memory location and write a new value into it atomically.
+As shown in \figref{sharedCounter}, A compare-and-swap  instruction takes three arguments: $address$, $old$ and $new$; it compares the contents of a memory location ($address$) to a given value ($old$) and, only if they are the same, modifies the contents of that location to a given new value ($new$).
+The same shared counter can be implemented using a compare-and-swap instruction.
+For the same scenario, let both $\alpha$ and $\beta$ threads read the value of $x$ into their local register $rOld$.
+They compute $rNew$ to be 1 and both of them try to perform a CAS(Compare-And-Swap) operation.
+Without loss of generality let $\alpha$ precede $\beta$.
+The operation by $\alpha$ would succeed as the the value of $x$(0) is equal to $rOld$(0).
+But when $\beta$ tries to perform a CAS operation, the value of $x$ has already changed to 1.
+So it would fail, as the value of $x$(1) is not equal to $rOld$(0).
+So $\beta$ would retry the operation.
+This time it reads the updated value of $x$ into $rOld$ and the CAS operation would succeed leaving the final value of $x$ to be 2.
+
+Each of the two solutions described above handled contention in a different way.
+The one using locks are used in developing blocking algorithms and the one using atomic operations are used to develop non-blocking algorithms.
+
+\section{Blocking algorithms}
+The granularity of the locks used in blocking algorithms can be \emph{coarse} or \emph{fine}.
+Coarse grained locks allows only one thread to operate on a data structure.
+But fine grain locks allows multiple threads to operate on different portions of the data structure concurrently.
+In general, fine-grained locking approaches provides better performance.
+Though blocking algorithm are relatively easier to design than their non-blocking counterpart, they have their own limitations.
+They are often prone to deadlocks and priority inversion.
+Also they provide weaker progress guarantees.
+For instance consider two threads $\alpha$ and $\beta$ trying to obtain lock on a shared counter.
+Let $\alpha$ obtain the lock.
+Assume that before it increments the counter it gets swapped out of context by the operating system.
+Now $\beta$ will not be able to obtain the lock until $\alpha$ releases it.
+Though there is no deadlock in this state, the system as a whole is not making any progress.
+
+\section{Non-blocking algorithms}
+Non-blocking algorithms uses atomic (Read-Modify-Write) instructions to resolve contention.
+The also provide stronger progress guarantees. A non-blocking algorithm is either \emph{lock-free} or \emph{wait-free}.
+An algorithm is lock-free if at least one thread is able to make progress over an infinite period of time in a system.
+It is wait-free if every thread is able to complete its operations in a finite number of steps over an infinite period of time in a system.
+The notion of lock-freedom is at the algorithm level and not at the system level as the atomic operations still uses locks at the hardware level.
+In a blocking algorithm a thread owns a lock but in a non-blocking algorithm an operation being performed by a thread owns a lock.
+
+Lock-freedom and wait-freedom are usually achieved using the concept of \emph{helping}.
+When a thread performing its operation sees that some other thread is in its way,  then it first \emph{helps} the other thread before continuing its own operation.
+To enable helping, every thread, for all its operations on the shared data structure, leaves enough information in the shared memory so that even if it gets swapped out of context by the operating system, some other contending thread might still be able to help finish its operation.
+This way the system as a whole is able to make progress even though some threads might be stalled in the middle of its operations.
+
+\section{Linearizability}
+Proving correctness of concurrent data structures are as hard as designing them.
+For the simple shared counter using locks and atomic operations it is easy to prove the correctness.
+But for complex data structures like trees it is much more difficult.
+So we need a formal way to define correctness. 
+
+A sequential object has a state and a set of methods which operate on the object making the object move from one valid state to another.
+A sequence of method invocations and responses is called a \emph{history}.
+Every method has a set of pre-conditions and post-conditions.
+Pre-conditions captures the state of the object before the method is invoked and post-conditions captures the state after the method returns.
+In a sequential specification of an object, each method is described in isolation.
+The interactions among methods are captured by the side-effects on the object state.
+So a sequential object needs a meaningful state only between method calls.
+Also as methods are described in isolation, new methods can be added without modifying the existing methods.
+As the methods are executed one-at-a-time, proving the correctness requires that the any history (a sequence of method invocations and response) respects the sequential specification of the object.
+
+For a concurrent object, multiple methods might be executing concurrently.
+Since method calls overlap, an object might never be between method calls and hence we cannot define a valid state.
+Also we must consider all the exponential possible interactions among method calls.
+Proving the correctness of  a concurrent object requires that some total ordering of any history respects the sequential specification of the object.
+%These problems are caused since method calls are not instantaneous. 
+%They take finite time and can be modelled as an interval in a time line.
+
+Two well known consistency conditions for shared memory systems are \emph{sequential consistency}~\cite{Lamport:1979} and \emph{linearizability}~\cite{HerWin:1990:TOPLAS}.
+Sequential consistency is not composable while linearizability is.
+Traditionally software systems as they are built by composing multiple subsystems.
+So linearizability is preferred in designing concurrent data structures.
+
+Linearizability requires two properties:
+\begin{enumerate*}[label=(\roman*)]
+\item the object (or data structure) be sequentially consistent
+\item the total ordering which makes it sequentially consistent respect the \emph{real-time ordering} among the operations in the execution.
+\end{enumerate*}
+Respecting real-time ordering means that if an operation $op_1$ completed before another operation $op_2$, then $op_1$ must be ordered before $op_2$.
+In other words, linearizability  requires us to identify a distinct point between a method invocation and response where the method appears to have taken effect instantaneously.
+This point is called a \emph{linearization point}.
+Now if we order the method calls based on their linearization points then the resulting order should be in the sequential specification of the object.
+
+\input{Figures/linearizability}
+
+\Figref{linearizability}(a) shows a sequential execution of reads and writes on a register.
+\Figref{linearizability}(b) shows an execution history of a concurrent object.
+The linearization points are chosen such that \textit{write(0) $\rightarrow$ write(1) $\rightarrow$ read(1) $\rightarrow$ write(0) $\rightarrow$ read(0)}.
+\Figref{linearizability}(c) shows a history which is not linearizable.
+Since thread $A$ reads a value 1, the \textit{write()} of thread $B$ must precede the second \textit{write()} of thread $A$.
+So the \textit{read()} by thread $B$ cannot read a value 1.
+
+As linearizability is intuitive and composable, most of the concurrent data structure implementations use it as a correctness condition.
+Moir and Shavit~\cite{moirSha:2007} provides a detailed literature survey of various concurrent data structure implementations.
+For each of the algorithms we present in this dissertation we prove that they are linearizable.

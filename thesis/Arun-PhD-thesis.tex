@@ -23,7 +23,8 @@
 %
 % Recommended: If your bibliography contains web page URLs, the url package
 % improves their appearance (e.g., better line breaking):
-\usepackage{url}
+%\usepackage{url}
+\usepackage[hidelinks]{hyperref}
 %
 % Required: To satisfy UTD's formatting requirements for citations, use the
 % "natbib" package.  (Use other citation packages at your own risk; not all
@@ -248,6 +249,10 @@ To my parents and sister
 
 \chapter{\preliminaries}
 \label{chapter:\preliminaries}
+\input{preliminaries/preliminaries}
+
+\chapter{System model}
+\label{chapter:systemModel}
 \input{systemModel/systemModel}
 
 \part{Design}
