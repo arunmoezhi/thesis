@@ -1,0 +1,19 @@
+\section{Correctness Proof}
+\label{sec:proof}
+\myparagraph{Safety Property}
+To establish the linearizability property, we specify the \emph{linearization point} of every operation.
+Note that modify operations that do not change the tree are treated as search operations.
+Also, search operations are partitioned into two types: those that find the key in the tree (search-hit) and those that do not (search-miss).
+The linearization point of an insert operation is defined to be the point at which it adds the key to the tree (the key becomes reachable from the root of the tree).
+The linearization point of a delete operation is defined to be the point at which it removes the key from the tree (the key is no longer reachable from the root of the tree).
+For a search-hit operation, we consider two cases.
+If the target key is still reachable from the root of the tree when a node containing the matching key is found, then its linearization point is defined to be the point at which the comparison is made.
+Otherwise, its linearization point is defined to be the point just before the target key is removed from the tree.
+For a search-miss operation, we again consider two cases.
+If there is one or more delete operation on the same key whose linearization point overlaps with the search-miss operation, then the point just after the \emph{last} such linearization point is taken to be the linearization point of the search-miss operation.
+Otherwise, the linearization point of the search-miss operation is defined to be the point at which the operation starts.
+It can be proved that, when the operations are ordered according to their linearization points, then the resulting sequence of operations is legal.
+
+\myparagraph{Liveness Property}
+Note that a traversal restarts only if the tree has been modified since the last traversal.
+This implies that our local recovery algorithm preserves the liveness property of the original algorithm (deadlock-freedom or lock-freedom).
