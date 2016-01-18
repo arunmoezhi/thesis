@@ -1,14 +1,14 @@
 \begin{figure}
 \centering
 {
-	\begin{tikzpicture}
+	\begin{tikzpicture}[scale=0.9,transform shape]
 	\node (p0) [] {search(K)};
 	\node (p1) [process, below of=p0, text width=4cm] {Do a binary search for key K in the tree};
 	\node (p2) [process, below of=p1, yshift=-1.5cm, text width=4.5cm] {Examine anchor node $A$ of top entry in the stack};
 	\node (p3) [decision, below of=p2, yshift=-1.5cm, text width=2cm] {is anchor node marked?};
 	\node (p4) [process, right of=p3, xshift=4cm, text width=4.5cm] {pop all entries upto anchor node $A$};
-	\node (retT) [process, right of=p1, xshift=4cm, text width=1cm, minimum width=1cm] {return true};
-	\node (retF) [process, left of=p2, xshift=-5cm, text width=1cm, minimum width=1cm] {return false};
+	\node (retT) [process, right of=p1, xshift=4cm, text width=1.2cm, minimum width=1cm] {return true};
+	\node (retF) [process, left of=p2, xshift=-5cm, text width=1.2cm, minimum width=1cm] {return false};
 
 
 	\draw [arrow] (p1) -- node[anchor=west] {K not found} (p2);

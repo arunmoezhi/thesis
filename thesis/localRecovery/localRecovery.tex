@@ -8,6 +8,7 @@
     arrow/.style={thick, ->, >=stealth}
 }
 %%%%% localRecovery macros - begin
+\newcommand{\myparagraph}[1]{\paragraph*{#1}}
 \newcommand{\remove}[1]{}
 \NewDocumentCommand\accesspath{ g g }{\IfNoValueTF{#1}{access-path\xspace}{\IfNoValueTF{#2}{A(#1)\xspace}{A(#1,#2)\xspace}}}
 \newcommand{\myterminal}{terminal}
@@ -15,21 +16,30 @@
 \newcommand{\Myanchor}{Anchor}
 \newcommand{\mytarget}{target}
 \newcommand{\myadmissible}{admissible}
+\newcommand{\myinadmissible}{inadmissible}
 \newcommand{\mycritical}{critical}
 \newcommand{\mysadmissible}{strongly admissible}
 \newcommand{\mysafe}{safe}
 \newcommand{\myconsistent}{consistent}
-\newcommand{\myinconsistent}{inconsistent}
+\newcommand{\myinconsistent}{strictly inconsistent}
+\newcommand{\mynonconsistent}{inconsistent}
 \newcommand{\storedpath}{\Pi}
 \newcommand{\prefixpath}[1]{\Pi(#1)}
+\newcommand{\mylegal}{legal}
+\newcommand{\mykey}{\kappa}
+\newcommand{\mylegality}{legal}
+\newcommand{\mysafety}{safety}
+\newcommand{\MySafety}{Safety}
 \newcommand{\injection}{injection}
+\newcommand{\action}{modify}
 \newcommand{\myleft}{le\!f\!t}
 \newcommand{\myright}{right}
 \newcommand{\myparent}{parent}
+
 \newcommand{\InitializeTraversalRecord}{\textsc{InitializeTraversalState}}
 \newcommand{\TestForTermination}{\textsc{CanTerminate}}
-\newcommand{\FindStartPoint}{\textsc{FindASafeNode}}
-\newcommand{\FindAdmissible}{\textsc{ValidatePath}}
+\newcommand{\FindStartPoint}{\textsc{FindARestartPoint}}
+\newcommand{\FindAdmissible}{\textsc{IsNodeSafe}}
 \newcommand{\RemoveFromTop}{\textsc{RemoveFromTop}}
 \newcommand{\AddToTop}{\textsc{AddToTop}}
 \newcommand{\GetTop}{\textsc{GetTop}}
@@ -54,8 +64,11 @@
 \newcommand{\PopulateSeekRecord}{\textsc{PopulateSeekRecord}}
 \newcommand{\SeekForModify}{\textsc{SeekForModify}}
 \newcommand{\SeekForSearch}{\textsc{SeekForSearch}}
+\newcommand{\SeekForTarget}{\textsc{Seek}}
 \newcommand{\TraverseTree}{\textsc{Traverse}}
 \newcommand{\ExamineStack}{\textsc{ExamineStack}}
+\newcommand{\ExamineTop}{\textsc{ExamineTop}}
+
 \newcommand{\numberOfProcesses}{p}
 \newcommand{\STELLAR}{\textsc{STELLAR}}
 \newcommand{\sNodeOne}{\mathbb{R}}

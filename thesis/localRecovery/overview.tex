@@ -2,12 +2,11 @@
 \label{sec:overview}
 \input{Figures/localRecovery/movement}
 As mentioned earlier, every operation on a BST involves first traversing the tree from top to down starting from the root node and following either the left or the right child pointer until either the target key is found or a null pointer is encountered (termination condition). Depending on the outcome of the traversal and the type of the operation, the 
-tree may then need to be modified to actually realize the operation. We refer to the period during which the tree is being traversed as \emph{seek phase}. Further, we refer to the period during which the tree is being modified as \emph{execution phase}.
+tree may then need to be modified to actually realize the operation. We refer to the period during which the tree is being traversed as \emph{seek phase}. Further, we refer to the period during which the tree is being modified as \emph{\action{} phase}.
 
 During the seek phase, the target key may move from its current location to a new location up the tree. As a result, the traversal may miss the key both at its old location as well as its new location. For an illustration, see \figref{movement}. In the illustration, key 50 has moved up by five nodes. In most concurrent BST algorithms, if it is suspected that the key may have moved up the tree, then the traversal is simply restarted from the root node. Different algorithms use different approaches to detect possible key movement. For example, in~\cite{HowJon:2012:SPAA}, the traversal is restarted if the \emph{last right-turn} node is detected to have undergone some change. For example, in \figref{movement|suspended}, the last right-turn node for the operation $op(50)$ is node $X$. On reaching the terminal node in \figref{movement|key|moved}, after resuming running, $op(50)$ needs to restart since $X$ has since been removed from the tree. 
 
-A \emph{re}-traversal of the tree may also be required if the operation encounters any failure during the execution phase. For example, in~\cite{RamMit:2015:PPoPP}, which is a lock-based algorithm, execution phase is aborted if, after locking the relevant edges, the validation step fails. This happens if the portion of the tree that lies within the ``operation's window'', which typically consists of a small constant number of nodes, has undergone some change since it was last observed. In that case, the operation 
-moves to the seek phase again. 
+A \emph{re}-traversal of the tree may also be required if the operation encounters any failure during the \action{} phase. For example, in~\cite{RamMit:2015:PPoPP}, which is a lock-based algorithm, \action{} phase is aborted if, after locking the relevant edges, the validation step fails. This happens if the portion of the tree that lies within the ``operation's window'', which typically consists of a small constant number of nodes, has undergone some change since it was last observed. In that case, the operation moves to the seek phase again. 
 
 In most concurrent BST algorithms, (a single instance of) the execution phase of an operation typically tends to have constant time complexity. The seek phase is where an operation may end up spending most of its time especially if the tree is large. Hence, it is desirable to make the seek phase of an operation more efficient by:
 %%
@@ -16,59 +15,156 @@ In most concurrent BST algorithms, (a single instance of) the execution phase of
 \item restarting the traversal from a point ``close'' to the operation's window.
 \end{enumerate*}
 %%
+Note that local recovery may also improve the temporal reference locality of a concurrent BST thereby boosting its cache performance.
 This leads to two separate but related questions that any local recovery algorithm needs to address. First, ``If a key is not found, then does the traversal need to restart?''. Second, ``If the traversal needs to be restarted, then from which node should the traversal restart?''
 
-Consider an operation $\alpha$ currently traversing the tree; let $\storedpath(\alpha)$ denote the path taken by $\alpha$ so far. For example, in \figref{movement|suspended}, considering only the subtree shown in the figure, $\storedpath(op(50)) = \ang{R, S, T, U, V, W, X, Y}$. At each node in the path (except the last node), $\alpha$ either followed 
+Consider an operation $\alpha$, with the target key denoted by $\mykey(\alpha)$, currently traversing the tree; let $\storedpath(\alpha)$ denote the path taken by $\alpha$ so far. For example, in \figref{movement|suspended}, considering only the subtree shown in the figure, $\storedpath(op(50)) = \ang{R, S, T, U, V, W, X, Y}$. At each non-terminal node in the path (except the last node), $\alpha$ either followed 
 the left or the right child pointer. We say that a node in the path is an \emph{\myanchor} node if the operation followed its \emph{right} child pointer; otherwise we say that is a 
 \emph{non-\myanchor{}} node. For example, in the path $\storedpath(op(50))$, nodes $S$, $U$ and $X$ are \myanchor{} nodes, whereas nodes $R$, $T$, $V$, $W$ and $Y$ 
 are non-\myanchor{} nodes. We assume that the first \myanchor{} node in a traversal path is always a \emph{sentinel} node that is never marked (not shown in the figure). Of course, as an operation is traversing the tree, the tree may undergo changes as a result of which the path taken by the operation may no longer be correct. For example, in \figref{movement|key|moved}, the new \accesspath of $op(50)$ in the subtree, which is obtained from the subtree in \figref{movement|suspended} after applying several delete operations, is now given 
 by $\ang{R, S, T, U}$. 
 
-Note that, since in a complex delete operation we assume that the key being deleted is replaced with its successor key, the value of a key stored in a node can only increase. Therefore, the child pointer followed by an operation at a node, if it is still part of the \accesspath, may change (from right to left) for an \myanchor{} node but cannot change for a non-\myanchor{} node. For example, as shown in \figref{movement|suspended}, the node $U$ is an \myanchor{} node for $op(40)$. But due to the changes made to the tree, the key at $U$ has now become 50, as shown in \figref{movement|key|moved}. Hence, the pointer that $op(40)$ now needs to follow at $U$ is left and not right. We say that an \myanchor
-{} node is \emph{\myconsistent} with respect to an operation if its key is still less than the operation's key; otherwise, we say that it is \emph{\myinconsistent}. For example, in \figref{movement|key|moved}, \myanchor{} nodes $S$ and $X$ are still \myconsistent{} with respect to $op(40)$ but node $U$ has become \myinconsistent{} with respect to $op(40)$. 
+Note that, since in a complex delete operation we assume that the key being deleted is replaced with its successor key, the value of a key stored in a node can only increase. Therefore, the child pointer followed by an operation at a node, if it is still part of the \accesspath, may change (from right to left) for an \myanchor{} node but cannot change for a non-\myanchor{} node. For example, as shown in \figref{movement|suspended}, the node $U$ is an \myanchor{} node for $op(40)$. But due to the changes made to the tree, the key at $U$ has now become 50, as shown in \figref{movement|key|moved}. Hence, the pointer that $op(40)$ now needs to follow at $U$ is left and not right. 
 
-Clearly, in case an operation needs to restart, \emph{no node} in the path \emph{after an \myinconsistent{} \myanchor{} node} in general can serve as a restart point since the path taken and the path that needs to be taken may now diverge. This implies that, to find a restart point, a local recovery algorithm should locate the \emph{shallowest} \myinconsistent{} \myanchor{} node in the path (with the least depth) and discard the suffix of the path after such a node. Moreover, a restart point has to be a node that is still a part of the tree. 
+For the remainder of the section, let $\alpha$ be an operation with key 
+$\mykey(\alpha)$ traversing the tree and let $\storedpath(\alpha)$ denote the 
+path it has traversed so far. To explain our local recovery algorithm, we first define some notions.
 
-This leads to the following approach to find a restart point for an operation $\alpha$ when needed. Find a node $C$ in the path taken so far by $\alpha$ such that the following two conditions hold. First, $C$ is not marked. Second, every \myanchor{} node in the path preceding $C$ is \myconsistent{} with respect to $\alpha$. To check for the second condition, it is not necessary to examine every \myanchor{} node in the path preceding $C$ as stated in the following lemma. 
+\begin{definition}[\myconsistent{} node]
+An \myanchor{} node is said to be \emph{\myconsistent} with respect to $\alpha$ 
+if its (current) key is less than $\mykey(\alpha)$; otherwise it is said to be \emph{\mynonconsistent} with respect to $\alpha$.
+Moreover, it is said to be \emph{\myinconsistent} with respect to $\alpha$
+if its key is strictly greater than $\mykey(\alpha)$.
+\end{definition}
+
+
+For example, in \figref{movement|key|moved}, \myanchor{} 
+nodes $S$ and $X$ are still \myconsistent{} with respect to $op(40)$ but 
+node $U$ has become \mynonconsistent{} with respect to $op(40)$. 
+
+
+A node is said to be \emph{active} if it is reachable from the root of the tree; otherwise it is said to be \emph{passive}.
+For example, in \figref{movement|anchor|deleted}, nodes $R$ and $S$ are active but node $X$ is passive.
+
+\begin{definition}[\mylegal{} node]
+\label{def:legal}
+An active node $U$ in $\storedpath(\alpha)$ is said to be \emph{\mylegal} with respect to $\alpha$ 
+if every \myanchor{} node preceding $U$ in $\storedpath(\alpha)$ is  
+either \myconsistent{} with respect to $\alpha$ or passive.
+\end{definition}
 
 \begin{lemma}
-\label{lem:consistent}
-Consider an operation $\alpha$ and let $\storedpath(\alpha)$ denote the path 
-taken by $\alpha$ when traversing the tree. 
-Let $A$ be an \myanchor{} node in $\storedpath(\alpha)$ and let 
-$\sigma = A_0, A_1, \ldots, A_k$, where $A_k = A$, 
-denote the sequence of \myanchor{} nodes in $\storedpath(\alpha)$ up 
-to and including $A$. Then, if $A$ is unmarked and \myconsistent{} with 
-respect to $\alpha$, then, for every $i$ with $0 \leq i \leq k$, $A_i$ is 
-also \myconsistent{} with respect to $\alpha$. Moreover, the \accesspath of $\alpha$ in the current tree includes $A$.
+\label{lem:legal:accesspath}
+An active node in $\storedpath(\alpha)$ is \mylegal{} with respect to $\alpha$ \emph{if and only if} it is on the \accesspath of 
+$\alpha$ in the tree.
 \end{lemma}
 
-We say that an \myanchor{} node is \emph{\mycritical{}} with respect to a node $C$ in the path if it is the \emph{closest} preceding \myanchor{} node to $C$ that is also unmarked. For example, in \figref{movement|anchor|deleted}, the \mycritical{} \myanchor{} node with respect to node $Y$ is node $U$ since node $X$ is marked. Using the above lemma, the second condition can now be replaced with the following: the \mycritical{} \myanchor{} node with respect to $C$ in the path, say $A$, as well as every \myanchor{} node in the path that lies between $A$ and $C$, which will be marked, is \myconsistent{} with respect to $\alpha$.
+We now describe an efficient method to test if a node in $\storedpath(\alpha)$ is \mylegal{}. The method is safe but not sound in the sense that it may misclassify a \mylegal{} node as not \mylegal{} (and thus cause unnecessary restarts), but not vice versa. 
 
-The next lemma states a useful  property about an \myinconsistent{} \myanchor{} node.
+
+\begin{definition}[\mycritical{} node]
+\label{def:critical}
+Consider two nodes $U$ and $V$ in $\storedpath(\alpha)$. Then,  
+$V$ is said to \emph{\mycritical} with respect to $U$ if the following conditions hold:
+%%
+\begin{enumerate*}[label=(\roman*)]
+\item $V$ precedes $U$ in $\storedpath(\alpha)$,
+\item $V$ is an unmarked \myanchor{} node, and 
+\item all \myanchor{} nodes between $U$ and $V$ (if any) are marked.
+\end{enumerate*}
+\end{definition}
+
+For example, in \figref{movement|anchor|deleted}, consider the path \\ $\ang{R, S, T, U, V, W, X, Y}$. In the path, the \mycritical{} node with respect to node $Y$ 
+is node $U$ and not node $X$ since $X$ is marked.  
+
+
+\begin{definition}[\mysafe{} node]
+\label{def:safe}
+Consider a node $U$ in $\storedpath(\alpha)$ and let $V$ denote its \mycritical{} node. 
+Then, $U$ is said to \emph{\mysafe{}} with respect to $\alpha$
+if $V$ and all \myanchor{} nodes between $U$ and $V$ (if any) are \myconsistent{} with respect to $\alpha$.
+\end{definition}
+
+For example, in \figref{movement|anchor|deleted}, consider the path \\ $\ang{R, S, T, U, V, W, X, Y}$. Node $Y$ is \mysafe{} with respect to $op(40)$. However, in \figref{movement|key|moved}, node $Y$ is no longer \mysafe{} with respect to $op(40)$.
+
+The next lemma relates the notions of \mylegality{} and \mysafety{}.
+
+\begin{lemma}[\mysafety{} $\implies$ \mylegality{}]
+\label{lem:safe:legal}
+If an active node is \mysafe{} with respect to  $\alpha$, then it is also \mylegal{} with respect to $\alpha$.
+\end{lemma}
 
 \begin{lemma}
-\label{lem:inconsistent}
-Consider an operation $\alpha$ with target key $k$ and let $\storedpath(\alpha)$ denote the path 
-taken by $\alpha$ when traversing the tree. Let $A$ be an \myanchor{} node in $\storedpath(\alpha)$. Assume that $A$ is now \myinconsistent{} with respect to $\alpha$. Then, at the time $A$ became \myinconsistent{}, the tree did not contain $k$.
+\label{lem:last|safe:not|present}
+Let $U$ denote the last node of the path $\storedpath(\alpha)$ such that:
+%%
+\begin{enumerate*}[label=(\roman*)]
+\item the next pointer that $\alpha$ needs to follow at $U$ is null, and
+\item $U$'s key does not match $\mykey(\alpha)$.
+\end{enumerate*}
+%%
+If $U$ is \mysafe{} with respect to $\alpha$, 
+then there exists a time during $\alpha$'s traversal when $\mykey(\alpha)$ was not present in the tree.
 \end{lemma}
 
-To see why the above lemma holds, let $k_{old}$ ($k_{new}$) be the key stored in $A$ just before (after) $A$ became \myinconsistent{}. Clearly, $k_{old} < k < k_{new}$. Let $t$ denote the time just after which $k_{old}$ was replaced with $k_{new}$ in $A$. Note that $k_{new}$ must be the next smallest key in the right subtree of $A$ at time $t$. This implies that the right subtree of $A$ did not contain $k$ at time $t$. Further, from \lemref{consistent}, $A$ is on the \accesspath of $\alpha$ at time $t$. Hence, we can conclude that the tree does not contain $k$ at time $t$. Note that, if a key is not present in the tree at some point while a search/delete operation is in progress, it is acceptable for the operation to say that key was not found. In this case, the operation will be linearized after the delete operation that removed the key from the tree.
+Based on the above discussion, we now describe an efficient procedure to test whether or not a node is \mysafe{}. 
 
-When an operation fails to find the target key after traversing the tree from top to bottom, it examines the path it took to check whether or not the key has moved up the tree and/or a re-traversal is required. To that end, it examines the \myanchor{} nodes in the reverse order in which they were visited, starting from the one closest to the terminal node. We now discuss the behaviour of each operation one-by-one.
+\subsubsection{Procedure to Test for \MySafety{}}
+\label{sec:test|safety}
+%%
+To test whether or not a node $U$ in $\storedpath(\alpha)$ is \mysafe{} with respect to $\alpha$,  we can examine the \myanchor{} nodes (preceding $U$) in 
+$\storedpath(\alpha)$ in the reverse order in which they were encountered during the traversal, starting from the one closest to $U$. We keep going as long as we find the \myanchor{} node to be \myconsistent{} and marked. Note that such an \myanchor{} node does not need to be examined again when testing for \mysafety{} in the future since its key value cannot change any more. We stop as soon as we encounter an \myanchor{} node, say $V$, that is either \mynonconsistent{} or unmarked.
+%%
+If $V$ is an \mynonconsistent{} \myanchor{} node, then we \emph{discard the suffix of $\storedpath(\alpha)$ after $V$}. This is because no node after $V$ in $\storedpath(\alpha)$ can act as a restart point in general.
+Moreover, if $\alpha$ is a search or delete operation,  then the next lemma suggests that $\alpha$ 
+can complete by announcing that $\mykey(\alpha)$ was not found in the tree. 
+
+\begin{lemma}
+\label{lem:inconsistent:not|present}
+If an \myanchor{} node in $\storedpath(\alpha)$ is \myinconsistent{} with respect to $\alpha$, 
+then there exists a time during $\alpha$'s traversal when $\mykey(\alpha)$ was not present in the tree.
+\end{lemma}
+%%
+
+Intuitively, if $\mykey(\alpha)$ was present in the tree when $\alpha$ started but was not present in the tree at some point during $\alpha$'s traversal, 
+then $\alpha$ can be linearized after the delete operation that removed $\mykey(\alpha)$ from the tree in case $\alpha$ is a search or delete operation.
+%%
+We next describe how each operation (search, insert and delete) achieves local recovery.
+
+\subsubsection{Working of an Operation}
+
+Assume that $\alpha$'s traversal ends in a terminal node, say $U$, whose key does not match $\mykey(\alpha)$.  As a first step, $\alpha$ invokes the procedure to test whether or not $U$ is a \mysafe{} node. Note that, if the procedure returns false, then it would have truncated the path such that the last node in the truncated path is an \mynonconsistent{} node, say $V$.
 
 
-\paragraph{Search Operation:} 
+\myparagraph{Search or Delete Operation} 
 \input{Figures/localRecovery/localRecoverySearch}
 \input{Figures/localRecovery/searchStack}
-A search operation \emph{does not} need to restart. When it examines an \myanchor{} node as mentioned above, there are three possibilities. First, if the \myanchor{} node's key matches the target key, then the key has been found and the operation terminates. Second, if the \myanchor{} node's key is greater than the target key (the \myanchor{} node has become \myinconsistent{}), then the operation concludes that the key is not  present in the tree and terminates. Finally, if the \myanchor{} node's key is smaller than the target key (the \myanchor{} node is still \myconsistent{}), then the operation terminates if the node is not marked; otherwise it moves to the preceding \myanchor{} node and repeats the comparison. \Figref{localRecoverySearch} gives an overview of the steps involved in a search operation. \Figref{searchStack} shows an example of how a stack is used to do local recovery. Each entry in the stack has the node encountered in the traversal along with its anchor node.
+\input{Figures/localRecovery/localRecoveryDelete}
+If the procedure returns true, then $\alpha$ announces that the key was not found and terminates (\lemref{last|safe:not|present}). 
+On the other hand, if the procedure returns false, then $\alpha$ compares $V$'s key with $\mykey(\alpha)$. If $V$ is found to be \myinconsistent{}, then  again $\alpha$ announces that the key was not found and terminates (\lemref{inconsistent:not|present}).  Otherwise, it implies that $V$'s key matches $\mykey(\alpha)$. In this case, $\alpha$ either announces that the key was found and terminates (search operation) or moves to the \action{} phase to try to remove the key from the tree (delete operation).
+Note that a search operation does not need to restart. A delete operation does not need to restart due to key movements; it only needs to restart if a failure occurs in the \action{} phase in which case it attempts to find a suitable node in the truncated path from where to restart the traversal (explained later).
+
+\Figref{localRecoverySearch} gives an overview of the steps involved in a search operation. \Figref{searchStack} shows an example of how a stack is used to do local recovery. Each entry in the stack has the node encountered in the traversal along with its anchor node. \Figref{localRecoveryDelete} gives an overview of the steps involved in a delete operation.
 
 
 
 \paragraph{Insert Operation:} 
 \input{Figures/localRecovery/localRecoveryInsert}
-An insert operation needs to restart only if one of the \myanchor{} nodes in the path has become \myinconsistent{}. When it examines an \myanchor{} node as mentioned above, there are three possibilities. First, if the \myanchor{} node's key matches the target key, then the key has been found and the operation terminates. Second, if the \myanchor{} node's key is greater than the target key (the \myanchor{} node has become \myinconsistent{}), then it discards the suffix of the path after the \myanchor{} node and restarts the traversal from a restart point. Finally, if the \myanchor{} node's key is smaller than the target key (the \myanchor{} node is still \myconsistent{}), then the traversal terminates if the node is not marked (the terminal node is returned  as the injection point); otherwise it moves to the preceding \myanchor{} node and repeats the comparison. \Figref{localRecoveryInsert} gives an overview of the steps involved in an insert operation.
+If the procedure returns true, then $\alpha$ moves to the \action{} phase to try to add $\mykey(\alpha)$ to the tree (\lemref{last|safe:not|present}).
+In this case, the new node will be attached as a child node of $U$.
+On the other hand, if the procedure returns false, then $\alpha$ compares $V$'s key with $\mykey(\alpha)$.
+If $V$'s key matches $\mykey(\alpha)$, then $\alpha$ announces that the key was found and terminates.
+Otherwise, it implies that $V$ is  a \myinconsistent{} node.
+In that case, $\alpha$ attempts to find a suitable node in the truncated path from where to restart the traversal (explained later).
+\Figref{localRecoveryInsert} gives an overview of the steps involved in an insert operation.
 
-\paragraph{Delete Operation:} 
-\input{Figures/localRecovery/localRecoveryDelete}
-A delete operation also \emph{does not} need to restart except when there is a failure in the execution phase. When it examines an \myanchor{} node as mentioned above, there are three possibilities. First, if the \myanchor{} node's key matches the target key, then the key has been found and the operation moves to the execution phase. Second, if the \myanchor{} node's key is greater than the target key (the \myanchor{} node has become \myinconsistent{}), then the operation concludes that the key is not present in the tree and terminates. Finally, if the \myanchor{} node's key is smaller than the target key (the \myanchor{} node is still \myconsistent{}), then the traversal terminates if the node is not marked; otherwise it moves to the preceding \myanchor{} node and repeats the comparison. \Figref{localRecoveryDelete} gives an overview of the steps involved in a delete operation.
+\subsubsection{Procedure to Find a Restart Point}
+\label{sec:find|restart|point}
+
+To find a restart point, $\alpha$ first rolls back to an unmarked node on the path, say $U$, and invokes the procedure to test whether or not $U$ is a \mysafe{} node. If the procedure returns true, then $U$ is returned as a valid restart point (\lemsref{legal:accesspath}{safe:legal}).
+Otherwise, as mentioned earlier, the procedure would have truncated the path such that the last node in the truncated path is an \mynonconsistent{} node, say $V$. 
+Next, $\alpha$ compares $V$'s key with $\mykey(\alpha)$. There are two possible cases depending on the outcome of the comparison.
+
+\myparagraph{Case 1 ($V$'s key matches $\mykey(\alpha)$)} In this case, $\alpha$ either moves to the \action{} phase (if $\alpha$ is a delete operation) or announces that the key was found and terminates (otherwise).
+
+\myparagraph{Case 2 ($V$'s key is greater than $\mykey(\alpha)$} In this case, $\alpha$ either  recursively invokes the procedure to find a restart point (if $\alpha$ is an insert operation) or announces that the key was not found and terminates (otherwise).

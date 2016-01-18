@@ -26,6 +26,7 @@ having 61 1.1 GHz cores with 4 hardware threads per core and 8GB of GDDR5 memory
 \subsection*{Key distribution}
 Usually uniform key distribution (where all keys have same frequency of occurrence) have been used to evaluate concurrent BSTs. But in many of the real world workloads, keys have skewed distribution~\cite{ClaSha+:2009:SIAM} where some keys are more popular than others. Zipfian distribution, a type of power-law distribution simulates this behaviour~\cite{BreCao+:1999:INFOCOM,FalJag:1992:VLDB,GraSun+:1994:SIGMOD}. It is characterized by a parameter $\alpha$ which usually lies between 0.5 and 1~\cite{BreCao+:1999:INFOCOM,AdaHub:2002:GLOTTMET}. In our experiments we used both uniform and Zipfian distributions to evaluate the local recovery algorithm.
 
+\subsection*{Simulation results}
 \Tabref{localRecovery-perf-numbers} summarizes the performance gap (with respect to system throughput) between the base algorithm and its extension using local recovery for uniform and Zipfian distributions. 
 \input{Figures/localRecovery/perf-numbers}
 

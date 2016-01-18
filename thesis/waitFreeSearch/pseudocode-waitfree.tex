@@ -85,9 +85,9 @@
 \newcommand{\WFSeekForSearchBOHeight}{\textsc{WFSeekForSearchBOHeight}}
 %%
 %% \newcommand{\WFTraverseTreeBOCount}{\textsc{TraverseBasedOnCount}}
-\newcommand{\WFTraverseTreeBOCount}{\textsc{LimitedTraverse}}
+\newcommand{\WFTraverseTreeBOCount}{\textsc{LimitedSeek}}
 %% \newcommand{\WFTraverseTreeBOTimeStamp}{\textsc{TraverseBasedOnTimeStamp}}
-\newcommand{\WFTraverseTreeBOTimeStamp}{\textsc{TimeStampTraverse}}
+\newcommand{\WFTraverseTreeBOTimeStamp}{\textsc{TimeStampSeek}}
 %%
 \remove{
 \newcommand{\SeekForSuccessor}{\textsc{SeekForSuccessor}}
@@ -182,7 +182,7 @@
 \Begin
 {
 %%
-\tcp{similar to \TraverseTree{} except that the while loop from \linesref{local-traverse|tree:while:begin}{local-traverse|tree:while:end} is executed at most $\limit$ times}
+\tcp{similar to \TraverseTree{} except that the while loop from \linesref{local-seek:while:traversal:begin}{local-seek:while:traversal:end} is executed at most $\limit$ times}
 %%
 }
 %%
@@ -244,8 +244,8 @@
 \Begin
 {
 %%
-\tcp{similar to \TraverseTree{} except that the while loop from \linesref{local-traverse|tree:while:begin}{local-traverse|tree:while:end} is terminated as soon as a node with a ``recent'' time-stamp is encountered}
-\tcp{specifically, the following lines are inserted between \linesref[ \& ]{local-traverse|tree:while:begin}{local-traverse|tree:while:first}}
+\tcp{similar to \TraverseTree{} except that the while loop from \linesref{local-seek:while:traversal:begin}{local-seek:while:traversal:end} is terminated as soon as a node with a ``recent'' time-stamp is encountered}
+\tcp{specifically, the following lines are inserted between \linesref[ \& ]{local-seek:while:traversal:begin}{local-seek:while:traversal:first}}
 %%
 $\ang{ \myPID, \myLabel }$ := $\node \rarrow \timeStamp$\;
 \lIf{$\myLabel$ $>$ $\labels[\myPID]$}{ \Break }
@@ -266,7 +266,8 @@ $\ang{ \myPID, \myLabel }$ := $\node \rarrow \timeStamp$\;
 	 \If{\LNot($\result$)} 
 	 {
 	    $\copyOfLabels$ := $\labels$\;
-			\mline{$\result$ := \WFTraverseTreeBOTimeStamp( \parbox[t]{1.125in}{$\opRecord$, $\seekRecord$, \\ $\copyOfLabels$ );} \;}
+			%\mline{$\result$ := \WFTraverseTreeBOTimeStamp( \parbox[t]{1.125in}{$\opRecord$, $\seekRecord$, \\ $\copyOfLabels$ );} \;}
+			$\result$ := \WFTraverseTreeBOTimeStamp($\opRecord$, $\seekRecord$, $\copyOfLabels$)\;
 			
 	 }
 	 

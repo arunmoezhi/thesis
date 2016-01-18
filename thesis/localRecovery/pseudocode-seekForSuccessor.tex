@@ -152,7 +152,7 @@
 
 \begin{algorithm}[tbh]
 \caption{Seek Function for Successor Key} 
-\label{algo:seek:successor}
+\label{algo:local-seek:successor}
 %%
 \DefineKeyWords
 %%
@@ -243,11 +243,10 @@
 			   \label{lin:local-seek|successor:while:traversal:begin}
 				 \lIf{\IsNull( $\reference$ )}{ \Break }
 				
-				 \tcp{obtain the address of the node}
-				 $\address$ := \GetAddress( $\reference$ )\;	
+				 $\address$ := \GetAddress( $\reference$ ); \tcp*[f]{obtain the address of the node}
 				
-				 \tcp{traverse the edge}
-				 $\restart$ := \Move( $\cNode$, $\address$, $\which$ )\;
+				 
+				 $\restart$ := \Move( $\cNode$, $\address$, $\which$ ); \tcp{traverse the edge}
 				 \label{lin:local-seek|successor:while:traversal:move}
 			   \If(\tcp*[f]{the algorithm wants to restart the traversal}){$\restart$}
 			   {
@@ -255,13 +254,12 @@
 						\label{lin:local-seek|successor:while:traversal:restart}
 			   }  
 				 
-			   \tcp{push the node visited into the stack}
-				 \AddToTop( $\traversalRecord$, $\address$, $\which$ )\;
+			   
+				 \AddToTop( $\traversalRecord$, $\address$, $\which$ ); \tcp*[f]{push the node visited into the stack}
 				 \label{lin:local-seek|successor:while:traversal:stack}
 				 \label{lin:local-seek|successor:while:traversal:advance:begin}
 			   $\cNode$ := $\address$\;
-				 \tcp{determine the next node to be visited}
-			   $\reference$ := \GetChild( $\cNode$, \LEFT{} )\;
+			   $\reference$ := \GetChild( $\cNode$, \LEFT{} ); \tcp*[f]{determine the next node to be visited}
 			   $\which$ := \LEFT{}\;
 				 \label{lin:local-seek|successor:while:traversal:advance:end}
 				 \label{lin:local-seek|successor:while:traversal:end}
