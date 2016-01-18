@@ -1,0 +1,6 @@
+metric	castle	castleL	citrus	citrusL	howley	howleyL
+retries	0.05	0.04	0.07	0.07	0.12	0.08
+seek-time	6.69294	8.37855	7.37106	8.8272	7.76347	9.90502
+modify-time	5.00568	5.17698	16.72336	17.70004	10.06241	9.74189
+seek-length	20.11	20.1	20.74	20.26	20.2	20.18
+throughput	38.06	32.41	11.3	10.48	15.88	14.78

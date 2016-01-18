@@ -1,3 +1,14 @@
+%\begin{limitscope}
+%%%%% local recovery experiments macros - begin
+\newcommand{\retries}{\emph {retries}}
+\newcommand{\seekTime}{\emph {seek-time}}
+\newcommand{\modifyTime}{\emph {modify-time}}
+\newcommand{\seekLength}{\emph {seek-length}}
+\newcommand{\estLatencyImpact}{\emph {latency-impact}}
+\newcommand{\throughput}{\emph {throughput}}
+\newcommand{\action}{modify}
+%%%%% local recovery experiments macros - end
+
 In this section we evaluate our local recovery technique. 
 
 To show that our local recovery algorithm is sufficiently general, we implemented it for three different concurrent internal BSTs, namely those based on:
@@ -8,18 +19,36 @@ To show that our local recovery algorithm is sufficiently general, we implemente
 \end{enumerate*}
 These implementations were chosen so that we covered both lock-free and lock-based approaches. We choose two lock-based implementations as one is based on locking edges~\cite{RamMit:2015:PPoPP} and the other is based on locking nodes using RCU framework~\cite{ArbAtt:2014:PODC}.
 
+\subsection*{Experimental Setup}
+As local recovery is useful for high contention cases, we conducted our experiments on a single Intel Xeon Phi SE10P Coprocessor \footnote{http://www.intel.com/content/www/us/en/processors/xeon/xeon-phi-detail.html}
+having 61 1.1 GHz cores with 4 hardware threads per core and 8GB of GDDR5 memory. With this machine we were able to experiment with up to 244 threads.
+
+\subsection*{Key distribution}
 Usually uniform key distribution (where all keys have same frequency of occurrence) have been used to evaluate concurrent BSTs. But in many of the real world workloads, keys have skewed distribution~\cite{ClaSha+:2009:SIAM} where some keys are more popular than others. Zipfian distribution, a type of power-law distribution simulates this behaviour~\cite{BreCao+:1999:INFOCOM,FalJag:1992:VLDB,GraSun+:1994:SIGMOD}. It is characterized by a parameter $\alpha$ which usually lies between 0.5 and 1~\cite{BreCao+:1999:INFOCOM,AdaHub:2002:GLOTTMET}. In our experiments we used both uniform and Zipfian distributions to evaluate the local recovery algorithm.
-
-To better understand the effect of local recovery, we also measure \emph{seek time} which is defined as the total time an operation spends on tree traversal including all restarts as well as stack processing time. For both uniform and Zipfian distribution \CASTLE{} and \HJBST{} reached peak performance at 244 threads while \CITRUS{} reached its peak performance at 61 threads for smaller trees and at 122 and 183 threads for larger trees. Performance comparison of these algorithms is not shown here as we are more interested in studying the impact of our local recovery algorithm on each of these algorithms. 
-
-For uniform distribution, the performance gain is marginal and, in many cases, is actually slightly worse due to the overhead of stack maintenance (graphs are provided in the appendix). This is not surprising because, for small trees, even though contention is higher, seek time is small to begin with and any benefit of local recovery is nullified by additional overhead of stack maintenance. For larger trees, even though seek time is larger, contention is low as key accesses are spread evenly. 
-
-\input{experiments/localRecovery/experiments-graphs-stampede-threadSweep-zipf-4Set-Relative-10threads}
-\input{experiments/localRecovery/experiments-graphs-stampede-threadSweep-zipf-4Set-Relative-seekTime-10threads}
-
-\Figref{localRecovery-throughput-stampede-threadSweep-zipf-4Set-Relative} shows the behaviour for Zipfian distribution with $\alpha$=1. In general, Zipfian distribution causes more contention than uniform distribution. So even for small trees for which seek times are smaller, we still see performance gains for mixed and write-dominated workloads. \Figref{localRecovery-seekTime-stampede-threadSweep-zipf-4Set-Relative} shows how seek time improves (reduces) due to local recovery. 
-
-From \figsrefc[ and ]{localRecovery-throughput-stampede-threadSweep-zipf-4Set-Relative}{localRecovery-seekTime-stampede-threadSweep-zipf-4Set-Relative}, we see a clear correlation between seek time and system throughput. As seek time reduces due to local recovery, the system throughput also improves. We see maximum improvement for \HJBST{}. Since \CASTLE{} and \CITRUS{} are lock-based algorithms, no helping is performed during tree traversal.  But in \HJBST{}, during the tree traversal, if a pending operation is seen it is helped and then the current operation is restarted. This results in frequent restarts and hence local recovery improves performance by a larger margin.
 
 \Tabref{localRecovery-perf-numbers} summarizes the performance gap (with respect to system throughput) between the base algorithm and its extension using local recovery for uniform and Zipfian distributions. 
 \input{Figures/localRecovery/perf-numbers}
+
+To better understand the effect of local recovery, we also measure several metrics defined in \tabref{metrics-definition}.
+\input{Figures/localRecovery/metrics-definition}
+\Figsref{localRecovery-throughput-uniform}{metrics-uniform} show the impact of local recovery on throughput and various metrics for uniform distribution. We see that the performance gain is marginal and, in many cases, is actually slightly worse due to the overhead of stack maintenance. This is not surprising because, for small trees, even though contention is higher, seek time is small to begin with and any benefit of local recovery is nullified by additional overhead of stack maintenance. For larger trees, even though seek time is larger, contention is low as key accesses are spread evenly.
+\input{experiments/localRecovery/experiments-graphs-mic-localRecovery-threadSweep-uniform}
+\input{experiments/localRecovery/experiments-graphs-mic-localRecovery-metrics-coloured-uniform}
+
+\Figsref{localRecovery-throughput-zipf}{metrics-zipf} show the impact of local recovery on throughput and various metrics for Zipfian distribution.  In general, Zipfian distribution causes more contention than uniform distribution. So even for small trees for which seek times are smaller, we still see performance gains for mixed and write-dominated workloads. As the graphs show,  we see a consistent increase in throughput (up to \localRecoveryMaximumgap{}) using local recovery as we move from low contention scenarios (read-dominated workload and large tree size)  to high contention scenarios (write-dominated workload and small tree size). Specifically, we see up to 70\% and 31\% improvements for \HJBST{} and \CASTLE{} respectively. Except \CITRUS{}, the other two implementations scale fairly well up to 244 threads.
+\input{experiments/localRecovery/experiments-graphs-mic-localRecovery-threadSweep-zipf}
+\input{experiments/localRecovery/experiments-graphs-mic-localRecovery-metrics-coloured-zipf}
+
+As shown in \Figref{metrics-zipf}, for \HJBST{}, all the metrics except \modifyTime{} show improvement.
+A modify operation in this algorithm helps any pending operation along its traversal path leading to higher fraction of restarts shown by the metric \retries.
+Retries and hence \seekLength{} and \seekTime{} are significantly reduced due to local recovery.
+
+For \CASTLE{}, for smaller trees, we see that all the metrics improved and the throughput increases up to 31\%.
+For \CITRUS{}, there was no improvement due to local recovery across all three workloads as this algorithm is optimized for low contention scenarios and does not scale well for high contention scenarios.
+Most of its modify operation's time is spent on \action{} phase than in seek phase.
+The main reason being a complex delete operation has to wait till all previous readers have completed their traversals.
+
+\begin{comment}
+From \figsrefc[ and ]{localRecovery-throughput-stampede-threadSweep-zipf-4Set-Relative}{localRecovery-seekTime-stampede-threadSweep-zipf-4Set-Relative}, we see a clear correlation between seek time and system throughput. As seek time reduces due to local recovery, the system throughput also improves. We see maximum improvement for \HJBST{}. Since \CASTLE{} and \CITRUS{} are lock-based algorithms, no helping is performed during tree traversal.  But in \HJBST{}, during the tree traversal, if a pending operation is seen it is helped and then the current operation is restarted. This results in frequent restarts and hence local recovery improves performance by a larger margin.
+\end{comment}
+%\end{limitscope}

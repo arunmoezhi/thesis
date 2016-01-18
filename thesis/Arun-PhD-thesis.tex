@@ -63,7 +63,7 @@
 \usepackage{verbatim}
 \usepackage{tikz}
 \usepackage{pgfplots}
-\usetikzlibrary{shapes.geometric,arrows,fit,matrix,positioning,pgfplots.groupplots}
+\usetikzlibrary{shapes.geometric,arrows,fit,matrix,positioning,pgfplots.groupplots,patterns}
 \tikzset
 {
     treenode/.style = {circle, draw=black, align=center, minimum size=1cm},
@@ -123,6 +123,7 @@
 %for tables
 \usepackage{multirow}
 \usepackage[nocolor]{drawstack}
+\usepackage{array}
 
 %
 %%% End of packages.
@@ -145,7 +146,7 @@
 \newcommand{\false}{\textsf{false}}
 \newcommand{\castleMaximumgap}{46\%}
 \newcommand{\icdcnMaximumgap}{27\%}
-\newcommand{\localRecoveryMaximumgap}{49\%}
+\newcommand{\localRecoveryMaximumgap}{70\%}
 \newcommand{\ICDCN}{\textsc{ELFtree}}
 \newcommand{\CASTLE}{\textsc{CASTLE}}
 \newcommand{\CITRUS}{\textsc{CITRUS}}
@@ -160,7 +161,8 @@
 \newcommand{\Secref}[1]{Section~\ref{sec:#1}}
 \newcommand{\figref}[1]{Figure~\ref{fig:#1}}
 \newcommand{\Figref}[1]{Figure~\ref{fig:#1}}
-\newcommand{\figsref}[2]{Figures~\ref{fig:#1}-\ref{fig:#2}}
+\newcommand{\figsref}[2]{figures~\ref{fig:#1}-\ref{fig:#2}}
+\newcommand{\Figsref}[2]{Figures~\ref{fig:#1}-\ref{fig:#2}}
 \newcommand{\figsrefc}[3][-]{Figures~\ref{fig:#2}{#1}\ref{fig:#3}}
 \newcommand{\algoref}[1]{Algorithm~\ref{algo:#1}}
 \newcommand{\Algoref}[1]{Algorithm~\ref{algo:#1}}

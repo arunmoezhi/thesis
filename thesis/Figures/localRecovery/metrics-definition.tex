@@ -1,0 +1,14 @@
+\begin{table}
+\centering
+\caption{Performance metrics used to evaluate the effect of local recovery.}
+\label{tab:metrics-definition}
+\begin{tabular}{|l|>{}m{0.7\linewidth}|}
+\hline
+{\bf Metric}					& {\bf Description} 		\\ \hline
+{\retries} 				& { fraction of restarts for an operation}      					\\ \hline
+{\seekTime}  					& {total time an operation spends on tree traversal including all restarts as well as stack processing time (in $\mu$s)}  \\ \hline
+{\modifyTime}  					& {total time an operation spends on \action{} phase (in $\mu$s)}      					\\ \hline
+{\seekLength} 				& {number of nodes traversed in the tree by an operation}      					\\ \hline
+{\estLatencyImpact}		& {a rough approximation of the amount of clock cycles devoted to each L1 cache miss (a measure of cache performance)~\cite{JefRei:2013:Book}}      					\\ \hline
+\end{tabular}                
+\end{table}

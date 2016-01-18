@@ -1,0 +1,145 @@
+% Style to select only points from #1 to #2 (inclusive)
+\pgfplotsset
+{
+	select coords between index/.style 2 args=
+	{
+    x filter/.code=
+		{
+        \ifnum\coordindex<#1\def\pgfmathresult{}\fi
+        \ifnum\coordindex>#2\def\pgfmathresult{}\fi
+    }
+	}
+}
+\begin{figure}
+\centering
+\nextwithlateexternal% < added
+\begin{tikzpicture}
+	\begin{groupplot}[group style={group size= 4 by 3},height=5.25cm,width=4.5cm,max space between ticks=20,minor tick num=1,tick label style={font=\scriptsize}]
+		\nextgroupplot[title={\scriptsize 2K keys},ylabel={\scriptsize Read-Dominated},y label style={at={(0.15,0.5)}},xtick={1,61,122,183,244},mark size=1.5pt]
+				\addplot[black, densely dashed,mark=square] [select coords between index={0}{8}] 		table[x=NumOfThreads,y=citrus-MOPS,col sep=space]	 	{Data/localRecovery/mic/threadSweep-uniform.csv}; 	\label{plots:CITRUS:mopsU}
+				\addplot[red,densely dashed,mark=triangle*] [select coords between index={0}{8}] 		table[x=NumOfThreads,y=howley-MOPS,col sep=space]	 	{Data/localRecovery/mic/threadSweep-uniform.csv}; 	\label{plots:HOWLEY:mopsU}
+				%\addplot[blue,densely dashed,mark=asterisk][select coords between index={0}{8}] 		table[x=NumOfThreads,y=icdcn-MOPS,col sep=space] 	 	{Data/localRecovery/mic/threadSweep-uniform.csv};  	\label{plots:ICDCN:mopsU}
+				\addplot[green, densely dashed,mark=o] 		 	[select coords between index={0}{8}] 		table[x=NumOfThreads,y=castle-MOPS,col sep=space]	 	{Data/localRecovery/mic/threadSweep-uniform.csv}; 	\label{plots:CASTLE:mopsU}
+				\addplot[black, semithick,mark=square] 	  	[select coords between index={0}{8}] 		table[x=NumOfThreads,y=citrusL-MOPS,col sep=space]	{Data/localRecovery/mic/threadSweep-uniform.csv}; 	\label{plots:CITRUSL:mopsU}
+				\addplot[red,semithick,mark=triangle*] 			[select coords between index={0}{8}] 		table[x=NumOfThreads,y=howleyL-MOPS,col sep=space]	{Data/localRecovery/mic/threadSweep-uniform.csv}; 	\label{plots:HOWLEYL:mopsU}
+				%\addplot[blue,semithick,mark=asterisk] 		[select coords between index={0}{8}] 		table[x=NumOfThreads,y=icdcnL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};  	\label{plots:ICDCNL:mopsU}
+				\addplot[green, semithick,mark=o] 					[select coords between index={0}{8}] 		table[x=NumOfThreads,y=castleL-MOPS,col sep=space]	{Data/localRecovery/mic/threadSweep-uniform.csv}; 	\label{plots:CASTLEL:mopsU}
+				\coordinate (top) at (rel axis cs:0,1);% coordinate at top of the first plot	
+		\nextgroupplot[title={\scriptsize 20K keys},xtick={1,61,122,183,244},mark size=1.5pt]	
+				\addplot[black, densely dashed,mark=square] [select coords between index={9}{17}] 	table[x=NumOfThreads,y=citrus-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};  
+				\addplot[red,densely dashed,mark=triangle*] [select coords between index={9}{17}] 	table[x=NumOfThreads,y=howley-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};  
+				%\addplot[blue,densely dashed,mark=asterisk][select coords between index={9}{17}] 	table[x=NumOfThreads,y=icdcn-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv};  
+				\addplot[green, densely dashed,mark=o] 			[select coords between index={9}{17}] 	table[x=NumOfThreads,y=castle-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[black, semithick,mark=square] 			[select coords between index={9}{17}] 	table[x=NumOfThreads,y=citrusL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[red,semithick,mark=triangle*] 			[select coords between index={9}{17}] 	table[x=NumOfThreads,y=howleyL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,semithick,mark=asterisk] 		[select coords between index={9}{17}] 	table[x=NumOfThreads,y=icdcnL-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[green, semithick,mark=o] 					[select coords between index={9}{17}] 	table[x=NumOfThreads,y=castleL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+		\nextgroupplot[title={\scriptsize 200K keys},xtick={1,61,122,183,244},mark size=1.5pt]
+				\addplot[black, densely dashed,mark=square] [select coords between index={18}{26}] 	table[x=NumOfThreads,y=citrus-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[red,densely dashed,mark=triangle*] [select coords between index={18}{26}] 	table[x=NumOfThreads,y=howley-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,densely dashed,mark=asterisk][select coords between index={18}{26}] 	table[x=NumOfThreads,y=icdcn-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[green, densely dashed,mark=o] 			[select coords between index={18}{26}] 	table[x=NumOfThreads,y=castle-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[black, semithick,mark=square] 			[select coords between index={18}{26}] 	table[x=NumOfThreads,y=citrusL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[red,semithick,mark=triangle*] 			[select coords between index={18}{26}] 	table[x=NumOfThreads,y=howleyL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,semithick,mark=asterisk] 		[select coords between index={18}{26}] 	table[x=NumOfThreads,y=icdcnL-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[green, semithick,mark=o] 					[select coords between index={18}{26}] 	table[x=NumOfThreads,y=castleL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+		\nextgroupplot[title={\scriptsize 2M keys},xtick={1,61,122,183,244},mark size=1.5pt]	
+				\addplot[black, densely dashed,mark=square] [select coords between index={27}{35}] 	table[x=NumOfThreads,y=citrus-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[red,densely dashed,mark=triangle*] [select coords between index={27}{35}] 	table[x=NumOfThreads,y=howley-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,densely dashed,mark=asterisk][select coords between index={27}{35}] 	table[x=NumOfThreads,y=icdcn-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[green, densely dashed,mark=o] 			[select coords between index={27}{35}] 	table[x=NumOfThreads,y=castle-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[black, semithick,mark=square] 			[select coords between index={27}{35}] 	table[x=NumOfThreads,y=citrusL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[red,semithick,mark=triangle*] 			[select coords between index={27}{35}] 	table[x=NumOfThreads,y=howleyL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,semithick,mark=asterisk] 		[select coords between index={27}{35}] 	table[x=NumOfThreads,y=icdcnL-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[green, semithick,mark=o] 					[select coords between index={27}{35}] 	table[x=NumOfThreads,y=castleL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+		\nextgroupplot[ylabel={\scriptsize Mixed},y label style={at={(0.15,0.5)}},xtick={1,61,122,183,244},mark size=1.5pt]		
+				\addplot[black, densely dashed,mark=square] [select coords between index={36}{44}] 	table[x=NumOfThreads,y=citrus-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[red,densely dashed,mark=triangle*] [select coords between index={36}{44}] 	table[x=NumOfThreads,y=howley-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,densely dashed,mark=asterisk][select coords between index={36}{44}] 	table[x=NumOfThreads,y=icdcn-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[green, densely dashed,mark=o] 			[select coords between index={36}{44}] 	table[x=NumOfThreads,y=castle-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[black, semithick,mark=square] 			[select coords between index={36}{44}] 	table[x=NumOfThreads,y=citrusL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[red,semithick,mark=triangle*] 			[select coords between index={36}{44}] 	table[x=NumOfThreads,y=howleyL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,semithick,mark=asterisk] 		[select coords between index={36}{44}] 	table[x=NumOfThreads,y=icdcnL-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[green, semithick,mark=o] 					[select coords between index={36}{44}] 	table[x=NumOfThreads,y=castleL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+		\nextgroupplot[xtick={1,61,122,183,244},mark size=1.5pt]		
+				\addplot[black, densely dashed,mark=square] [select coords between index={45}{53}] 	table[x=NumOfThreads,y=citrus-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[red,densely dashed,mark=triangle*] [select coords between index={45}{53}] 	table[x=NumOfThreads,y=howley-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,densely dashed,mark=asterisk][select coords between index={45}{53}] 	table[x=NumOfThreads,y=icdcn-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[green, densely dashed,mark=o] 			[select coords between index={45}{53}] 	table[x=NumOfThreads,y=castle-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[black, semithick,mark=square] 			[select coords between index={45}{53}] 	table[x=NumOfThreads,y=citrusL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[red,semithick,mark=triangle*] 			[select coords between index={45}{53}] 	table[x=NumOfThreads,y=howleyL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,semithick,mark=asterisk] 		[select coords between index={45}{53}] 	table[x=NumOfThreads,y=icdcnL-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[green, semithick,mark=o] 					[select coords between index={45}{53}] 	table[x=NumOfThreads,y=castleL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+		\nextgroupplot[xtick={1,61,122,183,244},mark size=1.5pt]		
+				\addplot[black, densely dashed,mark=square] [select coords between index={54}{62}] 	table[x=NumOfThreads,y=citrus-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[red,densely dashed,mark=triangle*] [select coords between index={54}{62}] 	table[x=NumOfThreads,y=howley-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,densely dashed,mark=asterisk][select coords between index={54}{62}] 	table[x=NumOfThreads,y=icdcn-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[green, densely dashed,mark=o] 			[select coords between index={54}{62}] 	table[x=NumOfThreads,y=castle-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};	
+				\addplot[black, semithick,mark=square] 			[select coords between index={54}{62}] 	table[x=NumOfThreads,y=citrusL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[red,semithick,mark=triangle*] 			[select coords between index={54}{62}] 	table[x=NumOfThreads,y=howleyL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,semithick,mark=asterisk] 		[select coords between index={54}{62}] 	table[x=NumOfThreads,y=icdcnL-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[green, semithick,mark=o] 					[select coords between index={54}{62}] 	table[x=NumOfThreads,y=castleL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+		\nextgroupplot[xtick={1,61,122,183,244},mark size=1.5pt]		
+				\addplot[black, densely dashed,mark=square] [select coords between index={63}{71}] 	table[x=NumOfThreads,y=citrus-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[red,densely dashed,mark=triangle*] [select coords between index={63}{71}] 	table[x=NumOfThreads,y=howley-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,densely dashed,mark=asterisk][select coords between index={63}{71}] 	table[x=NumOfThreads,y=icdcn-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[green, densely dashed,mark=o] 			[select coords between index={63}{71}] 	table[x=NumOfThreads,y=castle-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[black, semithick,mark=square] 			[select coords between index={63}{71}] 	table[x=NumOfThreads,y=citrusL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[red,semithick,mark=triangle*] 			[select coords between index={63}{71}] 	table[x=NumOfThreads,y=howleyL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,semithick,mark=asterisk] 		[select coords between index={63}{71}] 	table[x=NumOfThreads,y=icdcnL-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[green, semithick,mark=o] 					[select coords between index={63}{71}] 	table[x=NumOfThreads,y=castleL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};				
+		\nextgroupplot[xlabel={\scriptsize Number of Threads},ylabel={\scriptsize Write-Dominated},y label style={at={(0.15,0.5)}},xtick={1,61,122,183,	244},mark size=1.5pt]
+				\addplot[black, densely dashed,mark=square] [select coords between index={72}{80}] 	table[x=NumOfThreads,y=citrus-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};    
+				\addplot[red,densely dashed,mark=triangle*] [select coords between index={72}{80}] 	table[x=NumOfThreads,y=howley-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};    
+				%\addplot[blue,densely dashed,mark=asterisk][select coords between index={72}{80}] 	table[x=NumOfThreads,y=icdcn-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv};     
+				\addplot[green, densely dashed,mark=o] 			[select coords between index={72}{80}] 	table[x=NumOfThreads,y=castle-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};	   
+				\addplot[black, semithick,mark=square] 			[select coords between index={72}{80}] 	table[x=NumOfThreads,y=citrusL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[red,semithick,mark=triangle*] 			[select coords between index={72}{80}] 	table[x=NumOfThreads,y=howleyL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};   
+				%\addplot[blue,semithick,mark=asterisk] 		[select coords between index={72}{80}] 	table[x=NumOfThreads,y=icdcnL-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv};    
+				\addplot[green, semithick,mark=o] 					[select coords between index={72}{80}] 	table[x=NumOfThreads,y=castleL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};	
+		\nextgroupplot[xlabel={\scriptsize Number of Threads},xtick={1,61,122,183,244},mark size=1.5pt]	
+				\addplot[black, densely dashed,mark=square] [select coords between index={81}{89}] 	table[x=NumOfThreads,y=citrus-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[red,densely dashed,mark=triangle*] [select coords between index={81}{89}] 	table[x=NumOfThreads,y=howley-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,densely dashed,mark=asterisk][select coords between index={81}{89}] 	table[x=NumOfThreads,y=icdcn-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[green, densely dashed,mark=o] 			[select coords between index={81}{89}] 	table[x=NumOfThreads,y=castle-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};	
+				\addplot[black, semithick,mark=square] 			[select coords between index={81}{89}] 	table[x=NumOfThreads,y=citrusL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[red,semithick,mark=triangle*] 			[select coords between index={81}{89}] 	table[x=NumOfThreads,y=howleyL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,semithick,mark=asterisk] 		[select coords between index={81}{89}] 	table[x=NumOfThreads,y=icdcnL-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[green, semithick,mark=o] 					[select coords between index={81}{89}] 	table[x=NumOfThreads,y=castleL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+		\nextgroupplot[xlabel={\scriptsize Number of Threads},xtick={1,61,122,183,244},mark size=1.5pt]	
+				\addplot[black, densely dashed,mark=square] [select coords between index={90}{98}] 	table[x=NumOfThreads,y=citrus-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[red,densely dashed,mark=triangle*] [select coords between index={90}{98}] 	table[x=NumOfThreads,y=howley-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,densely dashed,mark=asterisk][select coords between index={90}{98}] 	table[x=NumOfThreads,y=icdcn-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[green, densely dashed,mark=o] 			[select coords between index={90}{98}] 	table[x=NumOfThreads,y=castle-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};	
+				\addplot[black, semithick,mark=square] 			[select coords between index={90}{98}] 	table[x=NumOfThreads,y=citrusL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[red,semithick,mark=triangle*] 			[select coords between index={90}{98}] 	table[x=NumOfThreads,y=howleyL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,semithick,mark=asterisk] 		[select coords between index={90}{98}] 	table[x=NumOfThreads,y=icdcnL-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[green, semithick,mark=o] 					[select coords between index={90}{98}] 	table[x=NumOfThreads,y=castleL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+		\nextgroupplot[xlabel={\scriptsize Number of Threads},xtick={1,61,122,183,244},mark size=1.5pt]	
+				\addplot[black, densely dashed,mark=square] [select coords between index={99}{107}]	table[x=NumOfThreads,y=citrus-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[red,densely dashed,mark=triangle*] [select coords between index={99}{107}]	table[x=NumOfThreads,y=howley-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,densely dashed,mark=asterisk][select coords between index={99}{107}]	table[x=NumOfThreads,y=icdcn-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[green, densely dashed,mark=o] 			[select coords between index={99}{107}]	table[x=NumOfThreads,y=castle-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};		
+				\addplot[black, semithick,mark=square] 			[select coords between index={99}{107}]	table[x=NumOfThreads,y=citrusL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				\addplot[red,semithick,mark=triangle*] 			[select coords between index={99}{107}]	table[x=NumOfThreads,y=howleyL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};
+				%\addplot[blue,semithick,mark=asterisk] 		[select coords between index={99}{107}]	table[x=NumOfThreads,y=icdcnL-MOPS,col sep=space]  	{Data/localRecovery/mic/threadSweep-uniform.csv}; 
+				\addplot[green, semithick,mark=o] 					[select coords between index={99}{107}]	table[x=NumOfThreads,y=castleL-MOPS,col sep=space] 	{Data/localRecovery/mic/threadSweep-uniform.csv};				
+				\coordinate (bot) at (rel axis cs:1,0);% coordinate at bottom of the last plot
+\end{groupplot}
+	\path (top-|current bounding box.west)-- node[anchor=south,rotate=90] {\scriptsize system throughput} (bot-|current bounding box.west);
+	\path (top|-current bounding box.north)-- coordinate(legendpos) (bot|-current bounding box.north);
+	\matrix[matrix of nodes, anchor=south, draw, inner sep=0.2em, draw] at ([yshift=1ex]legendpos)
+  {
+    \ref{plots:HOWLEY:mopsU}& 	\HJBST{} 				& [5pt]
+    %\ref{plots:ICDCN:mopsU}& 	\ICDCN{} 				& [5pt]
+    \ref{plots:CITRUS:mopsU}& 	\CITRUS{} 			& [5pt]
+		\ref{plots:CASTLE:mopsU}& 	\CASTLE{} 			\\
+		\ref{plots:HOWLEYL:mopsU}& 	\HJBST{} (LR)		& [5pt]
+    %\ref{plots:ICDCNL:mopsU}& 	\ICDCN{} (LR)		& [5pt]
+    \ref{plots:CITRUSL:mopsU}& 	\CITRUS{} (LR)	& [5pt]
+		\ref{plots:CASTLEL:mopsU}& 	\CASTLE{}	(LR)	\\
+	};
+\end{tikzpicture}
+\caption[Impact of local recovery on throughput - uniform distribution]{Comparison of throughput of different concurrent BST implementations with (solid lines) and without (dotted lines) local recovery for uniform distribution. Each row represents a workload type. Each column represents a key space range. Higher is better.}
+\label{fig:localRecovery-throughput-uniform}
+\end{figure}

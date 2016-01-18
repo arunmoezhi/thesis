@@ -1,0 +1,113 @@
+% Style to select only points from #1 to #2 (inclusive)
+\pgfplotsset{
+  select row/.style={
+    x filter/.code={\ifnum\coordindex=#1\else\def\pgfmathresult{}\fi}
+  },
+}
+
+\definecolor{colorbrewer1}{RGB}{166,206,227}
+\definecolor{colorbrewer2}{RGB}{31,120,180}
+\definecolor{colorbrewer3}{RGB}{178,223,138}
+\definecolor{colorbrewer4}{RGB}{51,160,44}
+\definecolor{colorbrewer5}{RGB}{251,154,153}
+\definecolor{colorbrewer6}{RGB}{227,26,28}
+\definecolor{colorbrewer7}{RGB}{253,191,111}
+\definecolor{colorbrewer8}{RGB}{255,127,0}
+\definecolor{colorbrewer9}{RGB}{202,178,214}
+\definecolor{colorbrewer10}{RGB}{106,61,154}
+\definecolor{colorbrewer11}{RGB}{222,179,155}
+\definecolor{colorbrewer12}{RGB}{177,89,40}
+			
+\pgfplotscreateplotcyclelist{paired}{
+{draw=colorbrewer1 ,pattern color=colorbrewer1 ,pattern=horizontal lines},
+{draw=colorbrewer2 ,pattern color=colorbrewer2 ,pattern=horizontal lines},
+{draw=colorbrewer3 ,pattern color=colorbrewer3 ,pattern=vertical lines},
+{draw=colorbrewer4 ,pattern color=colorbrewer4 ,pattern=vertical lines},
+{draw=colorbrewer5 ,pattern color=colorbrewer5 ,pattern=north east lines},
+{draw=colorbrewer6 ,pattern color=colorbrewer6 ,pattern=north east lines},
+{draw=colorbrewer7 ,pattern color=colorbrewer7 ,pattern=north west lines},
+{draw=colorbrewer8 ,pattern color=colorbrewer8 ,pattern=north west lines},
+{draw=colorbrewer9 ,pattern color=colorbrewer9 ,pattern=grid},
+{draw=colorbrewer10,pattern color=colorbrewer10,pattern=grid},
+{draw=colorbrewer11,pattern color=colorbrewer11,pattern=crosshatch},
+{draw=colorbrewer12,pattern color=colorbrewer12,pattern=crosshatch}}
+			
+\def\twinplot#1#2{
+  \pgfplotsforeachungrouped \row in {0,...,5}{
+      \edef\justplotit{
+        \noexpand\addplot+[bar shift=(-0.5)*\pgfplotbarwidth]
+          table [x=metric, select row=\row, y=#1] {#2};}
+      \justplotit
+			\edef\justplotit{
+        \noexpand\addplot+[bar shift=(0.5)*\pgfplotbarwidth]
+          table [x=metric, select row=\row, y=#1L] {#2};}
+      \justplotit
+  }
+}
+
+\begin{figure}
+\centering
+\nextwithlateexternal% < added
+\begin{tikzpicture}
+\begin{groupplot}
+	[
+    group style={group size= 3 by 6,xticklabels at=edge bottom},
+    height=3.5cm,
+    width=5cm,
+    ybar=1pt,
+    tick label style={font=\scriptsize},
+    x tick label style={rotate=45,anchor=east},
+    symbolic x coords={retries,seek-time,modify-time,seek-length,throughput},
+    ylabel style={align=center},
+		cycle list name=paired,
+    max space between ticks=15,
+		ymin=0
+  ]
+	\pgfkeys{/pgf/bar width=5.5pt}
+	
+	\nextgroupplot[title=\CASTLE,ylabel={\scriptsize 2K}] \twinplot{castle}{Data/localRecovery/mic/scaled/zipf/2k-90-9-1.csv}
+	%\nextgroupplot[title=\ICDCN] 						\twinplot{icdcn}{Data/localRecovery/mic/scaled/zipf/2k-90-9-1.csv}
+	\nextgroupplot[title=\CITRUS] 						\twinplot{citrus}{Data/localRecovery/mic/scaled/zipf/2k-90-9-1.csv}
+	\nextgroupplot[title=\HJBST] 							\twinplot{howley}{Data/localRecovery/mic/scaled/zipf/2k-90-9-1.csv}
+	\coordinate (mtop0) at (rel axis cs:0,1);% coordinate at top of the first plot
+		
+	\nextgroupplot[ylabel={\scriptsize 200K}]							\twinplot{castle}{Data/localRecovery/mic/scaled/zipf/200k-90-9-1.csv}
+	%\nextgroupplot														\twinplot{icdcn}{Data/localRecovery/mic/scaled/zipf/200k-90-9-1.csv}
+	\nextgroupplot														\twinplot{citrus}{Data/localRecovery/mic/scaled/zipf/200k-90-9-1.csv}
+	\nextgroupplot														\twinplot{howley}{Data/localRecovery/mic/scaled/zipf/200k-90-9-1.csv}
+	\coordinate (mbot0) at (rel axis cs:1,0);% coordinate at bottom of the last plot
+	
+	\nextgroupplot[ylabel={\scriptsize 2K}] 							\twinplot{castle}{Data/localRecovery/mic/scaled/zipf/2k-70-20-10.csv}
+	%\nextgroupplot														\twinplot{icdcn}{Data/localRecovery/mic/scaled/zipf/2k-70-20-10.csv}
+	\nextgroupplot						  							\twinplot{citrus}{Data/localRecovery/mic/scaled/zipf/2k-70-20-10.csv}
+	\nextgroupplot						  							\twinplot{howley}{Data/localRecovery/mic/scaled/zipf/2k-70-20-10.csv}
+	\coordinate (mtop) at (rel axis cs:0,1);% coordinate at top of the first plot
+		
+	\nextgroupplot[ylabel={\scriptsize 200K}]							\twinplot{castle}{Data/localRecovery/mic/scaled/zipf/200k-70-20-10.csv}
+	%\nextgroupplot														\twinplot{icdcn}{Data/localRecovery/mic/scaled/zipf/200k-70-20-10.csv}
+	\nextgroupplot														\twinplot{citrus}{Data/localRecovery/mic/scaled/zipf/200k-70-20-10.csv}
+	\nextgroupplot														\twinplot{howley}{Data/localRecovery/mic/scaled/zipf/200k-70-20-10.csv}
+	\coordinate (mbot) at (rel axis cs:1,0);% coordinate at bottom of the last plot
+	
+	\nextgroupplot[ylabel={\scriptsize 2K}]								\twinplot{castle}{Data/localRecovery/mic/scaled/zipf/2k-0-50-50.csv}
+	%\nextgroupplot														\twinplot{icdcn}{Data/localRecovery/mic/scaled/zipf/2k-0-50-50.csv}
+	\nextgroupplot														\twinplot{citrus}{Data/localRecovery/mic/scaled/zipf/2k-0-50-50.csv}
+	\nextgroupplot														\twinplot{howley}{Data/localRecovery/mic/scaled/zipf/2k-0-50-50.csv}
+	\coordinate (wtop) at (rel axis cs:0,1);% coordinate at top of the first plot
+	
+	\nextgroupplot[ylabel={\scriptsize 200K}]							\twinplot{castle}{Data/localRecovery/mic/scaled/zipf/200k-0-50-50.csv}
+	%\nextgroupplot														\twinplot{icdcn}{Data/localRecovery/mic/scaled/zipf/200k-0-50-50.csv}
+	\nextgroupplot														\twinplot{citrus}{Data/localRecovery/mic/scaled/zipf/200k-0-50-50.csv}
+	\nextgroupplot														\twinplot{howley}{Data/localRecovery/mic/scaled/zipf/200k-0-50-50.csv}
+	\coordinate (wbot) at (rel axis cs:1,0);% coordinate at bottom of the last plot	
+	
+\end{groupplot}
+\path (mtop0-|current bounding box.west)-- node[anchor=south,rotate=90,yshift=-0.9cm] {\scriptsize Read-Dominated} (mbot0-|current bounding box.west);
+\path (mtop-|current bounding box.west)-- node[anchor=south,rotate=90,yshift=-0.9cm] {\scriptsize Mixed} (mbot-|current bounding box.west);
+\path (wtop-|current bounding box.west)-- node[anchor=south,rotate=90,yshift=-0.9cm] {\scriptsize Write-Dominated} (wbot-|current bounding box.west);
+\end{tikzpicture}
+\caption[Impact of local recovery on various metrics - zipf distribution]{Impact of local recovery on various metrics for two key space ranges (2K and 200K) with zipf key distribution. Each column represents a concurrent BST implementation. To show all the metrics on the same plot, some of the metrics were scaled as follows: \retries{} by $\frac{1}{8}$, \seekLength{} by $\frac{1}{3}$ 
+and \throughput{} by 2. For \CITRUS{}, \modifyTime{} was further scaled-down by a factor 20 to make other metrics visible.
+}
+\label{fig:metrics-zipf}
+\end{figure}
