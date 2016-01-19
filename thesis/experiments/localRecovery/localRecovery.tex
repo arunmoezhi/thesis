@@ -20,8 +20,7 @@ To show that our local recovery algorithm is sufficiently general, we implemente
 These implementations were chosen so that we covered both lock-free and lock-based approaches. We choose two lock-based implementations as one is based on locking edges~\cite{RamMit:2015:PPoPP} and the other is based on locking nodes using RCU framework~\cite{ArbAtt:2014:PODC}.
 
 \subsection*{Experimental Setup}
-As local recovery is useful for high contention cases, we conducted our experiments on a single Intel Xeon Phi SE10P Coprocessor \footnote{http://www.intel.com/content/www/us/en/processors/xeon/xeon-phi-detail.html}
-having 61 1.1 GHz cores with 4 hardware threads per core and 8GB of GDDR5 memory. With this machine we were able to experiment with up to 244 threads.
+As local recovery is useful for high contention cases, we conducted our experiments on a single Intel Xeon Phi SE10P Coprocessor having 61 1.1 GHz cores with 4 hardware threads per core and 8GB of GDDR5 memory. With this machine we were able to experiment with up to 244 threads.
 
 \subsection*{Key distribution}
 Usually uniform key distribution (where all keys have same frequency of occurrence) have been used to evaluate concurrent BSTs. But in many of the real world workloads, keys have skewed distribution~\cite{ClaSha+:2009:SIAM} where some keys are more popular than others. Zipfian distribution, a type of power-law distribution simulates this behaviour~\cite{BreCao+:1999:INFOCOM,FalJag:1992:VLDB,GraSun+:1994:SIGMOD}. It is characterized by a parameter $\alpha$ which usually lies between 0.5 and 1~\cite{BreCao+:1999:INFOCOM,AdaHub:2002:GLOTTMET}. In our experiments we used both uniform and Zipfian distributions to evaluate the local recovery algorithm.
