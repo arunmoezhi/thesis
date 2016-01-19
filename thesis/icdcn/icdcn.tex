@@ -201,6 +201,8 @@ To enable helping, as mentioned earlier, whenever traversing the tree to locate 
 
 
 \section{Formal Description}
+We refer to our algorithm as \ICDCN{} (\underline{E}dge-based \underline{L}ock \underline{F}ree Binary Search \underline{Tree}).
+
 A pseudo-code of our algorithm is given in \algosref{icdcn-data|structures}{icdcn-helping}.
 
 \Algoref{icdcn-data|structures} describes the data structures used in our algorithm. Besides \textsf{Node}, three important data types in our algorithm are: \textsf{Edge}, \textsf{SeekRecord} and \textsf{StateRecord}. The data type \textsf{Edge} is a structure consisting of three fields: the two endpoints and the direction (left or right). The data type \textsf{SeekRecord} is a structure used to store the results of a tree traversal. The data type \textsf{StateRecord} is a structure used to store information about a delete operation (\emph{e.g.}, target edge, type,  current mode, etc.). Note that only objects of type \textsf{Node} are shared between processes; objects of all other types (\emph{e.g.}, \textsf{SeekRecord}, \textsf{StateRecord}) are \emph{local} to a process and not shared with other processes.
