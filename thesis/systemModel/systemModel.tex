@@ -1,5 +1,7 @@
 %\section{System Model}
-%\subsection{Synchronization Primitives}
+In this chapter we describe the system model.
+
+\section{Synchronization Primitives}
 We assume an asynchronous shared memory system that, in addition to read and write instructions, also supports compare-and-swap (\CAS{}) atomic instruction. The \CAS{} instruction is commonly available in many modern processors such as Intel~64 and AMD64. 
 
 We also use locks and assume that the following properties hold true about the locks
